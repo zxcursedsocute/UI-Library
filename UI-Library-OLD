@@ -1,0 +1,3685 @@
+local HttpService = game:GetService("HttpService")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+
+local Library = {}
+Library.__index = Library
+
+function Library.CreateWindow(title,subtitle,size)
+	local self = setmetatable({}, Library)
+
+	self.mainTabs = {}
+	self.CurrentTab = nil
+	self.Elements = {}
+	self.Notipos = 0.9
+	self.tabpos = 0
+	self.Theme = {
+		BackGroundIcon = "rbxassetid://81884260046139",
+		TextColor = Color3.fromRGB(255, 255, 255),
+		SubTtitleTextColor = Color3.fromRGB(125, 125, 125),
+		Notisubtitlecolor = Color3.fromRGB(199, 199, 199),
+		HeaderCloseIcon = "rbxassetid://134899599114088",
+		HeaderColor = Color3.fromRGB(22, 22, 22),
+		HeaderMinimazeIcon = "rbxassetid://139226435094489",
+		HeaderMiniIcon = "rbxassetid://89738650787294",
+		headerlinecolor = Color3.fromRGB(229, 229, 229),
+		headerlinetrans = 0.550,
+		TabsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+		NotiCloseImg = "rbxassetid://134899599114088",
+		NotiImg = "rbxassetid://97146547138190",
+		NotiTitleColor = Color3.fromRGB(255, 255, 255),
+		BackGroundTran = 0.05,
+		DestroyGFrame = Color3.fromRGB(22, 22, 22),
+		dbtntran = 0.95,
+		dbtncolor = Color3.fromRGB(255, 255, 255)
+	}
+	self.Noti = {}
+	self.BlurEffect = nil
+	self.Connections = {}
+	self.ActiveTweens = {}
+	self.AllToggles = {}
+	self.Windowscd = false
+	self.userinfo = true
+	self.saveFolder = nil
+	self.saveFileName = nil
+
+	self.OriginalTabElements = {} -- Для хранения оригинального расположения
+	self.CurrentSearchResults = {} -- Для хранения текущих результатов
+	self.IsSearching = false
+
+	self.UI = Instance.new("ScreenGui")
+	self.UI.Name = "RobloxGui"
+	self.UI.Parent = CoreGui:FindFirstChild("RobloxGui")
+	self.UI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+	self.ImageLabel = Instance.new("ImageLabel")
+	self.ImageLabel.Parent = self.UI
+	self.ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.ImageLabel.BackgroundTransparency = 1.000
+	self.ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.ImageLabel.BorderSizePixel = 0
+	self.ImageLabel.Position = UDim2.new(0.467958212, 0, 0.00145985396, 0)
+	self.ImageLabel.Size = UDim2.new(0, size, 0, 480)
+	self.ImageLabel.Image = self.Theme.BackGroundIcon
+	self.ImageLabel.Active = true
+	self.ImageLabel.Selectable = true
+	self.ImageLabel.Draggable = true
+	self.ImageLabel.ImageTransparency = 0.05
+
+	self.Destroy_gui = Instance.new("Frame")
+	self.dFrame_2 = Instance.new("Frame")
+	self.dTextLabel = Instance.new("TextLabel")
+	local dUICorner = Instance.new("UICorner")
+	self.dTextLabel_2 = Instance.new("TextLabel")
+	self.dTextButton = Instance.new("TextButton")
+	local dUICorner_2 = Instance.new("UICorner")
+	self.dTextButton_2 = Instance.new("TextButton")
+	local dUICorner_3 = Instance.new("UICorner")
+	local dUICorner_4 = Instance.new("UICorner")
+
+	self.Destroy_gui.Parent = self.ImageLabel
+	self.Destroy_gui.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	self.Destroy_gui.BackgroundTransparency = 0.7
+	self.Destroy_gui.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.Destroy_gui.BorderSizePixel = 0
+	self.Destroy_gui.Position = UDim2.new(0.017231673, 0, 0.0208332706, 0)
+	self.Destroy_gui.Size = UDim2.new(0, 570, 0, 460)
+	self.Destroy_gui.Visible = false
+	self.Destroy_gui.ZIndex = 10
+
+	dUICorner_4.CornerRadius = UDim.new(0, 5)
+	dUICorner_4.Parent = self.Destroy_gui
+
+	self.dFrame_2.Parent = self.Destroy_gui
+	self.dFrame_2.BackgroundColor3 = self.Theme.DestroyGFrame
+	self.dFrame_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.dFrame_2.BorderSizePixel = 0
+	self.dFrame_2.Position = UDim2.new(0.306779772, 0, 0.328608334, 0)
+	self.dFrame_2.Size = UDim2.new(0, 240, 0, 140)
+	self.dFrame_2.Transparency = 1
+	self.dFrame_2.ZIndex = 10
+
+	self.dTextLabel.Parent = self.dFrame_2
+	self.dTextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.dTextLabel.BackgroundTransparency = 1.000
+	self.dTextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.dTextLabel.BorderSizePixel = 2
+	self.dTextLabel.Position = UDim2.new(0.0291666668, 0, 0.0349650346, 0)
+	self.dTextLabel.Size = UDim2.new(0, 200, 0, 36)
+	self.dTextLabel.Font = Enum.Font.FredokaOne
+	self.dTextLabel.Text = "Destroy"
+	self.dTextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	self.dTextLabel.TextSize = 23.000
+	self.dTextLabel.TextWrapped = true
+	self.dTextLabel.Visible = false
+	self.dTextLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+	dUICorner.CornerRadius = UDim.new(0, 5)
+	dUICorner.Parent = self.dFrame_2
+
+	self.dTextLabel_2.Parent = self.dFrame_2
+	self.dTextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.dTextLabel_2.BackgroundTransparency = 1.000
+	self.dTextLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.dTextLabel_2.BorderSizePixel = 0
+	self.dTextLabel_2.Position = UDim2.new(0.0333333351, 0, 0.257692319, 0)
+	self.dTextLabel_2.Size = UDim2.new(0, 219, 0, 18)
+	self.dTextLabel_2.Font = Enum.Font.FredokaOne
+	self.dTextLabel_2.Text = "Do you really want to destroy the gui?"
+	self.dTextLabel_2.TextColor3 = Color3.fromRGB(184, 184, 184)
+	self.dTextLabel_2.TextSize = 14.500
+	self.dTextLabel_2.Visible = false
+	self.dTextLabel_2.TextXAlignment = Enum.TextXAlignment.Left
+
+	self.dTextButton.Parent = self.dFrame_2
+	self.dTextButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.dTextButton.BackgroundTransparency = 0.950
+	self.dTextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.dTextButton.BorderSizePixel = 0
+	self.dTextButton.Position = UDim2.new(0.0170000009, 0, 0.721000016, 0)
+	self.dTextButton.Size = UDim2.new(0, 112, 0, 36)
+	self.dTextButton.ZIndex = 10
+	self.dTextButton.Font = Enum.Font.FredokaOne
+	self.dTextButton.Text = "Yes"
+	self.dTextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	self.dTextButton.Visible = false
+	self.dTextButton.TextSize = 14.000
+
+	self.dTextButton.MouseButton1Click:Connect(function()
+		self:Destroy()
+	end)
+
+	dUICorner_2.CornerRadius = UDim.new(0, 5)
+	dUICorner_2.Parent = self.dTextButton
+
+	self.dTextButton_2.Parent = self.dFrame_2
+	self.dTextButton_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.dTextButton_2.BackgroundTransparency = 0.950
+	self.dTextButton_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.dTextButton_2.BorderSizePixel = 0
+	self.dTextButton_2.Position = UDim2.new(0.51700002, 0, 0.721000016, 0)
+	self.dTextButton_2.Size = UDim2.new(0, 112, 0, 36)
+	self.dTextButton_2.ZIndex = 10
+	self.dTextButton_2.Font = Enum.Font.FredokaOne
+	self.dTextButton_2.Text = "No"
+	self.dTextButton_2.TextColor3 = Color3.fromRGB(255, 255, 255)
+	self.dTextButton_2.Visible = false
+	self.dTextButton_2.TextSize = 14.000
+
+	self.dTextButton_2.MouseButton1Click:Connect(function()
+		self:ShowDestroyQ()
+	end)
+
+	dUICorner_3.CornerRadius = UDim.new(0, 5)
+	dUICorner_3.Parent = self.dTextButton_2
+
+	function self:Blur()
+		self:BlurOff()
+
+		local Lighting = game:GetService("Lighting")
+		local camera = workspace.CurrentCamera
+
+		local absoluteSize = self.ImageLabel.AbsoluteSize
+		local BLUR_SIZE = Vector2.new(absoluteSize.X - 20, absoluteSize.Y - 20)
+
+		local PART_SIZE = 0.01
+		local PART_TRANSPARENCY = 1 - 1e-7
+		local START_INTENSITY = 0.5
+
+		self.ImageLabel:SetAttribute("BlurIntensity", START_INTENSITY)
+
+		local BLUR_OBJ = Instance.new("DepthOfFieldEffect")
+		BLUR_OBJ.FarIntensity = 0
+		BLUR_OBJ.NearIntensity = self.ImageLabel:GetAttribute("BlurIntensity")
+		BLUR_OBJ.FocusDistance = 0.25
+		BLUR_OBJ.InFocusRadius = 0
+		BLUR_OBJ.Parent = Lighting
+
+		local PartsList = {}
+		local BlursList = {}
+		local BlurObjects = {}
+		local renderStepName = "BlurUpdate_" .. tostring(math.random(1, 1000000))
+
+		local function rayPlaneIntersect(planePos, planeNormal, rayOrigin, rayDirection)
+			local n = planeNormal
+			local d = rayDirection
+			local v = rayOrigin - planePos
+
+			local num = n.x*v.x + n.y*v.y + n.z*v.z
+			local den = n.x*d.x + n.y*d.y + n.z*d.z
+			local a = -num / den
+
+			return rayOrigin + a * rayDirection, a
+		end
+
+		local function rebuildPartsList()
+			PartsList = {}
+			BlursList = {}
+			for blurObj, part in pairs(BlurObjects) do
+				table.insert(PartsList, part)
+				table.insert(BlursList, blurObj)
+			end
+		end
+
+		local blurController = {}
+
+		function blurController.new(frame, shape)
+			local blurPart = Instance.new("Part")
+			blurPart.Size = Vector3.new(1, 1, 1) * 0.01
+			blurPart.Anchored = true
+			blurPart.CanCollide = false
+			blurPart.CanTouch = false
+			blurPart.Material = Enum.Material.Glass
+			blurPart.Transparency = PART_TRANSPARENCY
+			blurPart.Parent = workspace.CurrentCamera
+
+			local mesh
+			if shape == "Rectangle" then
+				mesh = Instance.new("BlockMesh")
+				mesh.Parent = blurPart
+			elseif shape == "Oval" then
+				mesh = Instance.new("SpecialMesh")
+				mesh.MeshType = Enum.MeshType.Sphere
+				mesh.Parent = blurPart
+			end
+
+			local ignoreInset = false
+			local currentObj = frame.Parent
+
+			while currentObj do
+				if currentObj:IsA("ScreenGui") then
+					ignoreInset = currentObj.IgnoreGuiInset
+					break
+				end
+				currentObj = currentObj.Parent
+			end
+
+			local blurObj = {
+				Frame = frame,
+				Part = blurPart,
+				Mesh = mesh,
+				IgnoreGuiInset = ignoreInset
+			}
+
+			BlurObjects[blurObj] = blurPart
+			rebuildPartsList()
+
+			return blurObj
+		end
+
+		local function updateGui(blurObj)
+			if not blurObj.Frame.Visible then
+				blurObj.Part.Transparency = 1
+				return
+			end
+
+			local camera = workspace.CurrentCamera
+			local frame = blurObj.Frame
+			local part = blurObj.Part
+			local mesh = blurObj.Mesh
+
+			part.Transparency = PART_TRANSPARENCY
+			absoluteSize = self.ImageLabel.AbsoluteSize
+			BLUR_SIZE = Vector2.new(absoluteSize.X - 20, absoluteSize.Y - 20)
+
+			local corner0 = frame.AbsolutePosition + BLUR_SIZE
+			local corner1 = corner0 + frame.AbsoluteSize - BLUR_SIZE * 2
+			local ray0, ray1
+
+			if blurObj.IgnoreGuiInset then
+				ray0 = camera:ViewportPointToRay(corner0.X, corner0.Y, 1)
+				ray1 = camera:ViewportPointToRay(corner1.X, corner1.Y, 1)
+			else
+				ray0 = camera:ScreenPointToRay(corner0.X, corner0.Y, 1)
+				ray1 = camera:ScreenPointToRay(corner1.X, corner1.Y, 1)
+			end
+
+			local planeOrigin = camera.CFrame.Position + camera.CFrame.LookVector * (0.05 - camera.NearPlaneZ)
+			local planeNormal = camera.CFrame.LookVector
+			local pos0 = rayPlaneIntersect(planeOrigin, planeNormal, ray0.Origin, ray0.Direction)
+			local pos1 = rayPlaneIntersect(planeOrigin, planeNormal, ray1.Origin, ray1.Direction)
+
+			pos0 = camera.CFrame:PointToObjectSpace(pos0)
+			pos1 = camera.CFrame:PointToObjectSpace(pos1)
+
+			local size = pos1 - pos0
+			local center = (pos0 + pos1) / 2
+
+			if mesh:IsA("BlockMesh") then
+				mesh.Offset = center
+				mesh.Scale = size / PART_SIZE
+			elseif mesh:IsA("SpecialMesh") then
+				mesh.Offset = center
+				local avgSize = (size.X + size.Y + size.Z) / 3
+				mesh.Scale = Vector3.new(avgSize, avgSize, avgSize) / PART_SIZE
+			end
+		end
+
+		function blurController.updateAll()
+			BLUR_OBJ.NearIntensity = self.ImageLabel:GetAttribute("BlurIntensity") or START_INTENSITY
+
+			for i = 1, #BlursList do
+				updateGui(BlursList[i])
+			end
+
+			if #PartsList > 0 then
+				local cframes = table.create(#PartsList, camera.CFrame)
+				workspace:BulkMoveTo(PartsList, cframes, Enum.BulkMoveMode.FireCFrameChanged)
+			end
+
+			BLUR_OBJ.FocusDistance = 0.25 - camera.NearPlaneZ
+		end
+
+		local blurInstance = blurController.new(self.ImageLabel, "Rectangle")
+
+		local function updateBlur()
+			if not blurController then return end
+			blurController.updateAll()
+		end
+
+		RunService:BindToRenderStep(
+			renderStepName,
+			Enum.RenderPriority.Camera.Value + 1,
+			updateBlur
+		)
+
+		function blurController:Destroy()
+			if self.destroyed then return end
+			self.destroyed = true
+
+			RunService:UnbindFromRenderStep(renderStepName)
+
+			if BLUR_OBJ and BLUR_OBJ.Parent then
+				BLUR_OBJ:Destroy()
+			end
+
+			for _, part in pairs(BlurObjects) do
+				if part and part.Parent then
+					part:Destroy()
+				end
+			end
+
+			BlurObjects = {}
+			PartsList = {}
+			BlursList = {}
+		end
+
+		blurController.updateAll()
+
+		-- Сохраняем контроллер блюра
+		self.BlurEffect = blurController
+
+		return {
+			Destroy = function()
+				if blurController and not blurController.destroyed then
+					blurController:Destroy()
+					if self.BlurEffect == blurController then
+						self.BlurEffect = nil
+					end
+				end
+			end
+		}
+	end
+	function self:BlurOff()
+		if self.BlurEffect and not self.BlurEffect.destroyed then
+			self.BlurEffect:Destroy()
+			self.BlurEffect = nil
+		end
+	end
+	self.Header = Instance.new("Frame")
+	self.Header.Name = "Header"
+	self.Header.Parent = self.ImageLabel
+	self.Header.BackgroundColor3 = self.Theme.HeaderColor
+	self.Header.BackgroundTransparency = 1
+	self.Header.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.Header.BorderSizePixel = 0
+	self.Header.Position = UDim2.new(0.0203390867, 0, 0.0250000004, 0)
+	self.Header.Size = UDim2.new(0, size - 24, 0, 40)
+
+	self.Search = Instance.new("Frame")
+	local SearchUICorner = Instance.new("UICorner")
+	self.SearchImageLabel = Instance.new("ImageLabel")
+	self.SearchTextBox2 = Instance.new("TextBox")
+
+	self.SearchTextBox = self.SearchTextBox2
+
+	self.SearchTextBox.Focused:Connect(function()
+		if self.SearchTextBox.Text == "Search..." then
+			self.SearchTextBox.Text = ""
+		end
+		self:Tween(self.Search,{Size = UDim2.new(0, 150,0, 28)},0.5)
+		self:Tween(self.Search,{Position = UDim2.new(0.52, 0, 0.13, 0)},0.5)
+		for i,v in pairs(self.CurrentTab["Elements"]) do
+			v.Visible = false
+		end
+		self.SearchTextBox2.TextSize = 15.000
+	end)
+
+	self.SearchTextBox.FocusLost:Connect(function()
+		if self.SearchTextBox.Text == "" then
+			self.SearchTextBox2.TextSize = 14.000
+			self:Tween(self.Search,{Size = UDim2.new(0, 118, 0, 26)},1)
+			self:Tween(self.Search,{Position = UDim2.new(0.574973166, 0, 0.16, 0)},1)
+			self.SearchTextBox.Text = "Search..."
+			for i,v in pairs(self.CurrentTab["Elements"]) do
+				v.Visible = true
+			end
+		end
+	end)
+
+	self.SearchTextBox:GetPropertyChangedSignal("Text"):Connect(function()
+		self:SearchAllTabs()
+	end)
+
+	self.Search.Parent = self.Header
+	self.Search.BackgroundColor3 = Color3.fromRGB(38, 38, 38)
+	self.Search.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.Search.BorderSizePixel = 0
+	self.Search.Position = UDim2.new(0.574973166, 0, 0.170000076, 0)
+	self.Search.Size = UDim2.new(0, 118, 0, 26)
+
+	SearchUICorner.Parent = self.Search
+
+	self.SearchImageLabel.Parent = self.Search
+	self.SearchImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.SearchImageLabel.BackgroundTransparency = 1.000
+	self.SearchImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.SearchImageLabel.BorderSizePixel = 0
+	self.SearchImageLabel.Position = UDim2.new(0.813980877, 0, 0.192307696, 0)
+	self.SearchImageLabel.Size = UDim2.new(0, 16, 0, 16)
+	self.SearchImageLabel.Image = "rbxassetid://131200540387892"
+
+	self.SearchTextBox2.Parent = self.Search
+	self.SearchTextBox2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.SearchTextBox2.BackgroundTransparency = 1.000
+	self.SearchTextBox2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.SearchTextBox2.BorderSizePixel = 0
+	self.SearchTextBox2.Position = UDim2.new(0.04, 0, 0.115000002, -0.9)
+	self.SearchTextBox2.Size = UDim2.new(0, 90, 0, 20)
+	self.SearchTextBox2.Font = Enum.Font.SourceSans
+	self.SearchTextBox2.Text = "Search..."
+	self.SearchTextBox2.Font = Enum.Font.FredokaOne
+	self.SearchTextBox2.TextColor3 = Color3.fromRGB(255, 255, 255)
+	self.SearchTextBox2.TextSize = 14.000
+	self.SearchTextBox2.TextXAlignment = Enum.TextXAlignment.Left
+
+	local function substr(str)
+		local strlen = string.len(str)
+		if(strlen > 50) then
+			return string.sub(str,1,20)
+		else
+			return str
+		end
+	end
+
+	local function labelsize(str)
+		return string.len(str) * 7
+	end
+
+	local title = substr(title)
+	local titlesize = labelsize(title)
+
+	local subtitle = substr(subtitle)
+	local subtitlesize = labelsize(subtitle)
+
+	self.TextLabel = Instance.new("TextLabel")
+	self.TextLabel.Parent = self.Header
+	self.TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.TextLabel.BackgroundTransparency = 1.000
+	self.TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.TextLabel.BorderSizePixel = 0
+	self.TextLabel.Position = UDim2.new(0.0106007066, 0, 0, -1)
+	self.TextLabel.Size = UDim2.new(0, titlesize, 0, 40)
+	self.TextLabel.Font = Enum.Font.FredokaOne
+	self.TextLabel.Text = title
+	self.TextLabel.TextColor3 = self.Theme.TextColor
+	self.TextLabel.TextSize = 16.000
+	self.TextLabel.TextWrapped = true
+	self.TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+	local positionsubt = self.TextLabel.Position.X.Scale
+	local sizetitle = self.TextLabel.Size.X.Offset
+
+	local trueposition = sizetitle + 10
+
+	self.TextLabel_2 = Instance.new("TextLabel")
+	self.TextLabel_2.Parent = self.Header
+	self.TextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.TextLabel_2.BackgroundTransparency = 1.000
+	self.TextLabel_2.BorderColor3 = Color3.fromRGB(59, 59, 59)
+	self.TextLabel_2.BorderSizePixel = 0
+	self.TextLabel_2.Position = UDim2.new(0, trueposition, 0.02, -1)
+	self.TextLabel_2.Size = UDim2.new(0, subtitlesize, 0, 40)
+	self.TextLabel_2.Font = Enum.Font.FredokaOne
+	self.TextLabel_2.Text = subtitle
+	self.TextLabel_2.TextColor3 = self.Theme.SubTtitleTextColor
+	self.TextLabel_2.TextSize = 12.000
+	self.TextLabel_2.TextXAlignment = Enum.TextXAlignment.Left
+
+	self.Frame = Instance.new("Frame")
+	self.Frame.Parent = self.Header
+	self.Frame.BackgroundColor3 = self.Theme.headerlinecolor
+	self.Frame.BackgroundTransparency = self.Theme.headerlinetrans
+	self.Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.Frame.BorderSizePixel = 0
+	self.Frame.Position = UDim2.new(0, 0, 1, 0)
+	self.Frame.Size = UDim2.new(0, 566, 0, 1)
+
+	self.close = Instance.new("ImageButton")
+	self.close.Name = "close"
+	self.close.Parent = self.Frame
+	self.close.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.close.BackgroundTransparency = 1.000
+	self.close.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.close.BorderSizePixel = 0
+	self.close.Position = UDim2.new(0.949999988, 0, -28, 0)
+	self.close.Size = UDim2.new(0, 15, 0, 15)
+	self.close.Image = self.Theme.HeaderCloseIcon
+
+	self.close.MouseButton1Click:Connect(function()
+		self:ShowDestroyQ()
+	end)
+
+	self.ImageButton = Instance.new("ImageButton")
+	self.ImageButton.Parent = self.Frame
+	self.ImageButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.ImageButton.BackgroundTransparency = 1.000
+	self.ImageButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.ImageButton.BorderSizePixel = 0
+	self.ImageButton.Position = UDim2.new(0.879999995, 0, -26, 0)
+	self.ImageButton.Size = UDim2.new(0, 16, 0, 12)
+	self.ImageButton.Image = self.Theme.HeaderMiniIcon
+
+	self.ImageButton.MouseButton1Click:Connect(function()
+		self:ColumnWindow()
+	end)
+
+	self.ImageButton_2 = Instance.new("ImageButton")
+	self.ImageButton_2.Parent = self.Frame
+	self.ImageButton_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.ImageButton_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.ImageButton_2.BorderSizePixel = 0
+	self.ImageButton_2.Position = UDim2.new(0.810000002, 0, -21, 0)
+	self.ImageButton_2.Size = UDim2.new(0, 18, 0, 2)
+	self.ImageButton_2.Image = self.Theme.HeaderMinimazeIcon
+
+	self.ImageButton_2.MouseButton1Click:Connect(function()
+		self:Minimaze()
+	end)
+
+	self.Tabs = Instance.new("Frame")
+	self.Frame_2 = Instance.new("Frame")
+	local ImageButton_3 = Instance.new("ImageButton")
+	local ImageButton_4 = Instance.new("ImageButton")
+	local ImageButton_5 = Instance.new("ImageButton")
+	self.ScrollingFrame = Instance.new("ScrollingFrame")
+	self.Tabs.Name = "Tabs"
+	self.Tabs.Parent = self.ImageLabel
+	self.Tabs.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.Tabs.BackgroundTransparency = 1
+	self.Tabs.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.Tabs.BorderSizePixel = 0
+	self.Tabs.Position = UDim2.new(0.0203390867, 0, 0.110416666, 0)
+	self.Tabs.Size = UDim2.new(0, 185, 0, 371)
+
+	self.WindowUser = Instance.new("Frame")
+	local Frame_2 = Instance.new("Frame")
+	local ImageLabel = Instance.new("ImageLabel")
+	local UICorner = Instance.new("UICorner")
+	self.wTextLabel = Instance.new("TextLabel")
+	self.wTextLabel_2 = Instance.new("TextLabel")
+
+	self.WindowUser.Parent = self.Tabs
+	self.WindowUser.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.WindowUser.BackgroundTransparency = 1
+	self.WindowUser.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.WindowUser.BorderSizePixel = 0
+	self.WindowUser.Position = UDim2.new(0, 0, 1.00270271, 0)
+	self.WindowUser.Size = UDim2.new(0, 186, 0, 45)
+
+	Frame_2.Parent = self.WindowUser
+	Frame_2.BackgroundColor3 = Color3.fromRGB(165, 165, 165)
+	Frame_2.BackgroundTransparency = 0.550
+	Frame_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Frame_2.BorderSizePixel = 0
+	Frame_2.Size = UDim2.new(0, 185, 0, 1)
+
+	local Players2 = game:GetService("Players")
+	local userimg = ''
+
+	local player = game.Players:GetPlayerByUserId(Players2.LocalPlayer.UserId)
+	local thumbnailType = Enum.ThumbnailType.HeadShot
+	local thumbnailSize = Enum.ThumbnailSize.Size150x150
+
+	local success, thumbnailUrl = pcall(function()
+		return Players2:GetUserThumbnailAsync(player.UserId, thumbnailType, thumbnailSize)
+	end)
+
+	if success then
+		userimg = thumbnailUrl
+	end
+
+	ImageLabel.Parent = self.WindowUser
+	ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	ImageLabel.BorderSizePixel = 0
+	ImageLabel.Position = UDim2.new(0.0322580636, 0, 0.155555561, 0)
+	ImageLabel.Size = UDim2.new(0, 30, 0, 30)
+	ImageLabel.Image = userimg
+
+	UICorner.CornerRadius = UDim.new(0, 100)
+	UICorner.Parent = ImageLabel
+
+	self.wTextLabel.Parent = self.WindowUser
+	self.wTextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.wTextLabel.BackgroundTransparency = 1.000
+	self.wTextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.wTextLabel.BorderSizePixel = 0
+	self.wTextLabel.Position = UDim2.new(0.250195563, 0, 0.156171337, 0)
+	self.wTextLabel.Size = UDim2.new(0, 131, 0, 15)
+	self.wTextLabel.Font = Enum.Font.FredokaOne
+	self.wTextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	self.wTextLabel.TextSize = 14.000
+	self.wTextLabel.Text = game:GetService("Players").LocalPlayer.DisplayName
+	self.wTextLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+	self.wTextLabel_2.Parent = self.WindowUser
+	self.wTextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.wTextLabel_2.BackgroundTransparency = 1.000
+	self.wTextLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.wTextLabel_2.BorderSizePixel = 0
+	self.wTextLabel_2.Position = UDim2.new(0.250195563, 0, 0.489504665, 0)
+	self.wTextLabel_2.Size = UDim2.new(0, 131, 0, 15)
+	self.wTextLabel_2.Font = Enum.Font.FredokaOne
+	self.wTextLabel_2.TextColor3 = Color3.fromRGB(171, 171, 171)
+	self.wTextLabel_2.TextSize = 14.000
+	self.wTextLabel_2.Text = "@" .. game:GetService("Players").LocalPlayer.Name
+	self.wTextLabel_2.TextXAlignment = Enum.TextXAlignment.Left
+
+	self.Frame_2.Parent = self.Tabs
+	self.Frame_2.BackgroundColor3 = Color3.fromRGB(165, 165, 165)
+	self.Frame_2.BackgroundTransparency = 0.550
+	self.Frame_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.Frame_2.BorderSizePixel = 0
+	self.Frame_2.Position = UDim2.new(1, 0, 0, 0)
+	self.Frame_2.Size = UDim2.new(0, 1, 0, 414)
+
+	self.ScrollingFrame.Parent = self.Tabs
+	self.ScrollingFrame.Active = true
+	self.ScrollingFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.ScrollingFrame.BackgroundTransparency = 1.000
+	self.ScrollingFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.ScrollingFrame.BorderSizePixel = 0
+	self.ScrollingFrame.Position = UDim2.new(0, 0, -0.0024154589, 0)
+	self.ScrollingFrame.Size = UDim2.new(0, 185, 0, 371)
+	self.ScrollingFrame.ScrollBarThickness = 2
+	self.ScrollingFrame.ScrollBarImageColor3 = self.Theme.TabsScrollingBarFrameColor
+
+	self.Sections = Instance.new("Frame")
+	self.Sections.Name = "Sections"
+	self.Sections.Parent = self.ImageLabel
+	self.Sections.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.Sections.BackgroundTransparency = 1
+	self.Sections.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.Sections.BorderSizePixel = 0
+	self.Sections.Position = UDim2.new(0.335593313, 0, 0.110416666, 0)
+	self.Sections.Size = UDim2.new(0, 380, 0, 414)
+
+	self.TextLabel_5 = Instance.new("TextLabel")
+	self.TextLabel_5.Parent = self.Sections
+	self.TextLabel_5.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.TextLabel_5.BackgroundTransparency = 1.000
+	self.TextLabel_5.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.TextLabel_5.BorderSizePixel = 0
+	self.TextLabel_5.Position = UDim2.new(0.0191256832, 0, 0.0144927539, 0)
+	self.TextLabel_5.Size = UDim2.new(0, 192, 0, 29)
+	self.TextLabel_5.Font = Enum.Font.FredokaOne
+	self.TextLabel_5.Text = ''
+	self.TextLabel_5.TextColor3 = self.Theme.TextColor
+	self.TextLabel_5.TextSize = 24.000
+	self.TextLabel_5.TextWrapped = true
+	self.TextLabel_5.TextXAlignment = Enum.TextXAlignment.Left
+
+	self.Frame_7 = Instance.new("Frame")
+	self.Frame_7.Parent = self.Sections
+	self.Frame_7.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.Frame_7.BackgroundTransparency = 1.000
+	self.Frame_7.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.Frame_7.BorderSizePixel = 0
+	self.Frame_7.Position = UDim2.new(0, 0, 0.08454106, 0)
+	self.Frame_7.Size = UDim2.new(0, 366, 0, 379)
+
+	function Library:Notification(config)
+		self.NotificationCounter = (self.NotificationCounter or 0) + 1
+		local notificationId = self.NotificationCounter
+		self.ActiveNotifications = self.ActiveNotifications or {}
+
+		local noti = {
+			title = config.Name or "Notification",
+			description = config.Description or "",
+			duration = config.Duration or 5,
+			type = config.Type or "Notification"
+		}
+
+		local UserInputService = game:GetService("UserInputService")
+
+		local img
+		if noti.type == 'Notification' then
+			img = "rbxassetid://83464096194873"
+		elseif noti.type == 'Warn' then
+			img = "rbxassetid://85045950898455"
+		elseif noti.type == 'Error' then
+			img = "rbxassetid://71852580046993"
+		else 
+			return
+		end
+
+		local startY = 0.9
+		local targetY = startY
+		local targetX = 0.8
+		local milti = 0.08
+		local wight = 360
+
+		if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled and not UserInputService.MouseEnabled then
+			targetX = 0.6
+			targetY = 0.75
+			milti = 0.2
+			wight = 280
+		end
+
+		if not self.NotificationTemplate then
+			self.NotificationTemplate = self:CreateNotificationTemplate()
+		end
+
+		local Notification = self.NotificationTemplate:Clone()
+		Notification.Name = noti.type
+		Notification.Parent = self.UI
+		Notification.Size = UDim2.new(0, wight, 0, 75)
+		Notification.Position = UDim2.new(1.2, 0, startY, 0)
+		Notification.Visible = true
+		Notification.Image = self.Theme.NotiImg
+
+		local Icon = Notification:FindFirstChild("Icon")
+		local Description = Notification:FindFirstChild("Description")
+		local Title = Notification:FindFirstChild("Title")
+		local CloseButton = Notification:FindFirstChild("CloseButton")
+
+		Icon.Image = img
+		Title.Text = noti.title
+		Description.Text = noti.description
+		Title.TextColor3 = self.Theme.TextColor
+		Description.TextColor3 = self.Theme.Notisubtitlecolor
+		CloseButton.Image = self.Theme.NotiCloseImg
+
+		CloseButton.MouseButton1Click:Connect(function()
+			self:CloseNotification(notificationId)
+		end)
+
+		self.ActiveNotifications[notificationId] = {
+			notification = Notification,
+			targetX = targetX,
+			targetY = targetY,
+			milti = milti
+		}
+
+		local tweenIn = game:GetService("TweenService"):Create(
+			Notification,
+			TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+			{Position = UDim2.new(targetX, 0, targetY, 0)}
+		)
+		tweenIn:Play()
+
+		for id, notifData in pairs(self.ActiveNotifications) do
+			if id ~= notificationId then
+				local currentPos = notifData.notification.Position
+				local newY = currentPos.Y.Scale - milti
+
+				local tweenUp = game:GetService("TweenService"):Create(
+					notifData.notification,
+					TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+					{Position = UDim2.new(targetX, 0, newY, 0)}
+				)
+				tweenUp:Play()
+			end
+		end
+
+		task.delay(noti.duration, function()
+			if self.ActiveNotifications ~= nil then
+				if self.ActiveNotifications[notificationId] then
+					self:CloseNotification(notificationId)
+				end
+			end
+		end)
+	end
+
+	function Library:CreateNotificationTemplate()
+		self.template = Instance.new("ImageLabel")
+		self.template.Name = "NotificationTemplate"
+		self.template.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		self.template.BackgroundTransparency = 1.000
+		self.template.BorderSizePixel = 0
+		self.template.Size = UDim2.new(0, 360, 0, 75)
+		self.template.Visible = false
+		self.template.ZIndex = 50
+
+		local UICorner = Instance.new("UICorner")
+		UICorner.CornerRadius = UDim.new(0, 6)
+		UICorner.Parent = self.template
+
+		local Icon = Instance.new("ImageLabel")
+		Icon.Name = "Icon"
+		Icon.Parent = self.template
+		Icon.BackgroundTransparency = 1.000
+		Icon.BorderSizePixel = 0
+		Icon.Position = UDim2.new(0.0446, 0, 0.2457, 0)
+		Icon.Size = UDim2.new(0, 18, 0, 18)
+		Icon.ZIndex = 51
+
+		local Description = Instance.new("TextLabel")
+		Description.Name = "Description"
+		Description.Parent = self.template
+		Description.BackgroundTransparency = 1.000
+		Description.BorderSizePixel = 0
+		Description.Position = UDim2.new(0.0462, 0, 0.4733, 0)
+		Description.Size = UDim2.new(0, 321, 0, 23)
+		Description.Font = Enum.Font.FredokaOne
+		Description.Text = ""
+		Description.TextSize = 14.000
+		Description.TextXAlignment = Enum.TextXAlignment.Left
+		Description.ZIndex = 51
+
+		self.Title = Instance.new("TextLabel")
+		self.Title.Name = "Title"
+		self.Title.Parent = self.template
+		self.Title.BackgroundTransparency = 1.000
+		self.Title.BorderSizePixel = 0
+		self.Title.Position = UDim2.new(0.1105, 0, 0.1995, 0)
+		self.Title.Size = UDim2.new(0, 200, 0, 24)
+		self.Title.Font = Enum.Font.FredokaOne
+		self.Title.Text = ""
+		self.Title.TextSize = 18.000
+		self.Title.TextXAlignment = Enum.TextXAlignment.Left
+		self.Title.ZIndex = 51
+
+		self.CloseButton = Instance.new("ImageButton")
+		self.CloseButton.Name = "CloseButton"
+		self.CloseButton.Parent = self.template
+		self.CloseButton.BackgroundTransparency = 1.000
+		self.CloseButton.BorderSizePixel = 0
+		self.CloseButton.Position = UDim2.new(0.9185, 0, 0.2133, 0)
+		self.CloseButton.Size = UDim2.new(0, 14, 0, 14)
+		self.CloseButton.ZIndex = 51
+
+		return self.template
+	end
+
+	function Library:CloseNotification(notificationId)
+		local data = self.ActiveNotifications[notificationId]
+		if not data then return end
+
+		local notification = data.notification
+		self.ActiveNotifications[notificationId] = nil
+
+		local tweenOut = game:GetService("TweenService"):Create(
+			notification,
+			TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+			{Position = UDim2.new(1.2, 0, notification.Position.Y.Scale, 0)}
+		)
+		tweenOut:Play()
+
+		tweenOut.Completed:Connect(function()
+			notification:Destroy()
+
+			local activeList = {}
+			for id, notifData in pairs(self.ActiveNotifications) do
+				table.insert(activeList, {id = id, data = notifData})
+			end
+
+			table.sort(activeList, function(a, b) return a.id < b.id end)
+
+			local currentY = data.targetY
+			for _, item in ipairs(activeList) do
+				local tween = game:GetService("TweenService"):Create(
+					item.data.notification,
+					TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+					{Position = UDim2.new(data.targetX, 0, currentY, 0)}
+				)
+				tween:Play()
+				currentY = currentY - item.data.milti
+			end
+		end)
+	end
+
+	return self
+end
+
+function Library:AddTab(name,icon)
+	local tab = {
+		Name = name,
+		Elements = {},
+		Container = nil,
+		Button = nil,
+		Frame = nil,
+		pos = 0,
+		Icon = icon,
+		Library = self,
+		Theme = {
+			TextColor = Color3.fromRGB(255, 255, 255),
+			TabColor = Color3.fromRGB(255, 255, 255),
+			SubTtitleTextColor = Color3.fromRGB(199, 199, 199),
+			TogleActivColor = Color3.fromRGB(28, 96, 255),
+			ButtonIcon = "rbxassetid://99811735506603",
+			InputTextColor = Color3.fromRGB(175, 175, 175),
+			BackGroundElemTran = 0.95,
+			BackGroundElemCol = Color3.fromRGB(255, 255, 255),
+			BackGroundButtonTran = 0.95,
+			ActionBackColor = Color3.fromRGB(255, 255, 255),
+			ToggleButton = Color3.fromRGB(255, 255, 255),
+			ToggleTran = 0.9,
+			SectionsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+			DropDownColor = Color3.fromRGB(47, 47, 47),
+			DropDownFrameColor = Color3.fromRGB(255, 255, 255),
+			SliderUnderLineColor = Color3.fromRGB(28, 96, 255),
+			Togglebtn = Color3.fromRGB(255, 255, 255),
+			Sliderball = Color3.fromRGB(255, 255, 255),
+			ColorPickerColoro = Color3.fromRGB(47, 47, 47)
+		},
+		Tab = {},
+		ElemBtn = {},
+		Texttitle = {},
+		Textsubtitle = {},
+		actionBakcColor = {},
+		BtnImg = {},
+		DropImg = {},
+		DropDownFrameColor = {},
+		ActiveToggleColor = {},
+		InputTextColor = {},
+		SliderUnderLineColor = {},
+		Togglebtn = {},
+		Sliderball = {},
+		Connections = {},
+		KeybindConnections = {},
+		ColorPickerColor = {},
+		Toggles = {},
+		Keybinds = {},
+		Dropdowns = {},
+		Sliders = {},
+		ColorPickers = {},
+		Inputs = {},
+		SearchData = {}
+	}
+
+	local Frame_3 = Instance.new("TextButton")
+	local UICorner = Instance.new("UICorner")
+	local TextLabel_3 = Instance.new("TextLabel")
+	local Frame_4 = Instance.new("Frame")
+
+	Frame_3.Parent = self.ScrollingFrame
+	Frame_3.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Frame_3.BackgroundTransparency = 1.000
+	Frame_3.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Frame_3.BorderSizePixel = 0
+	Frame_3.Position = UDim2.new(0.0299999993, 0, 0, 5 + self.tabpos)
+	Frame_3.Size = UDim2.new(0, 173, 0, 35)
+	Frame_3.Text = ''
+	table.insert(tab.Tab, Frame_3)
+
+	self.tabpos += 40
+
+	Frame_3.MouseEnter:Connect(function()
+		self:Tween(Frame_3,{BackgroundTransparency = 0.95},0.3)
+		self:Tween(Frame_4,{Size = UDim2.new(0, 2, 0, 23)},0.3)
+		self:Tween(Frame_4,{BackgroundTransparency = 0},0.3)
+	end)
+
+	Frame_3.MouseLeave:Connect(function()
+		if self.CurrentTab ~= tab then
+			self:Tween(Frame_3,{BackgroundTransparency = 1},0.3)
+			self:Tween(Frame_4,{BackgroundTransparency = 1},0.3)
+			self:Tween(Frame_4,{Size = UDim2.new(0, 2, 0, 0)},0.3)
+		end
+	end)
+
+	Frame_3.MouseButton1Click:Connect(function()
+		self:SelectTab(tab,Frame_3)
+	end)
+
+	UICorner.CornerRadius = UDim.new(0, 5)
+	UICorner.Parent = Frame_3
+
+	local textpos2 = 0.05
+
+	if (icon ~= nil and icon ~= '') then
+		textpos2 = 0.21
+	else
+		textpos2 = 0.05
+		icon = 1
+	end
+
+	if icon == "Settings" then
+		icon = "rbxassetid://103450663687860"
+	elseif icon == "Visual" then
+		icon = "rbxassetid://88552609982363"
+	elseif icon == "Player" then
+		icon = "rbxassetid://115824076979644"
+	elseif icon == "Combat" then
+		icon = "rbxassetid://108715264661822"
+	elseif icon == "Generator" then
+		icon = "rbxassetid://138832805084579"
+	elseif icon == "AutoFarm" then
+		icon = "rbxassetid://125163773482315"
+	elseif icon == "Animation" then
+		icon = "rbxassetid://109675987433260"
+	elseif icon == "Items" then
+		icon = "rbxassetid://104651616243172"
+	elseif icon == "Teleport" then
+		icon = "rbxassetid://78108225641992"
+	elseif icon == "Badge" then
+		icon = "rbxassetid://80456866422285"
+	end
+
+	TextLabel_3.Parent = Frame_3
+	TextLabel_3.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TextLabel_3.BackgroundTransparency = 1.000
+	TextLabel_3.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TextLabel_3.BorderSizePixel = 0
+	TextLabel_3.Position = UDim2.new(textpos2, 0, 0, -1)
+	TextLabel_3.Size = UDim2.new(0, 52, 0, 35)
+	TextLabel_3.Font = Enum.Font.FredokaOne
+	TextLabel_3.Text = name
+	TextLabel_3.TextColor3 = self.Theme.TextColor
+	table.insert(tab.Tab, TextLabel_3)
+	TextLabel_3.TextSize = 14.000
+	TextLabel_3.TextXAlignment = Enum.TextXAlignment.Left
+
+	Frame_4.Parent = Frame_3
+	Frame_4.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Frame_4.BackgroundTransparency = 1.000
+	Frame_4.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Frame_4.BorderSizePixel = 0
+	Frame_4.Position = UDim2.new(0, 1, 0.171428576, 0)
+	Frame_4.Size = UDim2.new(0, 2, 0, 0)
+	table.insert(tab.Tab, 3,Frame_4)
+
+	local ScrollingFrame_2 = Instance.new("ScrollingFrame")
+	ScrollingFrame_2.Name = "ScrollingFrame"
+	ScrollingFrame_2.Parent = self.Frame_7
+	ScrollingFrame_2.Active = true
+	ScrollingFrame_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	ScrollingFrame_2.BackgroundTransparency = 1.000
+	ScrollingFrame_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	ScrollingFrame_2.BorderSizePixel = 0
+	ScrollingFrame_2.Position = UDim2.new(0, 0, 0.0230395645, 0)
+	ScrollingFrame_2.Size = UDim2.new(0, 379, 0, 370)
+	ScrollingFrame_2.CanvasSize = UDim2.new(0, 0, 0, 0)
+	ScrollingFrame_2.ScrollBarThickness = 2
+	ScrollingFrame_2.Visible = false
+	table.insert(tab.Tab, 5,ScrollingFrame_2)
+
+	local ImageLabel = Instance.new("ImageLabel")
+
+	ImageLabel.Parent = Frame_3
+	ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	ImageLabel.BackgroundTransparency = 1.000
+	ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	ImageLabel.BorderSizePixel = 0
+	ImageLabel.Position = UDim2.new(0, 8, 0, 6.5)
+	ImageLabel.Size = UDim2.new(0, 22, 0, 22)
+	ImageLabel.Image = icon
+	table.insert(tab.Tab,4,ImageLabel)
+
+	tab.Container = ScrollingFrame_2
+	tab.Button = Frame_3
+	tab.Frame = Frame_4
+
+	table.insert(self.mainTabs, tab)
+
+	if #self.mainTabs == 1 then
+		self:SelectTab(tab, Frame_3)
+	end
+
+	function tab:CalcScroll()
+		self.Tab[5].CanvasSize = UDim2.new(0, 0, 0, self.pos)
+	end
+
+	function tab:AddParagraph(title, subtitle, secondsubtitle)
+
+		local Paragraph = Instance.new("Frame")
+		table.insert(tab.ElemBtn, Paragraph)
+		local UICorner = Instance.new("UICorner")
+		local name = Instance.new("TextLabel")
+		table.insert(tab.Texttitle, name)
+		local subtext = Instance.new("TextLabel")
+		table.insert(tab.Textsubtitle, subtext)
+		local secondsubtext = Instance.new("TextLabel")
+		table.insert(tab.Textsubtitle, secondsubtext)
+		
+		local size = 60
+		local namepos = 4
+		local titlepos = 24
+		
+		if secondsubtitle == "" then
+			size = 45
+			titlepos = 24
+		end
+
+		Paragraph.Name = "Paragraph"
+		Paragraph.Parent = self.Container
+		Paragraph.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
+		Paragraph.BackgroundTransparency = tab.Theme.BackGroundElemTran
+		Paragraph.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Paragraph.BorderSizePixel = 0
+		Paragraph.Position = UDim2.new(0, 7, 0, self.pos)
+		Paragraph.Size = UDim2.new(0,360, 0, size)
+
+		UICorner.Parent = Paragraph
+
+		name.Name = "name"
+		name.Parent = Paragraph
+		name.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		name.BackgroundTransparency = 1.000
+		name.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		name.BorderSizePixel = 0
+		name.Position = UDim2.new(0.027777778, 0, 0, namepos)
+		name.Size = UDim2.new(0, 328, 0, 21)
+		name.Font = Enum.Font.FredokaOne
+		name.Text = title
+		name.TextColor3 = tab.Theme.TextColor
+		name.TextSize = 16.000
+		name.TextXAlignment = Enum.TextXAlignment.Left
+
+		subtext.Name = "subtext"
+		subtext.Parent = Paragraph
+		subtext.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		subtext.BackgroundTransparency = 1.000
+		subtext.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		subtext.BorderSizePixel = 0
+		subtext.Position = UDim2.new(0.027777778, 0, 0, titlepos)
+		subtext.Size = UDim2.new(0, 332, 0, 14)
+		subtext.Font = Enum.Font.FredokaOne
+		subtext.Text = subtitle
+		subtext.TextColor3 = tab.Theme.SubTtitleTextColor
+		subtext.TextSize = 14.000
+		subtext.TextXAlignment = Enum.TextXAlignment.Left
+
+		secondsubtext.Name = "second-subtext"
+		secondsubtext.Parent = Paragraph
+		secondsubtext.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		secondsubtext.BackgroundTransparency = 1.000
+		secondsubtext.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		secondsubtext.BorderSizePixel = 0
+		secondsubtext.Position = UDim2.new(0.027777778, 0, 0, 40)
+		secondsubtext.Size = UDim2.new(0, 332, 0, 13)
+		secondsubtext.Font = Enum.Font.FredokaOne
+		secondsubtext.Text = secondsubtitle
+		secondsubtext.TextColor3 = tab.Theme.SubTtitleTextColor
+		secondsubtext.TextSize = 14.000
+		secondsubtext.TextXAlignment = Enum.TextXAlignment.Left
+
+		table.insert(self.Elements, Paragraph)
+		self.pos += 65
+		tab:CalcScroll()
+
+		self.SearchData[Paragraph] = title .. " " .. subtitle .. " " .. secondsubtitle
+		table.insert(self.Elements, Paragraph)
+	end
+	function tab:AddSection(title)
+		local TextLabel = Instance.new("TextLabel")
+		table.insert(tab.Texttitle, TextLabel)
+
+		TextLabel.Parent = self.Container
+		TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		TextLabel.BackgroundTransparency = 1.000
+		TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		TextLabel.BorderSizePixel = 0
+		TextLabel.Position = UDim2.new(0.0291780813, 0, 0, self.pos)
+		TextLabel.Size = UDim2.new(0, 193, 0, 21)
+		TextLabel.Font = Enum.Font.FredokaOne
+		TextLabel.Text = title
+		TextLabel.TextColor3 = self.Theme.TextColor
+		TextLabel.TextSize = 18.000
+		TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+		table.insert(self.Elements, TextLabel)
+		self.pos += 26
+		tab:CalcScroll()
+
+		self.SearchData[TextLabel] = title
+		table.insert(self.Elements, TextLabel)
+	end
+
+	function tab:AddButton(config)
+		local button = {
+			Name = config.Name,
+			Description = config.Description,
+			Callback = config.Callback
+		}
+
+		local Button = Instance.new("TextButton")
+		table.insert(tab.ElemBtn, Button)
+		local UICorner = Instance.new("UICorner")
+		local name = Instance.new("TextLabel")
+		table.insert(tab.Texttitle, name)
+		local subtext = Instance.new("TextLabel")
+		table.insert(tab.Textsubtitle, subtext)
+		local ImageLabel = Instance.new("ImageLabel")
+
+		Button.Name = "Button"
+		Button.Parent = self.Container
+		Button.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
+		Button.BackgroundTransparency = tab.Theme.BackGroundElemTran
+		Button.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Button.BorderSizePixel = 0
+		Button.Position = UDim2.new(0, 7, 0, self.pos)
+		Button.Size = UDim2.new(0, 360, 0, 45)
+		Button.Text = ''
+
+		Button.MouseButton1Click:Connect(function()
+			if button.Callback then
+				button.Callback()
+			end
+		end)
+
+		UICorner.Parent = Button
+
+		local namepos = 4
+
+		if config.Description == '' then
+			namepos = 12.5
+		end
+
+		name.Name = "name"
+		name.Parent = Button
+		name.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		name.BackgroundTransparency = 1.000
+		name.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		name.BorderSizePixel = 0
+		name.Position = UDim2.new(0.0290000141, 0, 0, namepos)
+		name.Size = UDim2.new(0, 77, 0, 20)
+		name.Font = Enum.Font.FredokaOne
+		name.Text = button.Name
+		name.TextColor3 = self.Theme.TextColor
+		name.TextSize = 16.000
+		name.TextXAlignment = Enum.TextXAlignment.Left
+
+		subtext.Name = "subtext"
+		subtext.Parent = Button
+		subtext.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		subtext.BackgroundTransparency = 1.000
+		subtext.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		subtext.BorderSizePixel = 0
+		subtext.Position = UDim2.new(0.0289855078, 0, 0, 25)
+		subtext.Size = UDim2.new(0, 193, 0, 14)
+		subtext.Font = Enum.Font.FredokaOne
+		subtext.Text = button.Description
+		subtext.TextColor3 = tab.Theme.SubTtitleTextColor
+		subtext.TextSize = 14.000
+		subtext.TextXAlignment = Enum.TextXAlignment.Left
+
+		ImageLabel.Parent = Button
+		ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		ImageLabel.BackgroundTransparency = 1.000
+		ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		ImageLabel.BorderSizePixel = 0
+		ImageLabel.Position = UDim2.new(0.841222107, 0, 0.244000241, 0)
+		ImageLabel.Size = UDim2.new(0, 25, 0, 23)
+		ImageLabel.Image = tab.Theme.ButtonIcon
+		table.insert(tab.BtnImg, ImageLabel)
+
+		table.insert(self.Elements, Button)
+		self.pos += 50
+		tab:CalcScroll()
+
+		self.SearchData[Button] = config.Name .. " " .. (config.Description or "")
+		table.insert(self.Elements, Button)
+	end
+
+	function tab:AddToggle(config)
+		local toggle = {
+			Name = config.Name,
+			Description = config.Description or '',
+			Default = config.Default or false,
+			Callback = config.Callback
+		}
+
+		local Toggle = Instance.new("TextButton")
+		table.insert(tab.ElemBtn, Toggle)
+		local UICorner = Instance.new("UICorner")
+		local name = Instance.new("TextLabel")
+		table.insert(tab.Texttitle, name)
+		local subtext = Instance.new("TextLabel")
+		table.insert(tab.Textsubtitle, subtext)
+		local sliderbutton = Instance.new("Frame")
+		table.insert(tab.actionBakcColor, sliderbutton)
+		local UICorner_2 = Instance.new("UICorner")
+		local Frame = Instance.new("Frame")
+		local UICorner_3 = Instance.new("UICorner")
+		local Frame2 = Instance.new("Frame")
+		table.insert(tab.Togglebtn, Frame)
+		local UICorner2 = Instance.new("UICorner")
+
+		Toggle.Name = "Toggle"
+		Toggle.Parent = self.Container
+		Toggle.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
+		Toggle.BackgroundTransparency = tab.Theme.BackGroundElemTran
+		Toggle.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Toggle.BorderSizePixel = 0
+		Toggle.Position = UDim2.new(0, 7, 0, self.pos)
+		Toggle.Size = UDim2.new(0, 360, 0, 45)
+		Toggle.Text = ''
+
+		UICorner.Parent = Toggle
+
+		local namepos = config.Description and config.Description ~= '' and 4 or 12.5
+
+		name.Name = "name"
+		name.Parent = Toggle
+		name.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		name.BackgroundTransparency = 1.000
+		name.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		name.BorderSizePixel = 0
+		name.Position = UDim2.new(0.0290000141, 0, 0, namepos)
+		name.Size = UDim2.new(0, 77, 0, 20)
+		name.Font = Enum.Font.FredokaOne
+		name.Text = toggle.Name
+		name.TextColor3 = self.Theme.TextColor
+		name.TextSize = 15.000
+		name.TextXAlignment = Enum.TextXAlignment.Left
+
+		subtext.Name = "subtext"
+		subtext.Parent = Toggle
+		subtext.BackgroundColor3 = Color3.fromRGB(199, 199, 199)
+		subtext.BackgroundTransparency = 1.000
+		subtext.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		subtext.BorderSizePixel = 0
+		subtext.Position = UDim2.new(0.0289855078, 0, 0, 25)
+		subtext.Size = UDim2.new(0, 193, 0, 14)
+		subtext.Font = Enum.Font.FredokaOne
+		subtext.Text = toggle.Description
+		subtext.TextColor3 = tab.Theme.SubTtitleTextColor
+		subtext.TextSize = 14.000
+		subtext.TextXAlignment = Enum.TextXAlignment.Left
+
+		sliderbutton.Name = "slider-button"
+		sliderbutton.Parent = Toggle
+		sliderbutton.BackgroundColor3 = tab.Theme.ToggleButton
+		sliderbutton.BackgroundTransparency = tab.Theme.ToggleTran
+		sliderbutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		sliderbutton.BorderSizePixel = 0
+		sliderbutton.Position = UDim2.new(0.801999986, 0, 0.206, 0)
+		sliderbutton.Size = UDim2.new(0, 54, 0, 25)
+
+		UICorner_2.Parent = sliderbutton
+
+		Frame.Parent = sliderbutton
+		Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Frame.BorderSizePixel = 0
+		Frame.Position = UDim2.new(0, 3, 0.119999997, 0)
+		Frame.Size = UDim2.new(0, 19, 0, 19)
+
+		Frame2.Parent = sliderbutton
+		Frame2.BackgroundColor3 = tab.Theme.TogleActivColor
+		table.insert(tab.ActiveToggleColor, Frame2)
+		Frame2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Frame2.BorderSizePixel = 0
+		Frame2.Position = UDim2.new(0, 3, 0.119999997, 0)
+		Frame2.Size = UDim2.new(0, 0, 0, 19)
+		Frame2.ZIndex = -1
+
+		UICorner2.Parent = Frame2
+		UICorner_3.Parent = Frame
+
+		local toggleController = {
+			Value = toggle.Default,
+			UpdateVisuals = function(self, state)
+				if state then
+					Library:Tween(Frame, {Position = UDim2.new(0, 32, 0.12, 0)}, 0.2)
+					Library:Tween(Frame2, {Size = UDim2.new(0, 47, 0, 19), BackgroundTransparency = 0}, 0.2)
+				else
+					Library:Tween(Frame, {Position = UDim2.new(0, 3, 0.12, 0)}, 0.2)
+					Library:Tween(Frame2, {Size = UDim2.new(0, 0, 0, 19), BackgroundTransparency = 1}, 0.2)
+				end
+			end,
+			SetState = function(self, state)
+				if state == self.Value then return end
+				self.Value = state
+				self:UpdateVisuals(state)
+				if toggle.Callback then
+					task.spawn(function()
+						toggle.Callback(state)
+					end)
+				end
+			end,
+			GetState = function(self)
+				return self.Value
+			end,
+			Toggle = function(self)
+				self:SetState(not self.Value)
+			end
+		}
+
+		toggleController:UpdateVisuals(toggleController.Value)
+
+		local toggleData = {
+			callback = toggle.Callback,
+			controller = toggleController
+		}
+		table.insert(self.Library.AllToggles, toggleData)
+
+		Toggle.MouseButton1Click:Connect(function()
+			toggleController:Toggle()
+		end)
+
+		table.insert(self.Elements, Toggle)
+		self.pos += 50
+		tab:CalcScroll()
+
+		tab.Toggles[config.Name] = toggleController
+
+		self.SearchData[Toggle] = config.Name .. " " .. (config.Description or "")
+		table.insert(self.Elements, Toggle)
+
+
+		return toggleController
+	end
+
+	function tab:AddKeybind(config)
+		local Keybind = {
+			Name = config.Name,
+			Description = config.Description,
+			key = config.Default or "None",
+			Callback = config.Callback
+		}
+
+		local keybind = Instance.new("TextButton")
+		table.insert(tab.ElemBtn, keybind)
+		local UICorner = Instance.new("UICorner")
+		local name = Instance.new("TextLabel")
+		table.insert(tab.Texttitle, name)
+		local subtext = Instance.new("TextLabel")
+		table.insert(tab.Textsubtitle, subtext)
+		local TextButton = Instance.new("TextButton")
+		table.insert(tab.actionBakcColor, TextButton)
+		local UICorner_2 = Instance.new("UICorner")
+
+		keybind.Name = "keybind"
+		keybind.Parent = self.Container
+		keybind.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
+		keybind.BackgroundTransparency = tab.Theme.BackGroundElemTran
+		keybind.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		keybind.BorderSizePixel = 0
+		keybind.Position = UDim2.new(0, 7, 0, self.pos)
+		keybind.Size = UDim2.new(0, 360, 0, 45)
+		keybind.Text = ''
+
+		UICorner.Parent = keybind
+
+		local namepos = 4
+
+		if config.Description == '' then
+			namepos = 12.5
+		end
+
+		name.Name = "name"
+		name.Parent = keybind
+		name.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		name.BackgroundTransparency = 1.000
+		name.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		name.BorderSizePixel = 0
+		name.Position = UDim2.new(0.0290000141, 0, 0, namepos)
+		name.Size = UDim2.new(0, 77, 0, 20)
+		name.Font = Enum.Font.FredokaOne
+		name.Text = Keybind.Name
+		name.TextColor3 = self.Theme.TextColor
+		name.TextSize = 16.000
+		name.TextXAlignment = Enum.TextXAlignment.Left
+
+		subtext.Name = "subtext"
+		subtext.Parent = keybind
+		subtext.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		subtext.BackgroundTransparency = 1.000
+		subtext.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		subtext.BorderSizePixel = 0
+		subtext.Position = UDim2.new(0.0289855078, 0, 0, 25)
+		subtext.Size = UDim2.new(0, 193, 0, 14)
+		subtext.Font = Enum.Font.FredokaOne
+		subtext.Text = Keybind.Description
+		subtext.TextColor3 = tab.Theme.SubTtitleTextColor
+		subtext.TextSize = 14.000
+		subtext.TextXAlignment = Enum.TextXAlignment.Left
+
+		TextButton.Parent = keybind
+		TextButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		TextButton.BackgroundTransparency = tab.Theme.BackGroundButtonTran
+		TextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		TextButton.BorderSizePixel = 0
+		TextButton.Position = UDim2.new(0.672555566, 0, 0.221999779, 0)
+		TextButton.Size = UDim2.new(0, 100, 0, 25)
+		TextButton.Font = Enum.Font.FredokaOne
+		TextButton.Text = ''
+		table.insert(tab.Texttitle, TextButton)
+		TextButton.TextColor3 = self.Theme.TextColor
+		TextButton.TextSize = 14.000
+
+		UICorner_2.CornerRadius = UDim.new(0, 5)
+		UICorner_2.Parent = TextButton
+
+		local button = TextButton
+		local key = Keybind.key
+		button.Text = tostring(Keybind.key.Name)
+		if button.Text == "nil" then
+			button.Text = 'None'
+		end
+
+
+		local function setKey(newKey)
+			if newKey then
+				key = newKey
+				button.Text = newKey and newKey.Name or "None"
+			end
+		end
+
+		local selectConnection = button.MouseButton1Click:Connect(function()
+			button.Text = "..."
+			local connection
+			connection = UserInputService.InputBegan:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 then
+					connection:Disconnect()
+					setKey(input)
+					button.Text = 'None'
+				end
+				if input.UserInputType == Enum.UserInputType.Keyboard then
+					wait(0.01)
+					setKey(input.KeyCode)
+					connection:Disconnect()
+				end
+			end)
+		end)
+		table.insert(tab.Connections, selectConnection)
+
+		local actionConnection = UserInputService.InputBegan:Connect(function(input)
+			if input.KeyCode == key and config.Callback then
+				config.Callback()
+			end
+		end)
+		table.insert(tab.KeybindConnections, actionConnection)
+
+
+		table.insert(self.Elements, keybind)
+		self.pos += 50
+		tab:CalcScroll()
+
+		local keybindObj = {
+			Name = config.Name,
+			Key = key,
+			SetKey = setKey,
+			GetState = function(self)
+				return button.Text
+			end,
+			Callback = config.Callback
+		}
+		tab.Keybinds[config.Name] = keybindObj
+
+		self.SearchData[keybind] = config.Name .. " " .. (config.Description or "")
+		table.insert(self.Elements, keybind)
+		return keybindObj
+	end
+
+	function tab:AddInput(config)
+		local Input = {
+			Name = config.Name,
+			Description = config.Description,
+			SaveUserText = config.SaveUserText or false,
+			SaveConfig = config.SaveConfig or false,
+			Default = config.Default or "Default",
+			Callback = config.Callback
+		}
+
+		local input = Instance.new("TextButton")
+		table.insert(tab.ElemBtn, input)
+		local UICorner = Instance.new("UICorner")
+		local name = Instance.new("TextLabel")
+		table.insert(tab.Texttitle, name)
+		local subtext = Instance.new("TextLabel")
+		table.insert(tab.Textsubtitle, subtext)
+		local TextBox = Instance.new("TextBox")
+		table.insert(tab.actionBakcColor, TextBox)
+		local UICorner_2 = Instance.new("UICorner")
+
+		input.Name = "input"
+		input.Parent = self.Container
+		input.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
+		input.BackgroundTransparency = tab.Theme.BackGroundElemTran
+		input.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		input.BorderSizePixel = 0
+		input.Position = UDim2.new(0, 7, 0, self.pos)
+		input.Size = UDim2.new(0, 360, 0, 45)
+		input.Text = ''
+
+		UICorner.Parent = input
+
+		local namepos = 4
+
+		if config.Description == '' then
+			namepos = 12.5
+		end
+
+		name.Name = "name"
+		name.Parent = input
+		name.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		name.BackgroundTransparency = 1.000
+		name.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		name.BorderSizePixel = 0
+		name.Position = UDim2.new(0.0290000141, 0, 0, namepos)
+		name.Size = UDim2.new(0, 77, 0, 20)
+		name.Font = Enum.Font.FredokaOne
+		name.Text = Input.Name
+		name.TextColor3 = self.Theme.TextColor
+		name.TextSize = 16.000
+		name.TextXAlignment = Enum.TextXAlignment.Left
+
+		subtext.Name = "subtext"
+		subtext.Parent = input
+		subtext.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		subtext.BackgroundTransparency = 1.000
+		subtext.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		subtext.BorderSizePixel = 0
+		subtext.Position = UDim2.new(0.0289855078, 0, 0, 25)
+		subtext.Size = UDim2.new(0, 193, 0, 14)
+		subtext.Font = Enum.Font.FredokaOne
+		subtext.Text = Input.Description
+		subtext.TextColor3 = tab.Theme.SubTtitleTextColor
+		subtext.TextSize = 14.000
+		subtext.TextXAlignment = Enum.TextXAlignment.Left
+
+		TextBox.Parent = input
+		TextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		TextBox.BackgroundTransparency = tab.Theme.BackGroundButtonTran
+		TextBox.BorderColor3 = Color3.fromRGB(255, 255, 255)
+		TextBox.BorderSizePixel = 0
+		TextBox.Position = UDim2.new(0.574999988, 0, 0.155555561, 0)
+		TextBox.Size = UDim2.new(0, 135, 0, 30)
+		TextBox.Font = Enum.Font.FredokaOne
+		TextBox.Text = Input.Default
+		TextBox.TextColor3 = self.Theme.InputTextColor
+		TextBox.TextSize = 14.000
+		table.insert(tab.InputTextColor, TextBox)
+
+		UICorner_2.CornerRadius = UDim.new(0, 5)
+		UICorner_2.Parent = TextBox
+
+		TextBox.FocusLost:Connect(function(enterPressed)
+			if enterPressed and config.Callback then
+				config.Callback(TextBox.Text)
+			end
+		end)
+
+		TextBox.FocusLost:Connect(function()
+			wait(0.01)
+			if not Input.SaveUserText then
+				TextBox.Text = Input.Default
+			end
+		end)
+
+		local function SetInput(Text2)
+			TextBox.Text = Text2
+			config.Callback(TextBox.Text)
+		end
+
+		table.insert(self.Elements, input)
+		self.pos += 50
+		tab:CalcScroll()
+
+		local InputObj = {
+			Name = config.Name,
+			SetText = SetInput,
+			GetState = function(self)
+				return TextBox.Text
+			end,
+			SaveConfig = Input.SaveConfig,
+			Callback = config.Callback
+		}
+		tab.Inputs[config.Name] = InputObj
+
+		self.SearchData[input] = config.Name .. " " .. (config.Description or "")
+		table.insert(self.Elements, input)
+		return InputObj
+	end
+
+	function tab:AddSlider(config)
+		local Slider = {
+			Name = config.Name,
+			Description = config.Description,
+			min = config.Min or 0,
+			max = config.Max or 100,
+			Callback = config.Callback
+		}
+		local value = config.Default or Slider.min
+
+		local slider = Instance.new("TextButton")
+		table.insert(tab.ElemBtn, slider)
+		local UICorner = Instance.new("UICorner")
+		local name = Instance.new("TextLabel")
+		table.insert(tab.Texttitle, name)
+		local subtext = Instance.new("TextLabel")
+		table.insert(tab.Textsubtitle, subtext)
+		local sliderbutton = Instance.new("Frame")
+		local sliderline = Instance.new("Frame")
+		local sliderball = Instance.new("Frame")
+		local UICorner_2 = Instance.new("UICorner")
+		local slideramount = Instance.new("TextLabel")
+		local underline = Instance.new("Frame")
+		table.insert(tab.SliderUnderLineColor, underline)
+		table.insert(tab.Sliderball, sliderball)
+
+		slider.Name = "slider"
+		slider.Parent = self.Container
+		slider.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
+		slider.BackgroundTransparency = tab.Theme.BackGroundElemTran
+		slider.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		slider.BorderSizePixel = 0
+		slider.Position = UDim2.new(0, 7, 0, self.pos)
+		slider.Size = UDim2.new(0, 360, 0, 45)
+		slider.Text = ''
+
+		UICorner.Parent = slider
+
+		local namepos = 4
+
+		if config.Description == '' then
+			namepos = 12.5
+		end
+
+		name.Name = "name"
+		name.Parent = slider
+		name.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		name.BackgroundTransparency = 1.000
+		name.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		name.BorderSizePixel = 0
+		name.Position = UDim2.new(0.0290000141, 0, 0, namepos)
+		name.Size = UDim2.new(0, 77, 0, 20)
+		name.Font = Enum.Font.FredokaOne
+		name.Text = Slider.Name
+		name.TextColor3 = self.Theme.TextColor
+		name.TextSize = 16.000
+		name.TextXAlignment = Enum.TextXAlignment.Left
+
+		subtext.Name = "subtext"
+		subtext.Parent = slider
+		subtext.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		subtext.BackgroundTransparency = 1.000
+		subtext.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		subtext.BorderSizePixel = 0
+		subtext.Position = UDim2.new(0.0289855078, 0, 0, 25)
+		subtext.Size = UDim2.new(0, 193, 0, 14)
+		subtext.Font = Enum.Font.FredokaOne
+		subtext.Text = Slider.Description
+		subtext.TextColor3 = tab.Theme.SubTtitleTextColor
+		subtext.TextSize = 14.000
+		subtext.TextXAlignment = Enum.TextXAlignment.Left
+
+		sliderbutton.Name = "slider-button"
+		sliderbutton.Parent = slider
+		sliderbutton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		sliderbutton.BackgroundTransparency = 1.000
+		sliderbutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		sliderbutton.BorderSizePixel = 0
+		sliderbutton.Position = UDim2.new(0.671, 0, 0.244000003, 0)
+		sliderbutton.Size = UDim2.new(0, 100, 0, 22)
+
+		sliderline.Name = "slider-line"
+		sliderline.Parent = sliderbutton
+		sliderline.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		sliderline.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		sliderline.BorderSizePixel = 0
+		sliderline.Position = UDim2.new(0, 0, 0.454545468, 0)
+		sliderline.Size = UDim2.new(0, 100, 0, 2)
+
+		sliderball.Name = "slider-ball"
+		sliderball.Parent = sliderbutton
+		sliderball.BackgroundColor3 = tab.Theme.Sliderball
+		sliderball.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		sliderball.BorderSizePixel = 0
+		sliderball.Position = UDim2.new(0, 0, 0.13636364, 0)
+		sliderball.Size = UDim2.new(0, 15, 0, 15)
+		sliderball.ZIndex = 2
+
+		UICorner_2.Parent = sliderball
+
+		slideramount.Name = "slider-amount"
+		slideramount.Parent = sliderbutton
+		slideramount.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		slideramount.BackgroundTransparency = 1.000
+		slideramount.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		slideramount.BorderSizePixel = 0
+		slideramount.Position = UDim2.new(0, 6, 0.136000007, 0)
+		slideramount.Size = UDim2.new(-0.8, 21, 0, 18)
+		slideramount.Font = Enum.Font.FredokaOne
+		slideramount.Text = value
+		table.insert(tab.Texttitle, slideramount)
+		slideramount.TextColor3 = self.Theme.TextColor
+		slideramount.TextSize = 14.000
+
+		underline.Name = "under-line"
+		underline.Parent = sliderbutton
+		underline.BackgroundColor3 = Color3.fromRGB(0, 85, 255)
+		underline.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		underline.BorderSizePixel = 0
+		underline.Position = UDim2.new(0, 0, 0.454545468, 0)
+		underline.Size = UDim2.new(0, 0, 0, 2)
+
+		local dragging = false
+
+		local function updateValue(newValue)
+			value = math.clamp(newValue, Slider.min, Slider.max)
+			local percent = (value - Slider.min) / (Slider.max - Slider.min) - 0.08
+			underline.Size = UDim2.new(percent, 0, 0, 2)
+			sliderball.Position = UDim2.new(percent, 0, 0.136, 0)
+			slideramount.Text = tostring(math.floor(value))
+
+			if config.Callback then
+				config.Callback(value)
+			end
+		end
+
+		sliderbutton.InputBegan:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 then
+				dragging = true
+			end
+		end)
+
+		sliderbutton.InputEnded:Connect(function()
+			dragging = false
+		end)
+
+		sliderbutton.InputChanged:Connect(function(input)
+			if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+				local pos = input.Position.X - sliderbutton.AbsolutePosition.X
+				local percent = math.clamp(pos / sliderbutton.AbsoluteSize.X, 0, 1)
+				updateValue(Slider.min + percent * (Slider.max - Slider.min))
+			end
+		end)
+
+		table.insert(self.Elements, slider)
+		self.pos += 50
+		tab:CalcScroll()
+
+		local sliderObj = {
+			Name = config.Name,
+			Value = value,
+			GetState = function(self)
+				return value
+			end,
+			SetValue = updateValue
+		}
+
+		tab.Sliders[config.Name] = sliderObj
+
+		self.SearchData[slider] = config.Name .. " " .. (config.Description or "")
+		table.insert(self.Elements, slider)
+		return sliderObj
+	end
+
+	function tab:AddColorPicker(config)
+		local colorPicker = {
+			Name = config.Name,
+			Description = config.Description or "",
+			Default = config.Default or Color3.new(1, 1, 1),
+			Callback = config.Callback
+		}
+
+		local ColorPick = Instance.new("TextButton")
+		table.insert(tab.ElemBtn, ColorPick)
+		local UICorner = Instance.new("UICorner")
+		local name = Instance.new("TextLabel")
+		table.insert(tab.Texttitle, name)
+		local subtext = Instance.new("TextLabel")
+		table.insert(tab.Textsubtitle, subtext)
+		local colorButton = Instance.new("TextButton")
+		local UICorner_2 = Instance.new("UICorner")
+
+		ColorPick.Name = "ColorPick"
+		ColorPick.Parent = self.Container
+		ColorPick.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
+		ColorPick.BackgroundTransparency = tab.Theme.BackGroundElemTran
+		ColorPick.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		ColorPick.BorderSizePixel = 0
+		ColorPick.Position = UDim2.new(0, 7, 0, self.pos)
+		ColorPick.Size = UDim2.new(0, 360, 0, 45)
+		ColorPick.Text = ''
+
+		UICorner.Parent = ColorPick
+
+		local namepos = 4
+
+		if config.Description == '' then
+			namepos = 12.5
+		end
+
+		name.Name = "name"
+		name.Parent = ColorPick
+		name.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		name.BackgroundTransparency = 1.000
+		name.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		name.BorderSizePixel = 0
+		name.Position = UDim2.new(0.0290000141, 0, 0, namepos)
+		name.Size = UDim2.new(0, 77, 0, 20)
+		name.Font = Enum.Font.FredokaOne
+		name.Text = colorPicker.Name
+		name.TextColor3 = self.Theme.TextColor
+		name.TextSize = 16.000
+		name.TextXAlignment = Enum.TextXAlignment.Left
+
+		subtext.Name = "subtext"
+		subtext.Parent = ColorPick
+		subtext.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		subtext.BackgroundTransparency = 1.000
+		subtext.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		subtext.BorderSizePixel = 0
+		subtext.Position = UDim2.new(0.0289855078, 0, 0, 25)
+		subtext.Size = UDim2.new(0, 193, 0, 14)
+		subtext.Font = Enum.Font.FredokaOne
+		subtext.Text = colorPicker.Description
+		subtext.TextColor3 = tab.Theme.SubTtitleTextColor
+		subtext.TextSize = 14.000
+		subtext.TextXAlignment = Enum.TextXAlignment.Left
+
+		colorButton.Parent = ColorPick
+		colorButton.BackgroundColor3 = colorPicker.Default
+		colorButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		colorButton.BorderSizePixel = 0
+		colorButton.Position = UDim2.new(0.801999986, 0, 0.206, 0)
+		colorButton.Size = UDim2.new(0, 54, 0, 25)
+		colorButton.Text = ""
+		colorButton.ZIndex = 2
+
+		UICorner_2.Parent = colorButton
+		UICorner_2.CornerRadius = UDim.new(0, 5)
+
+		local currentColor = colorPicker.Default
+		local colorPaletteFrame = nil
+		local hue, saturation, value = currentColor:ToHSV()
+		local updateConnection = nil
+
+		local function setColor(color)
+			if color == nil then return end
+			currentColor = color
+			colorButton.BackgroundColor3 = color
+			hue, saturation, value = color:ToHSV()
+			if colorPicker.Callback then
+				colorPicker.Callback(color)
+			end
+		end
+
+		setColor(colorPicker.Default)
+
+		local function updatePalettePosition()
+			if not colorPaletteFrame or not colorPaletteFrame.Visible then return end
+			if not colorButton or not colorButton.AbsolutePosition then return end
+
+			colorPaletteFrame.Position = UDim2.new(
+				0, colorButton.AbsolutePosition.X - 80,
+				0, colorButton.AbsolutePosition.Y + colorButton.AbsoluteSize.Y + 5
+			)
+		end
+
+		local function togglePalette()
+			if colorPaletteFrame and colorPaletteFrame.Visible then
+				colorPaletteFrame.Visible = false
+				if updateConnection then
+					updateConnection:Disconnect()
+					updateConnection = nil
+				end
+			else
+				if not colorPaletteFrame then
+					colorPaletteFrame = Instance.new("Frame")
+					colorPaletteFrame.Name = "ColorPalette"
+					colorPaletteFrame.BackgroundColor3 = tab.Theme.DropDownColor or Color3.fromRGB(30, 30, 30)
+					colorPaletteFrame.BorderSizePixel = 0
+					colorPaletteFrame.ZIndex = 50
+					colorPaletteFrame.Visible = false
+					colorPaletteFrame.Parent = self.Library.UI
+					colorPaletteFrame.Size = UDim2.new(0, 140, 0, 125)
+					table.insert(tab.ColorPickerColor, colorPaletteFrame)
+
+					local UICorner_3 = Instance.new("UICorner")
+					UICorner_3.CornerRadius = UDim.new(0, 6)
+					UICorner_3.Parent = colorPaletteFrame
+
+					local hueGradient = Instance.new("Frame")
+					hueGradient.Name = "HueGradient"
+					hueGradient.Size = UDim2.new(0, 130, 0, 15)
+					hueGradient.Position = UDim2.new(0.05, 0, 0.05, 0)
+					hueGradient.ZIndex = 51
+					hueGradient.Parent = colorPaletteFrame
+
+					local hueUICorner = Instance.new("UICorner")
+					hueUICorner.CornerRadius = UDim.new(0, 4)
+					hueUICorner.Parent = hueGradient
+
+					local hueUIGradient = Instance.new("UIGradient")
+					hueUIGradient.Color = ColorSequence.new{
+						ColorSequenceKeypoint.new(0, Color3.fromHSV(0, 1, 1)),
+						ColorSequenceKeypoint.new(0.17, Color3.fromHSV(0.17, 1, 1)),
+						ColorSequenceKeypoint.new(0.33, Color3.fromHSV(0.33, 1, 1)),
+						ColorSequenceKeypoint.new(0.5, Color3.fromHSV(0.5, 1, 1)),
+						ColorSequenceKeypoint.new(0.67, Color3.fromHSV(0.67, 1, 1)),
+						ColorSequenceKeypoint.new(0.83, Color3.fromHSV(0.83, 1, 1)),
+						ColorSequenceKeypoint.new(1, Color3.fromHSV(1, 1, 1))
+					}
+					hueUIGradient.Parent = hueGradient
+
+					local hueSlider = Instance.new("Frame")
+					hueSlider.Name = "HueSlider"
+					hueSlider.Size = UDim2.new(0, 4, 0, 17)
+					hueSlider.BackgroundColor3 = Color3.new(1, 1, 1)
+					hueSlider.BorderSizePixel = 0
+					hueSlider.ZIndex = 52
+					hueSlider.Parent = hueGradient
+
+					local svGradient = Instance.new("Frame")
+					svGradient.Name = "SVGradient"
+					svGradient.Size = UDim2.new(0, 130, 0, 80)
+					svGradient.Position = UDim2.new(0.05, 0, 0.2, 0)
+					svGradient.BackgroundColor3 = Color3.fromHSV(hue, 1, 1)
+					svGradient.ZIndex = 51
+					svGradient.Parent = colorPaletteFrame
+
+					local svUICorner = Instance.new("UICorner")
+					svUICorner.CornerRadius = UDim.new(0, 4)
+					svUICorner.Parent = svGradient
+
+					local saturationGradient = Instance.new("UIGradient")
+					saturationGradient.Rotation = 0
+					saturationGradient.Transparency = NumberSequence.new{
+						NumberSequenceKeypoint.new(0, 0),
+						NumberSequenceKeypoint.new(1, 1)
+					}
+					saturationGradient.Color = ColorSequence.new(Color3.new(1, 1, 1))
+					saturationGradient.Parent = svGradient
+
+					local valueGradient = Instance.new("UIGradient")
+					valueGradient.Rotation = 90
+					valueGradient.Transparency = NumberSequence.new{
+						NumberSequenceKeypoint.new(0, 1),
+						NumberSequenceKeypoint.new(1, 0)
+					}
+					valueGradient.Color = ColorSequence.new(Color3.new(0, 0, 0))
+					valueGradient.Parent = svGradient
+
+					local svSelector = Instance.new("Frame")
+					svSelector.Name = "SVSelector"
+					svSelector.Size = UDim2.new(0, 8, 0, 8)
+					svSelector.AnchorPoint = Vector2.new(0.5, 0.5)
+					svSelector.BackgroundColor3 = Color3.new(1, 1, 1)
+					svSelector.BackgroundTransparency = 1
+					svSelector.BorderSizePixel = 2
+					svSelector.BorderColor3 = Color3.new(1, 1, 1)
+					svSelector.ZIndex = 52
+					svSelector.Parent = svGradient
+
+					local selectorUICorner = Instance.new("UICorner")
+					selectorUICorner.CornerRadius = UDim.new(1, 0)
+					selectorUICorner.Parent = svSelector
+
+					local hexInput = Instance.new("TextBox")
+					hexInput.Name = "HexInput"
+					hexInput.PlaceholderText = "HEX (#RRGGBB)"
+					hexInput.Size = UDim2.new(0.8, 0, 0, 25)
+					hexInput.Position = UDim2.new(0.1, 0, 0.82, 0)
+					hexInput.BackgroundColor3 = tab.Theme.BackGroundElemCol or Color3.fromRGB(50, 50, 50)
+					hexInput.BackgroundTransparency = 1
+					hexInput.TextColor3 = self.Theme.TextColor or Color3.new(1, 1, 1)
+					hexInput.Font = Enum.Font.FredokaOne
+					hexInput.TextSize = 14
+					hexInput.ZIndex = 51
+					hexInput.Parent = colorPaletteFrame
+
+					local UICorner_4 = Instance.new("UICorner")
+					UICorner_4.CornerRadius = UDim.new(0, 4)
+					UICorner_4.Parent = hexInput
+
+					local function updateVisuals()
+						if svGradient then
+							svGradient.BackgroundColor3 = Color3.fromHSV(hue, 1, 1)
+						end
+
+						if hueSlider then
+							hueSlider.Position = UDim2.new(hue, -2, 0, -1)
+						end
+						if svSelector then
+							svSelector.Position = UDim2.new(saturation, 0, 1 - value, 0)
+						end
+
+						if hexInput then
+							local r, g, b = math.floor(currentColor.R * 255), math.floor(currentColor.G * 255), math.floor(currentColor.B * 255)
+							hexInput.Text = string.format("#%02X%02X%02X", r, g, b)
+						end
+					end
+
+					local function onHueInput(input)
+						if input.UserInputType == Enum.UserInputType.MouseButton1 then
+							local x = (input.Position.X - hueGradient.AbsolutePosition.X) / hueGradient.AbsoluteSize.X
+							hue = math.clamp(x, 0, 1)
+							setColor(Color3.fromHSV(hue, saturation, value))
+							if updateVisuals then updateVisuals() end
+						end
+					end
+
+					local function onSVInput(input)
+						if input.UserInputType == Enum.UserInputType.MouseButton1 then
+							local x = (input.Position.X - svGradient.AbsolutePosition.X) / svGradient.AbsoluteSize.X
+							local y = (input.Position.Y - svGradient.AbsolutePosition.Y) / svGradient.AbsoluteSize.Y
+							saturation = math.clamp(x, 0, 1)
+							value = math.clamp(1 - y, 0, 1)
+							setColor(Color3.fromHSV(hue, saturation, value))
+							if updateVisuals then updateVisuals() end
+						end
+					end
+
+					if hueGradient then
+						hueGradient.InputBegan:Connect(onHueInput)
+						hueGradient.InputChanged:Connect(function(input)
+							if input.UserInputType == Enum.UserInputType.MouseMovement then
+								onHueInput(input)
+							end
+						end)
+					end
+
+					if svGradient then
+						svGradient.InputBegan:Connect(onSVInput)
+						svGradient.InputChanged:Connect(function(input)
+							if input.UserInputType == Enum.UserInputType.MouseMovement then
+								onSVInput(input)
+							end
+						end)
+					end
+
+					local function applyCustomColor()
+						local hex = hexInput.Text:gsub("#", "")
+						if #hex == 6 then
+							local r = tonumber(hex:sub(1, 2), 16) / 255
+							local g = tonumber(hex:sub(3, 4), 16) / 255
+							local b = tonumber(hex:sub(5, 6), 16) / 255
+
+							if r and g and b then
+								local newColor = Color3.new(r, g, b)
+								hue, saturation, value = newColor:ToHSV()
+								setColor(newColor)
+								if updateVisuals then updateVisuals() end
+							end
+						end
+					end
+
+					if hexInput then
+						hexInput.FocusLost:Connect(function(enterPressed)
+							if enterPressed then
+								applyCustomColor()
+							end
+						end)
+					end
+
+					if updateVisuals then updateVisuals() end
+				end
+
+				if updateConnection then
+					updateConnection:Disconnect()
+				end
+				updateConnection = RunService.RenderStepped:Connect(function()
+					if colorPaletteFrame and colorPaletteFrame.Visible then
+						updatePalettePosition()
+					end
+				end)
+
+				updatePalettePosition()
+				colorPaletteFrame.Visible = true
+			end
+		end
+
+		colorButton.MouseButton1Click:Connect(togglePalette)
+
+		local closeConnection
+		closeConnection = UserInputService.InputBegan:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 then
+				if colorPaletteFrame and colorPaletteFrame.Visible then
+					local mousePos = input.Position
+					local framePos = colorPaletteFrame.AbsolutePosition
+					local frameSize = colorPaletteFrame.AbsoluteSize
+
+					if framePos and frameSize then
+						if not (mousePos.X >= framePos.X and mousePos.X <= framePos.X + frameSize.X and
+							mousePos.Y >= framePos.Y and mousePos.Y <= framePos.Y + frameSize.Y) then
+							colorPaletteFrame.Visible = false
+							if updateConnection then
+								updateConnection:Disconnect()
+								updateConnection = nil
+							end
+						end
+					end
+				end
+			end
+		end)
+
+		table.insert(tab.Connections, closeConnection)
+
+		table.insert(self.Elements, ColorPick)
+		self.pos += 50
+		tab:CalcScroll()
+
+		local colorPickerObj = {}
+		function colorPickerObj:SetColor(color)
+			setColor(color)
+			if colorPaletteFrame then
+				hue, saturation, value = color:ToHSV()
+			end
+		end
+
+		function colorPickerObj:GetColor()
+			return currentColor
+		end
+
+		tab.ColorPickers[config.Name] = colorPickerObj
+
+		self.SearchData[ColorPick] = config.Name .. " " .. (config.Description or "")
+		table.insert(self.Elements, ColorPick)
+
+		return colorPickerObj
+	end
+
+	function tab:AddDropdown(config)
+		local dropdown = {
+			Name = config.Name,
+			Description = config.Description,
+			Options = config.Options or {},
+			Default = config.Default or "",
+			Multi = config.Multi or false,
+			Callback = config.Callback
+		}
+
+		local pos = self.pos
+
+		local Dropdown = Instance.new("TextButton")
+		table.insert(tab.ElemBtn, Dropdown)
+		local UICorner = Instance.new("UICorner")
+		local name = Instance.new("TextLabel")
+		table.insert(tab.Texttitle, name)
+		local subtext = Instance.new("TextLabel")
+		table.insert(tab.Textsubtitle, subtext)
+		local Select = Instance.new("TextButton")
+		table.insert(tab.actionBakcColor, Select)
+		local UICorner_2 = Instance.new("UICorner")
+		local TextLabel = Instance.new("TextLabel")
+		local ImageLabel = Instance.new("ImageLabel")
+		local ImageLabel_2 = Instance.new("ImageLabel")
+		local Options = Instance.new("ScrollingFrame")
+		local UICorner_3 = Instance.new("UICorner")
+		local UIListLayout = Instance.new("UIListLayout")
+
+		Dropdown.Name = "Dropdown"
+		Dropdown.Parent = self.Container
+		Dropdown.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
+		Dropdown.BackgroundTransparency = tab.Theme.BackGroundElemTran
+		Dropdown.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Dropdown.BorderSizePixel = 0
+		Dropdown.Position = UDim2.new(0, 7, 0, pos)
+		Dropdown.Size = UDim2.new(0, 360, 0, 45)
+		Dropdown.Text = ''
+
+		UICorner.Parent = Dropdown
+
+		local namepos = 4
+
+		if config.Description == '' then
+			namepos = 12.5
+		end
+
+		name.Name = "name"
+		name.Parent = Dropdown
+		name.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		name.BackgroundTransparency = 1.000
+		name.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		name.BorderSizePixel = 0
+		name.Position = UDim2.new(0.0290000141, 0, 0, namepos)
+		name.Size = UDim2.new(0, 77, 0, 20)
+		name.Font = Enum.Font.FredokaOne
+		name.Text = dropdown.Name
+		name.TextColor3 = self.Theme.TextColor
+		name.TextSize = 16.000
+		name.TextXAlignment = Enum.TextXAlignment.Left
+
+		subtext.Name = "subtext"
+		subtext.Parent = Dropdown
+		subtext.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		subtext.BackgroundTransparency = 1.000
+		subtext.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		subtext.BorderSizePixel = 0
+		subtext.Position = UDim2.new(0.0289855078, 0, 0, 25)
+		subtext.Size = UDim2.new(0, 193, 0, 14)
+		subtext.Font = Enum.Font.FredokaOne
+		subtext.Text = dropdown.Description
+		subtext.TextColor3 = tab.Theme.SubTtitleTextColor
+		subtext.TextSize = 14.000
+		subtext.TextXAlignment = Enum.TextXAlignment.Left
+
+		Select.Name = "Select"
+		Select.Parent = Dropdown
+		Select.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		Select.BackgroundTransparency = tab.Theme.BackGroundButtonTran
+		Select.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Select.BorderSizePixel = 0
+		Select.Position = UDim2.new(0.576207817, 0, 0.155555561, 0)
+		Select.Size = UDim2.new(0, 135, 0, 30)
+		Select.Text = ''
+
+		UICorner_2.CornerRadius = UDim.new(0, 5)
+		UICorner_2.Parent = Select
+
+		TextLabel.Parent = Select
+		TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		TextLabel.BackgroundTransparency = 1.000
+		TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		TextLabel.BorderSizePixel = 0
+		TextLabel.Position = UDim2.new(0.038557943, 0, -0.0200012214, 0)
+		TextLabel.Size = UDim2.new(0, 88, 0, 30)
+		TextLabel.Font = Enum.Font.FredokaOne
+		TextLabel.Text = dropdown.Default or "Select..."
+		table.insert(tab.Texttitle, TextLabel)
+		TextLabel.TextColor3 = self.Theme.TextColor
+		TextLabel.TextSize = 14.000
+		TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+		ImageLabel.Parent = Select
+		ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		ImageLabel.BackgroundTransparency = 1.000
+		ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		ImageLabel.BorderSizePixel = 0
+		ImageLabel.Position = UDim2.new(0.816335738, 0, 0.166666672, 0)
+		ImageLabel.Size = UDim2.new(0, 20, 0, 20)
+		ImageLabel.Image = "rbxassetid://138820474017746"
+
+		ImageLabel_2.Parent = self.Container.Parent.Parent
+		ImageLabel_2.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
+		ImageLabel_2.BackgroundTransparency = 1
+		ImageLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		ImageLabel_2.BorderSizePixel = 0
+		ImageLabel_2.Size = UDim2.new(0, 135, 0, 0)
+		ImageLabel_2.Visible = false
+		ImageLabel_2.ZIndex = 20
+		ImageLabel_2.Image = "ImageLabel_2"
+		ImageLabel_2.ImageTransparency = 0.9
+		ImageLabel_2.ClipsDescendants = true
+
+		Options.Name = "Options"
+		Options.Parent = ImageLabel_2
+		Options.Active = true
+		Options.BackgroundColor3 = Color3.fromRGB(47, 47, 47)
+		Options.BackgroundTransparency = 0
+		Options.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Options.BorderSizePixel = 0
+		Options.Position = UDim2.new(0.027777778, 0, 0.0350000001, 0)
+		Options.Size = UDim2.new(0, 135, 0, 0)
+		Options.ZIndex = 20
+		Options.ScrollBarThickness = 2
+		Options.CanvasSize = UDim2.new(0, 0, 0, 0)
+		Options.ClipsDescendants = true
+		table.insert(tab.DropImg, Options)
+
+		UICorner_3.CornerRadius = UDim.new(0, 5)
+		UICorner_3.Parent = Options
+
+		UIListLayout.Parent = Options
+		UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+		local function createOption(optionText)
+			local Option = Instance.new("TextButton")
+			local TextLabel = Instance.new("TextLabel")
+			local Frame = Instance.new("Frame")
+			local UICorner = Instance.new("UICorner")
+			local UICorner2 = Instance.new("UICorner")
+
+			Option.Name = "Option"
+			Option.Parent = Options
+			Option.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+			Option.BackgroundTransparency = 1
+			Option.BorderColor3 = Color3.fromRGB(0, 0, 0)
+			Option.BorderSizePixel = 0
+			Option.Size = UDim2.new(0, 135, 0, 30)
+			Option.ZIndex = 21
+			Option.Text = ''
+
+			Option.MouseEnter:Connect(function()
+				Library:Tween(Option,{BackgroundTransparency = 0.95},0.3)
+				Library:Tween(Frame,{Size = UDim2.new(0, 2, 0, 22)},0.3)
+				Library:Tween(Frame,{BackgroundTransparency = 0},0.3)
+			end)
+
+			Option.MouseLeave:Connect(function()
+				Library:Tween(Option,{BackgroundTransparency = 1},0.3)
+				Library:Tween(Frame,{BackgroundTransparency = 1},0.3)
+				Library:Tween(Frame,{Size = UDim2.new(0, 2, 0, 0)},0.3)
+			end)
+
+			local result = ""
+			local len = #optionText
+
+			for i = 1, len, 19 do
+				local segment_end = math.min(i + 18, len)
+
+				result = result .. optionText:sub(i, segment_end)
+
+				if segment_end < len then
+					result = result .. "\n"
+				end
+			end
+			result = result:sub(1, 33)
+
+			optionText = result
+
+			TextLabel.Parent = Option
+			TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+			TextLabel.BackgroundTransparency = 1.000
+			TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+			TextLabel.BorderSizePixel = 0
+			TextLabel.Position = UDim2.new(0.047, 0, 0, 0)
+			TextLabel.Size = UDim2.new(0, 124, 0, 30)
+			TextLabel.Font = Enum.Font.FredokaOne
+			TextLabel.Text = optionText
+			TextLabel.TextColor3 = self.Theme.TextColor
+			TextLabel.TextSize = 14.000
+			TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+			TextLabel.ZIndex = 22
+			table.insert(tab.Texttitle, TextLabel)
+
+			Frame.Parent = Option
+			Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+			Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+			Frame.BorderSizePixel = 0
+			Frame.Position = UDim2.new(0.01, 0, 0, 4)
+			Frame.Size = UDim2.new(0, 2, 0, 0)
+			Frame.ZIndex = 22
+			Frame.Transparency = 1
+			table.insert(tab.DropDownFrameColor, Frame)
+
+			UICorner.CornerRadius = UDim.new(0, 20)
+			UICorner.Parent = Frame
+
+			UICorner2.CornerRadius = UDim.new(0, 5)
+			UICorner2.Parent = Option
+
+			return Option
+		end
+
+		local optionElements = {}
+		for i, option in ipairs(dropdown.Options) do
+			local optionElement = createOption(option)
+			optionElement.Name = option
+			table.insert(optionElements, optionElement)
+
+			optionElement.MouseButton1Click:Connect(function()
+				if dropdown.Multi then
+					dropdown.Selected = dropdown.Selected or {}
+					dropdown.Selected[option] = not dropdown.Selected[option]
+
+					local selectedText = ""
+					for opt, sel in pairs(dropdown.Selected) do
+						if sel then
+							selectedText = selectedText .. (selectedText == "" and opt or "," .. opt)
+						end
+					end
+
+					local function smart_line_break(str)
+						local visible_count = 0
+						local last_visible_pos = 0
+
+						for i = 1, #str do
+							local c = str:sub(i, i)
+							if c ~= " " and c ~= "," then
+								visible_count = visible_count + 1
+								last_visible_pos = i
+							end
+
+							if visible_count >= 14 then
+								local break_pos = i
+								for j = i + 1, #str do
+									local next_char = str:sub(j, j)
+									if next_char ~= " " and next_char ~= "," then
+										break
+									end
+									break_pos = j
+								end
+								if #str >= 28 then
+									str = str:sub(1, 28) .. "..."
+								end
+								return str:sub(1, break_pos) .. "\n" .. str:sub(break_pos + 1)
+							end
+						end
+
+						if #str >= 28 then
+							str = str:sub(1, 28) .. "..."
+						end
+						return str
+					end
+
+					TextLabel.Text = selectedText == "" and "Select..." or smart_line_break(selectedText)
+				else
+					local result = ""
+					local len = #option
+
+					for i = 1, len, 18 do
+						local segment_end = math.min(i + 12, len)
+
+						result = result .. option:sub(i, segment_end)
+
+						if segment_end < len then
+							result = result .. "\n"
+						end
+					end
+					result = result:sub(1, 26)
+
+					if #result >= 26 then
+						result = result:sub(1, 26) .. "..."
+					end
+
+					TextLabel.Text = result
+					dropdown.Selected = option
+					Library:Tween(ImageLabel_2, {Size = UDim2.new(0, 140, 0, 0)}, 0.2)
+					Library:Tween(Options, {Size = UDim2.new(0, 130, 0, 0)}, 0.2)
+					task.wait(0.2)
+					ImageLabel_2.Visible = false
+				end
+
+				if dropdown.Callback then
+					if dropdown.Multi then
+						dropdown.Callback(dropdown.Selected)
+					else
+						dropdown.Callback(option)
+					end
+				end
+			end)
+		end
+
+		Options.CanvasSize = UDim2.new(0, 0, 0, #dropdown.Options * 30)
+
+		local function updateDropdownPosition()
+			local absolutePos = Select.AbsolutePosition
+			local containerPos = ImageLabel_2.Parent.AbsolutePosition
+
+			ImageLabel_2.Position = UDim2.new(
+				-0.01, 
+				absolutePos.X - containerPos.X,
+				0,
+				absolutePos.Y - containerPos.Y + Select.AbsoluteSize.Y
+			)
+		end
+
+		local function posselect()
+			while wait() do
+				if not ImageLabel_2.Visible then break end
+				updateDropdownPosition()
+			end
+		end
+
+		Select.MouseButton1Click:Connect(function()
+			if ImageLabel_2.Visible then
+				Library:Tween(ImageLabel_2, {Size = UDim2.new(0, 140, 0, 0)}, 0.2)
+				Library:Tween(Options, {Size = UDim2.new(0, 135, 0, 0)}, 0.2)
+				task.wait(0.2)
+				ImageLabel_2.Visible = false
+			else
+				updateDropdownPosition()
+				ImageLabel_2.Visible = true
+				local height = math.min(150, #dropdown.Options * 30)
+				Library:Tween(ImageLabel_2, {Size = UDim2.new(0, 140, 0, height + 10)}, 0.2)
+				Library:Tween(Options, {Size = UDim2.new(0, 135, 0, height)}, 0.2)
+				posselect()
+			end
+		end)
+
+		table.insert(self.Elements, Dropdown)
+		self.pos += 50
+		tab:CalcScroll()
+
+		local function getvalue()
+			return dropdown.Selected
+		end
+
+		local dropdownObj = {
+			Name = config.Name,
+			Value = config.Default,
+			Options = config.Options,
+			Multi = config.Multi,
+			GetValue = getvalue,
+			SetValue = function(self, value)
+				-- Обработка мультивыбора
+				if self.Multi then
+					-- Если передана таблица значений
+					if type(value) == "table" then
+						dropdown.Selected = {}
+						for _, option in ipairs(value) do
+							if table.find(self.Options, option) then
+								dropdown.Selected[option] = true
+							end
+						end
+						-- Если передана строка (для совместимости)
+					elseif type(value) == "string" then
+						dropdown.Selected = {}
+						for option in string.gmatch(value, "([^,]+)") do
+							option = option:gsub("^%s*(.-)%s*$", "%1")
+							if table.find(self.Options, option) then
+								dropdown.Selected[option] = true
+							end
+						end
+					end
+				else
+					-- Одиночный выбор
+					if table.find(self.Options, value) then
+						dropdown.Selected = value
+					end
+				end
+
+				-- Обновление отображаемого текста
+				local displayText = ""
+				if self.Multi then
+					if type(value) == "table" then
+						dropdown.Selected = {}
+						for option, selected in pairs(value) do
+							if selected and table.find(self.Options, option) then
+								dropdown.Selected[option] = true
+							end
+						end
+						--displayText = dropdown.Selected or "Select..."
+					--[[local selectedList = {}
+					for option, selected in pairs(dropdown.Selected) do
+						if selected then
+							table.insert(selectedList, option)
+						end
+					end
+					displayText = table.concat(selectedList, ", ")
+					--]]
+						if #displayText > 20 then
+							displayText = displayText:sub(1, 17) .. "..."
+						end
+					end
+				else
+					displayText = dropdown.Selected or "Select..."
+					if #displayText > 20 then
+						displayText = displayText:sub(1, 17) .. "..."
+					end
+				end
+
+				TextLabel.Text = displayText
+
+				-- Вызов колбэка
+				if config.Callback then
+					if self.Multi then
+						config.Callback(dropdown.Selected)
+					else
+						config.Callback(dropdown.Selected)
+					end
+				end
+			end
+		}
+
+		-- Инициализация начального значения
+		if config.Default then
+			dropdownObj:SetValue(config.Default)
+		end
+
+		tab.Dropdowns[config.Name] = dropdownObj
+
+		self.SearchData[Dropdown] = config.Name .. " " .. (config.Description or "")
+		table.insert(self.Elements, Dropdown)
+		return dropdownObj
+	end
+
+	self.ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, self.tabpos + 2)
+
+	return tab
+end
+
+function Library:SelectTab(tab, button)
+	for _, t in ipairs(self.mainTabs) do
+		if t.Container then
+			t.Container.Visible = false
+		end
+		if t.Button then
+			self:Tween(t.Button, {BackgroundTransparency = 1}, 0.2)
+		end
+		if t.Frame then
+			self:Tween(t.Frame, {BackgroundTransparency = 1}, 0.2)
+			self:Tween(t.Frame, {Size = UDim2.new(0, 2, 0, 0)}, 0.2)
+		end
+	end
+
+	self.SearchTextBox.Text = "Search..."
+	self:ClearSearchResults()
+
+	if tab.Container then
+		tab.Container.Visible = true
+	end
+
+	if button then
+		self:Tween(button, {BackgroundTransparency = 0.95}, 0.2)
+		self:Tween(tab.Frame, {BackgroundTransparency = 0}, 0.2)
+		self:Tween(tab.Frame, {Size = UDim2.new(0, 2, 0, 23)}, 0.2)
+	end
+
+	self.CurrentTab = tab
+	self.TextLabel_5.Text = tab.Name
+end
+
+function Library:Tween(instance, properties, duration)
+	local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	local tween = TweenService:Create(instance, tweenInfo, properties)
+	tween:Play()
+	return tween
+end
+
+function Library:ChangeBackgroundTransparance()
+	if self.ImageLabel.ImageTransparency <= 0.05  then
+		self.ImageLabel.ImageTransparency = 0.05
+		self.Theme.BackGroundTran = 0.05
+	else
+		self.ImageLabel.ImageTransparency = 0
+		self.Theme.BackGroundTran = 0
+	end
+end
+
+function Library:Minimaze()
+	if self.Windowscd == false then
+		self.Windowscd = true
+		if(self.ImageLabel.ImageTransparency ~= 1) then
+			self.Header.BackgroundTransparency = self.Theme.BackGroundTran
+			self.Tabs.Visible = false
+			self.Sections.Visible = false
+			if self.Sections.Size == UDim2.new(0, 375,0, 370) then
+				self:Tween(self.ImageLabel,{Size = UDim2.new(0, 395,0, 40)},1)
+				self:Tween(self.Header,{Size = UDim2.new(0, 375,0, 40)},0)
+			else
+				self:Tween(self.ImageLabel,{Size = UDim2.new(0, 590, 0, 40)},1)
+				self.Header.Size = UDim2.new(0, 590 - 24, 0, 40)
+			end
+			wait(1)
+			self.ImageLabel.ImageTransparency = 1
+			self.Windowscd = false
+		else
+			self.ImageLabel.ImageTransparency = self.Theme.BackGroundTran
+			self.Header.BackgroundTransparency = 1
+			if self.Sections.Size == UDim2.new(0, 375,0, 370) then
+				self:Tween(self.ImageLabel,{Size = UDim2.new(0, 395,0, 480)},1)
+				self:Tween(self.Header,{Size = UDim2.new(0, 375,0, 40)},1)
+			else
+				self:Tween(self.ImageLabel,{Size = UDim2.new(0, 590, 0, 480)},1)
+			end
+			self:Tween(self.Header,{Size = UDim2.new(0, 590 - 24, 0, 40)},1)
+
+			wait(1)
+			self.Tabs.Visible = true
+			self.Sections.Visible = true
+			self.Windowscd = false
+		end
+	end
+end
+
+function Library:ColumnWindow()
+	if self.Windowscd == false then
+		self.Windowscd = true
+		if self.Sections.Size ~= UDim2.new(0, 375,0, 370) then
+			self:ShowSearch()
+			self.Header.BackgroundTransparency = 1
+			self.ImageLabel.ImageTransparency = self.Theme.BackGroundTran
+			self.Frame_2.Visible = false
+			self:Tween(self.ImageLabel, {Size = UDim2.new(0, 395,0, 480)}, 1)
+			self:Tween(self.Frame, {Size = UDim2.new(0, 375,0, 1)}, 1)
+			self.Tabs.Visible = false
+			self.Sections.Visible = false
+			self.WindowUser.Visible = false
+			self.Sections.Size = UDim2.new(0, 375,0, 370)
+			self.Sections.Position = UDim2.new(0.02, 0,0.201, 0)
+			self.Frame_7.Size = UDim2.new(0, 375,0, 370)
+			self.Frame_7.Position = UDim2.new(0, 0,0, 0)
+			for i,v in pairs(self.mainTabs) do
+				v.Tab[5].Position = UDim2.new(0,0,0,0)
+				v.Tab[5].Size = UDim2.new(0, 375,0, 370)
+			end
+			self.Tabs.Size = UDim2.new(0, 375,0, 45)
+			self.Tabs.Position =  UDim2.new(0.02,0,0.11, 0)
+			self.ScrollingFrame.Size = UDim2.new(0, 375,0, 45)
+			self.ScrollingFrame.Position =  UDim2.new(0,0,0,0)
+			self.TextLabel_5.Visible = false
+			local wight = 565 / #self.mainTabs
+			if wight > 171 then
+				wight = 171
+			end
+			local pos = 0
+			local scroll = 1
+			for i,v in pairs(self.mainTabs) do
+				v.Tab[1].Position = UDim2.new(0, pos,0.1, 0)
+				v.Tab[1].Size = UDim2.new(0, 130,0, 35)
+				pos += 130
+				if i == 3 then
+					scroll += 0.045
+				end
+				if i > 3 then
+					scroll += 0.34
+				end
+			end
+			self.ScrollingFrame.CanvasSize = UDim2.new(scroll,0,0,0)
+			wait(1)
+			self.Tabs.Visible = true
+			self.Sections.Visible = true
+			self.Windowscd = false
+		else
+			self.Header.Size = UDim2.new(0, 590 - 24, 0, 40)
+			self.Header.BackgroundTransparency = 1
+			self.ImageLabel.ImageTransparency = self.Theme.BackGroundTran
+			self:Tween(self.ImageLabel, {Size = UDim2.new(0, 590,0, 480)}, 1)
+			self:Tween(self.Frame, {Size = UDim2.new(0, 566,0, 1)}, 1)
+			self.Tabs.Visible = false
+			self.Sections.Visible = false
+			self.Frame_2.Visible = true
+			self.Sections.Size = UDim2.new(0, 380,0, 414)
+			self.Sections.Position = UDim2.new(0.336, 0,0.11, 0)
+			self.Frame_7.Size = UDim2.new(0, 366,0, 379)
+			self.Frame_7.Position = UDim2.new(0, 0,0.085, 0)
+			for i,v in pairs(self.mainTabs) do
+				v.Tab[5].Position = UDim2.new(0, 0,0.023, 0)
+				v.Tab[5].Size = UDim2.new(0, 379,0, 370)
+			end
+			self.Tabs.Size = UDim2.new(0, 185,0, 414)
+			self.Tabs.Position =  UDim2.new(0.02, 0,0.11, 0)
+			self.ScrollingFrame.Size = UDim2.new(0, 185,0, 415)
+			self.ScrollingFrame.Position =  UDim2.new(0, 0,-0.002, 0)
+			self.TextLabel_5.Visible = true
+			local pos = 0.009
+			local scroll = 5
+			for i,v in pairs(self.mainTabs) do
+				v.Tab[1].Position = UDim2.new(0.03, 0,pos, 0)
+				v.Tab[1].Size = UDim2.new(0, 171,0, 35)
+				pos += 0.05
+				if i == 5 then
+					scroll += 0.16
+				end
+				if i > 5 then
+					scroll += 0.23
+				end
+			end
+			self.ScrollingFrame.CanvasSize = UDim2.new(0,0,2,0)
+			wait(1)
+			self.Tabs.Visible = true
+			self.Sections.Visible = true
+			if self.userinfo then
+				self.WindowUser.Visible = true
+				self.Tabs.Size = UDim2.new(0, 185,0, 371)
+				self.ScrollingFrame.Size = UDim2.new(0, 185,0, 371)
+			end
+			self:ShowSearch()
+		end
+		self.Windowscd = false
+	end
+end
+
+function Library:Destroy()
+	if self.saveFolder and self.saveFileName then
+		pcall(function()
+			self:SaveConfig(self.saveFolder, self.saveFileName)
+		end)
+	end
+	for _, tab in ipairs(self.mainTabs) do
+		for _, connection in ipairs(tab.Connections) do
+			connection:Disconnect()
+		end
+		for _, connection in ipairs(tab.KeybindConnections) do
+			connection:Disconnect()
+		end
+	end
+	for _, toggle in ipairs(self.AllToggles) do
+		if toggle["controller"]["Value"] == true then
+			if toggle["callback"] then
+				task.spawn(function()
+					toggle["callback"](false) 
+				end)
+			end
+		end
+	end
+	self:ClearSearchResults()
+	self.Destroy_gui.Visible = false
+	self.AllToggles = {}
+	self:BlurOff()
+	local tweenInfo = TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	local tween = TweenService:Create(self.ImageLabel, tweenInfo, {ImageTransparency = 1})
+	tween:Play()
+	self.Tabs.Visible = false
+	self.Sections.Visible = false
+	self.Header.Visible = false
+	wait(0.5)
+	self.UI:Destroy()
+	setmetatable(self, nil)
+	table.clear(self)
+	table.remove(self)
+end
+
+function Library:ShowDestroyQ()
+	if self.Destroy_gui.Visible then
+		self.dTextLabel.Visible = false
+		self.dTextButton.Visible = false
+		self.dTextLabel_2.Visible = false
+		self.dTextButton_2.Visible = false
+		self:Tween(self.dFrame_2,{Transparency = 1},0.15)
+		wait(0.15)
+		self.Destroy_gui.Visible = false
+	else
+		local newX = UDim.new(0, self.ImageLabel.Size.X.Offset - 20)
+		local newY = UDim.new(0, self.ImageLabel.Size.Y.Offset - 20)
+		self.Destroy_gui.Size = UDim2.new(newX, newY)
+		if self.ImageLabel.Size ~= UDim2.new(0, 590, 0, 40) and self.ImageLabel.Size ~= UDim2.new(0, 590, 0, 480)  then
+			self.dFrame_2.Position = UDim2.new(0.2, 0,0.329, 0)
+		else
+			self.dFrame_2.Position = UDim2.new(0.307, 0,0.329, 0)
+		end
+		self.Destroy_gui.Visible = true
+		self:Tween(self.dFrame_2,{Transparency = 0},0.15)
+		wait(0.15)
+		self.dTextLabel.Visible = true
+		self.dTextButton.Visible = true
+		self.dTextLabel_2.Visible = true
+		self.dTextButton_2.Visible = true
+	end
+end
+
+function Library:UserInfo()
+	if self.WindowUser.Visible then
+		self.userinfo = false
+		self.WindowUser.Visible = false
+		self.Tabs.Size = UDim2.new(0, 185,0, 421)
+		self.ScrollingFrame.Size = UDim2.new(0, 185,0, 421)
+	else
+		self.WindowUser.Visible = true
+		self.Tabs.Size = UDim2.new(0, 185,0, 371)
+		self.ScrollingFrame.Size = UDim2.new(0, 185,0, 371)
+		self.userinfo = true
+	end
+end
+
+function Library:Close()
+	local size = self.ImageLabel.Size
+	if self.ImageLabel.Visible then
+		self:Tween(self.ImageLabel,{Size = UDim2.new(0, 40, 0, 0)},0)
+		self.ImageLabel.Visible = false
+	else
+		if self.Sections.Visible == false then
+			self:Tween(self.ImageLabel,{Size = UDim2.new(0, 590, 0, 40)},0)
+		elseif self.Sections.Size == UDim2.new(0, 375,0, 370) then
+			self:Tween(self.ImageLabel,{Size = UDim2.new(0, 395,0, 480)},0)
+		else
+			self:Tween(self.ImageLabel,{Size = UDim2.new(0, 590, 0, 480)},0)
+		end
+		self.ImageLabel.Visible = true
+	end
+end
+
+function Library:TurnOffAllFunctions(WhiteList,CallBack)
+	for _, toggle in ipairs(self.AllToggles) do
+		local check = false
+		if WhiteList ~= nil then
+			for i,v in pairs(WhiteList) do
+				if v == toggle["controller"] then
+					check = true
+				end
+			end
+		end
+		if not check then
+			if toggle["controller"]["Value"] == true then
+				toggle["controller"]["Value"] = false
+				toggle["controller"]["UpdateVisuals"](false)
+				if toggle["callback"] then
+					toggle["callback"](false) 
+				end
+			end
+		end
+	end
+	if CallBack then
+		CallBack()
+	end
+end
+
+function Library:GetConfig(filename)
+	if not isfile(filename) then
+		self:Notification({
+			Name = "Error",
+			Description = "Config not found",
+			Duration = 10,
+			Type = "Error"
+		})
+	else
+		setclipboard(readfile(filename))
+		self:Notification({
+			Name = "Config",
+			Description = "The config has been successfully copied to the clipboard",
+			Duration = 10,
+			Type = "Notification"
+		})
+	end
+end
+
+function Library:InputConfig(filename,Config)
+	writefile(filename,Config)
+end
+
+function Library:SaveConfig(foldername,filename)
+	local config = {
+		Toggles = {},
+		Keybinds = {},
+		Dropdowns = {},
+		Sliders = {},
+		ColorPickers = {},
+		Inputs = {}
+	}
+
+	for _, tab in ipairs(self.mainTabs) do
+		for name, toggle in pairs(tab.Toggles) do
+			config.Toggles[name] = toggle:GetState()
+		end
+
+		for name, keybind in pairs(tab.Keybinds) do
+			config.Keybinds[name] = keybind:GetState()
+		end
+
+		for name, Input in pairs(tab.Inputs) do
+			config.Inputs[name] = Input:GetState()
+		end
+
+		for name, dropdown in pairs(tab.Dropdowns) do
+			config.Dropdowns[name] = dropdown.GetValue()
+		end
+
+		for name, slider in pairs(tab.Sliders) do
+			config.Sliders[name] = slider:GetState()
+		end
+
+		for name, colorPicker in pairs(tab.ColorPickers) do
+			local color = colorPicker:GetColor()
+			config.ColorPickers[name] = {
+				R = color.R,
+				G = color.G,
+				B = color.B
+			}
+		end
+	end
+
+	if not isfolder(foldername) then
+		makefolder(foldername)
+	end
+	writefile(foldername .. "/" .. filename, game:GetService("HttpService"):JSONEncode(config))
+end
+
+function Library:IsLoadConfig(filename)
+	if not isfile(filename) then return false end
+
+	local success, data = pcall(function()
+		return game:GetService("HttpService"):JSONDecode(readfile(filename))
+	end)
+
+	if not success then return false end
+	if not data.Toggles then
+		return
+	end
+	for _, tab in ipairs(self.mainTabs) do
+		for name, state in pairs(data.Toggles) do
+			if tab.Toggles[name] and name == "Load Config" and state == true then
+				tab.Toggles[name]:SetState(state)
+				--self:LoadConfig(filename)
+			end
+		end
+	end
+
+end
+
+function Library:LoadConfig(filename)
+	if not isfile(filename) then return false end
+
+	local success, data = pcall(function()
+		return game:GetService("HttpService"):JSONDecode(readfile(filename))
+	end)
+
+	if not success then return false end
+
+	for _, tab in ipairs(self.mainTabs) do
+
+		for name, keyStr in pairs(data.Keybinds) do
+			for _, tab in ipairs(self.mainTabs) do
+				if tab.Keybinds[name] then
+					local keyCode
+					if keyStr ~= "None" then
+						keyCode = Enum.KeyCode[keyStr]
+					else
+						keyCode = nil
+					end
+					if keyCode then
+						tab.Keybinds[name].SetKey(keyCode)
+					end
+				end
+			end
+		end
+
+		for name, value in pairs(data.Inputs) do
+			if tab.Inputs[name] and tab.Inputs[name].SaveConfig == false then
+				tab.Inputs[name].SetText(value)
+			end
+		end
+
+		--[[for name, value in pairs(data.Dropdowns) do
+			if tab.Dropdowns[name] then
+				tab.Dropdowns[name]:SetValue(value)
+			end
+		end--]]
+
+		for name, value in pairs(data.Dropdowns) do
+			if tab.Dropdowns[name] then
+				-- Handle multi-select dictionary format
+				if tab.Dropdowns[name].Multi and type(value) == "table" then
+					local fixedValue = {}
+					for k, v in pairs(value) do
+						if type(k) == "string" then  -- Dictionary format
+							fixedValue[k] = v
+						else  -- Array format
+							fixedValue[v] = true
+						end
+					end
+					tab.Dropdowns[name]:SetValue(fixedValue)
+				else
+					tab.Dropdowns[name]:SetValue(value)
+				end
+			end
+		end
+
+		for name, value in pairs(data.Sliders) do
+			if tab.Sliders[name] then
+				tab.Sliders[name].SetValue(value)
+			end
+		end
+
+		for name, colorData in pairs(data.ColorPickers) do
+			if tab.ColorPickers[name] then
+				local color = Color3.new(colorData.R, colorData.G, colorData.B)
+				tab.ColorPickers[name]:SetColor(color)
+			end
+		end
+
+		for name, state in pairs(data.Toggles) do
+			if tab.Toggles[name] and name ~= "Load Config" then
+				tab.Toggles[name]:SetState(state)
+				task.wait(0.01)
+			end
+		end
+	end
+
+	return true
+end
+
+function Library:SetSavePath(folder, filename)
+	self.saveFolder = folder
+	self.saveFileName = filename
+end
+
+function Library:SearchAllTabs()
+	local searchText = self.SearchTextBox.Text
+	if searchText == "Search..." then
+		searchText = ""
+	end
+
+	-- Сбрасываем предыдущие результаты
+	self:ClearSearchResults()
+
+	if searchText == "" then
+		self.IsSearching = false
+		return
+	end
+
+	self.IsSearching = true
+	local searchLower = string.lower(searchText)
+	local currentTab = self.CurrentTab
+	local foundElements = {}
+
+	-- Ищем по всем вкладкам
+	for _, tab in ipairs(self.mainTabs) do
+		for element, elementData in pairs(tab.SearchData) do
+			if string.find(string.lower(elementData), searchLower, 1, true) then
+				table.insert(foundElements, {
+					element = element,
+					originalTab = tab,
+					originalParent = element.Parent,
+					originalPosition = element.Position
+				})
+			end
+		end
+	end
+
+	-- Сортируем по вкладкам (сначала текущая)
+	table.sort(foundElements, function(a, b)
+		local aIsCurrent = a.originalTab == currentTab
+		local bIsCurrent = b.originalTab == currentTab
+
+		if aIsCurrent and not bIsCurrent then
+			return true
+		elseif not aIsCurrent and bIsCurrent then
+			return false
+		else
+			return a.originalTab.Name < b.originalTab.Name
+		end
+	end)
+
+	-- Перемещаем элементы в текущую вкладку
+	local container = currentTab.Container
+	local yOffset = 5
+	local positionStep = 50 -- Стандартная высота элемента
+
+	for i, result in ipairs(foundElements) do
+		local element = result.element
+
+		-- Сохраняем оригинальные свойства
+		self.OriginalTabElements[element] = {
+			Parent = element.Parent,
+			Position = element.Position,
+			Visible = element.Visible
+		}
+
+		-- Перемещаем элемент
+		element.Parent = container
+		element.Visible = true
+		element.Position = UDim2.new(0, 7, 0, yOffset)
+
+		-- Обновляем позицию для следующего элемента
+		yOffset = yOffset + positionStep
+
+		-- Сохраняем в текущих результатах
+		table.insert(self.CurrentSearchResults, element)
+	end
+
+	-- Обновляем размер контейнера
+	container.CanvasSize = UDim2.new(0, 0, 0, yOffset + 10)
+end
+
+function Library:ClearSearchResults()
+	if not self.IsSearching then return end
+
+	-- Восстанавливаем элементы в исходные позиции
+	for _, element in ipairs(self.CurrentSearchResults) do
+		local original = self.OriginalTabElements[element]
+		if original then
+			element.Parent = original.Parent
+			element.Position = original.Position
+			element.Visible = original.Visible
+		end
+	end
+
+	-- Очищаем временные данные
+	self.OriginalTabElements = {}
+	self.CurrentSearchResults = {}
+	self.IsSearching = false
+
+	-- Восстанавливаем размер контейнера текущей вкладки
+	if self.CurrentTab then
+		self.CurrentTab:CalcScroll()
+	end
+end
+
+function Library:ShowSearch()
+	if self.Search.Visible then
+		self.Search.Visible = false
+	else
+		self.Search.Visible = true
+	end	
+end
+
+function Library:SetTheme(themeName)
+	if themeName == "Dark" then
+		self.Theme = {
+			BackGroundIcon = "rbxassetid://81884260046139",
+			TextColor = Color3.fromRGB(255, 255, 255),
+			SubTtitleTextColor = Color3.fromRGB(125, 125, 125),
+			Notisubtitlecolor = Color3.fromRGB(199, 199, 199),
+			HeaderCloseIcon = "rbxassetid://134899599114088",
+			HeaderColor = Color3.fromRGB(22, 22, 22),
+			HeaderMinimazeIcon = "rbxassetid://139226435094489",
+			HeaderMiniIcon = "rbxassetid://89738650787294",
+			headerlinecolor = Color3.fromRGB(229, 229, 229),
+			headerlinetrans = 0.550,
+			TabsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+			NotiCloseImg = "rbxassetid://134899599114088",
+			NotiImg = "rbxassetid://97146547138190",
+			NotiTitleColor = Color3.fromRGB(255, 255, 255),
+			BackGroundTran = 0.05,
+			DestroyGFrame = Color3.fromRGB(22, 22, 22),
+			dbtntran = 0.95,
+			dbtncolor = Color3.fromRGB(255, 255, 255)
+		}
+		for i,v in pairs(self.mainTabs) do
+			v.Theme = {
+				TextColor = Color3.fromRGB(255, 255, 255),
+				TabColor = Color3.fromRGB(255, 255, 255),
+				SubTtitleTextColor = Color3.fromRGB(199, 199, 199),
+				TogleActivColor = Color3.fromRGB(28, 96, 255),
+				ButtonIcon = "rbxassetid://99811735506603",
+				InputTextColor = Color3.fromRGB(175, 175, 175),
+				BackGroundElemTran = 0.95,
+				BackGroundElemCol = Color3.fromRGB(255, 255, 255),
+				BackGroundButtonTran = 0.95,
+				ActionBackColor = Color3.fromRGB(255, 255, 255),
+				ToggleButton = Color3.fromRGB(255, 255, 255),
+				ToggleTran = 0.9,
+				SectionsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+				DropDownColor = Color3.fromRGB(47, 47, 47),
+				DropDownFrameColor = Color3.fromRGB(255, 255, 255),
+				SliderUnderLineColor = Color3.fromRGB(28, 96, 255),
+				Togglebtn = Color3.fromRGB(255, 255, 255),
+				Sliderball = Color3.fromRGB(255, 255, 255),
+				ColorPickerColoro = Color3.fromRGB(47, 47, 47)
+			}
+		end
+	elseif themeName == "White" then
+		self.Theme = {
+			BackGroundIcon = "rbxassetid://129312064085105",
+			TextColor = Color3.fromRGB(0, 0, 0),
+			SubTtitleTextColor = Color3.fromRGB(49, 49, 49),
+			Notisubtitlecolor = Color3.fromRGB(67, 67, 67),
+			HeaderCloseIcon = "rbxassetid://118159983720285",
+			HeaderColor = Color3.fromRGB(255, 255, 255),
+			HeaderMinimazeIcon = "rbxassetid://107601725963454",
+			HeaderMiniIcon = "rbxassetid://134755374708151",
+			headerlinecolor = Color3.fromRGB(165, 165, 165),
+			headerlinetrans = 0.550,
+			TabsScrollingBarFrameColor = Color3.fromRGB(0, 0, 0),
+			NotiCloseImg = "rbxassetid://118159983720285",
+			NotiImg = "rbxassetid://79134154162988",
+			NotiTitleColor = Color3.fromRGB(0, 0, 0),
+			BackGroundTran = 0.05,
+			DestroyGFrame = Color3.fromRGB(255, 255, 255),
+			dbtntran = 0.8,
+			dbtncolor = Color3.fromRGB(0, 0, 0)
+		}
+		for i,v in pairs(self.mainTabs) do
+			v.Theme = {
+				TextColor = Color3.fromRGB(0, 0, 0),
+				TabColor = Color3.fromRGB(0, 0, 0),
+				SubTtitleTextColor = Color3.fromRGB(67, 67, 67),
+				TogleActivColor = Color3.fromRGB(84, 84, 84),
+				ButtonIcon = "rbxassetid://136618696247063",
+				InputTextColor = Color3.fromRGB(67, 67, 67),
+				BackGroundElemTran = 0.9,
+				BackGroundElemCol = Color3.fromRGB(0, 0, 0),
+				ActionBackColor = Color3.fromRGB(33, 33, 33),
+				BackGroundButtonTran = 0.9,
+				SectionsScrollingBarFrameColor = Color3.fromRGB(0, 0, 0),
+				DropDownColor = Color3.fromRGB(202, 202, 202),
+				DropDownFrameColor = Color3.fromRGB(0, 0, 0),
+				SliderUnderLineColor = Color3.fromRGB(0, 0, 0),
+				Togglebtn = Color3.fromRGB(0, 0, 0),
+				Sliderball = Color3.fromRGB(0, 0, 0),
+				ColorPickerColoro = Color3.fromRGB(202, 202, 202)
+			}
+		end
+	elseif themeName == "Aqua" then
+		self.Theme = {
+			BackGroundIcon = "rbxassetid://131566986174421",
+			TextColor = Color3.fromRGB(255, 255, 255),
+			SubTtitleTextColor = Color3.fromRGB(221, 221, 221),
+			Notisubtitlecolor = Color3.fromRGB(199, 199, 199),
+			HeaderCloseIcon = "rbxassetid://134899599114088",
+			HeaderColor = Color3.fromRGB(0, 77, 140),
+			HeaderMinimazeIcon = "rbxassetid://139226435094489",
+			HeaderMiniIcon = "rbxassetid://89738650787294",
+			headerlinecolor = Color3.fromRGB(229, 229, 229),
+			headerlinetrans = 0.550,
+			TabsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+			NotiCloseImg = "rbxassetid://134899599114088",
+			NotiImg = "rbxassetid://78799487177198",
+			NotiTitleColor = Color3.fromRGB(255, 255, 255),
+			BackGroundTran = 0.05,
+			DestroyGFrame = Color3.fromRGB(21, 107, 132),
+			dbtntran = 0.95,
+			dbtncolor = Color3.fromRGB(255, 255, 255)
+		}
+		for i,v in pairs(self.mainTabs) do
+			v.Theme = {
+				TextColor = Color3.fromRGB(255, 255, 255),
+				TabColor = Color3.fromRGB(255, 255, 255),
+				SubTtitleTextColor = Color3.fromRGB(199, 199, 199),
+				TogleActivColor = Color3.fromRGB(21, 107, 132),
+				ButtonIcon = "rbxassetid://99811735506603",
+				InputTextColor = Color3.fromRGB(221, 221, 221),
+				BackGroundElemTran = 0.95,
+				BackGroundElemCol = Color3.fromRGB(255, 255, 255),
+				BackGroundButtonTran = 0.95,
+				ActionBackColor = Color3.fromRGB(255, 255, 255),
+				ToggleButton = Color3.fromRGB(255, 255, 255),
+				ToggleTran = 0.9,
+				SectionsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+				DropDownColor = Color3.fromRGB(21, 107, 132),
+				DropDownFrameColor = Color3.fromRGB(255, 255, 255),
+				SliderUnderLineColor = Color3.fromRGB(21, 107, 132),
+				Togglebtn =  Color3.fromRGB(255, 255, 255),
+				Sliderball = Color3.fromRGB(255, 255, 255),
+				ColorPickerColoro = Color3.fromRGB(21, 107, 132)
+			}
+		end
+	elseif themeName == "jungel" then
+		self.Theme = {
+			BackGroundIcon = "rbxassetid://90896119697781",
+			TextColor = Color3.fromRGB(255, 255, 255),
+			SubTtitleTextColor = Color3.fromRGB(221, 221, 221),
+			Notisubtitlecolor = Color3.fromRGB(199, 199, 199),
+			HeaderCloseIcon = "rbxassetid://134899599114088",
+			HeaderColor = Color3.fromRGB(0, 38, 6),
+			HeaderMinimazeIcon = "rbxassetid://139226435094489",
+			HeaderMiniIcon = "rbxassetid://89738650787294",
+			headerlinecolor = Color3.fromRGB(229, 229, 229),
+			headerlinetrans = 0.550,
+			TabsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+			NotiCloseImg = "rbxassetid://134899599114088",
+			NotiImg = "rbxassetid://89937485741870",
+			NotiTitleColor = Color3.fromRGB(255, 255, 255),
+			BackGroundTran = 0.05,
+			DestroyGFrame = Color3.fromRGB(3, 61, 0),
+			dbtntran = 0.95,
+			dbtncolor = Color3.fromRGB(255, 255, 255)
+		}
+		for i,v in pairs(self.mainTabs) do
+			v.Theme = {
+				TextColor = Color3.fromRGB(255, 255, 255),
+				TabColor = Color3.fromRGB(11, 217, 0),
+				SubTtitleTextColor = Color3.fromRGB(199, 199, 199),
+				TogleActivColor = Color3.fromRGB(61, 32, 0),
+				ButtonIcon = "rbxassetid://99811735506603",
+				InputTextColor = Color3.fromRGB(221, 221, 221),
+				BackGroundElemTran = 0.95,
+				BackGroundElemCol = Color3.fromRGB(16, 236, 0),
+				BackGroundButtonTran = 0.95,
+				ActionBackColor = Color3.fromRGB(255, 255, 255),
+				ToggleButton = Color3.fromRGB(25, 13, 0),
+				ToggleTran = 0.9,
+				SectionsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+				DropDownColor = Color3.fromRGB(3, 61, 0),
+				DropDownFrameColor = Color3.fromRGB(255, 255, 255),
+				SliderUnderLineColor = Color3.fromRGB(61, 32, 0),
+				Togglebtn =  Color3.fromRGB(25, 13, 0),
+				Sliderball = Color3.fromRGB(25, 13, 0),
+				ColorPickerColoro = Color3.fromRGB(3, 61, 0)
+			}
+		end
+	elseif themeName == "Black" then
+		self.Theme = {
+			BackGroundIcon = "rbxassetid://121663946449949",
+			TextColor = Color3.fromRGB(255, 255, 255),
+			SubTtitleTextColor = Color3.fromRGB(199, 199, 199),
+			Notisubtitlecolor = Color3.fromRGB(199, 199, 199),
+			HeaderCloseIcon = "rbxassetid://134899599114088",
+			HeaderColor = Color3.fromRGB(0, 0, 0),
+			HeaderMinimazeIcon = "rbxassetid://139226435094489",
+			HeaderMiniIcon = "rbxassetid://89738650787294",
+			headerlinecolor = Color3.fromRGB(165, 165, 165),
+			headerlinetrans = 0.550,
+			TabsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+			NotiCloseImg = "rbxassetid://134899599114088",
+			NotiImg = "rbxassetid://74670242216855",
+			NotiTitleColor = Color3.fromRGB(255, 255, 255),
+			BackGroundTran = 0.05,
+			DestroyGFrame = Color3.fromRGB(0, 0, 0),
+			dbtntran = 0.9,
+			dbtncolor = Color3.fromRGB(255, 255, 255)
+		}
+		for i,v in pairs(self.mainTabs) do
+			v.Theme = {
+				TextColor = Color3.fromRGB(255, 255, 255),
+				TabColor = Color3.fromRGB(255, 255, 255),
+				SubTtitleTextColor = Color3.fromRGB(203, 203, 203),
+				TogleActivColor = Color3.fromRGB(0, 0, 0),
+				ButtonIcon = "rbxassetid://99811735506603",
+				InputTextColor = Color3.fromRGB(255, 255, 255),
+				BackGroundElemTran = 0.95,
+				BackGroundElemCol = Color3.fromRGB(255, 255, 255),
+				ActionBackColor = Color3.fromRGB(255, 255, 255),
+				BackGroundButtonTran = 0.9,
+				SectionsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+				DropDownColor = Color3.fromRGB(0, 0, 0),
+				DropDownFrameColor = Color3.fromRGB(0, 0, 0),
+				SliderUnderLineColor = Color3.fromRGB(0, 0, 0),
+				Togglebtn = Color3.fromRGB(255, 255, 255),
+				Sliderball = Color3.fromRGB(255, 255, 255),
+				ColorPickerColoro = Color3.fromRGB(0, 0, 0)
+			}
+		end
+	elseif themeName == "Dota" then
+		self.Theme = {
+			BackGroundIcon = "rbxassetid://87894054844272",
+			TextColor = Color3.fromRGB(255, 255, 255),
+			SubTtitleTextColor = Color3.fromRGB(125, 125, 125),
+			Notisubtitlecolor = Color3.fromRGB(199, 199, 199),
+			HeaderCloseIcon = "rbxassetid://134899599114088",
+			HeaderColor = Color3.fromRGB(22, 22, 22),
+			HeaderMinimazeIcon = "rbxassetid://139226435094489",
+			HeaderMiniIcon = "rbxassetid://89738650787294",
+			headerlinecolor = Color3.fromRGB(229, 229, 229),
+			headerlinetrans = 0.550,
+			TabsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+			NotiCloseImg = "rbxassetid://134899599114088",
+			NotiImg = "rbxassetid://97146547138190",
+			NotiTitleColor = Color3.fromRGB(255, 255, 255),
+			BackGroundTran = 0.05,
+			DestroyGFrame = Color3.fromRGB(22, 22, 22),
+			dbtntran = 0.95,
+			dbtncolor = Color3.fromRGB(255, 255, 255)
+		}
+		for i,v in pairs(self.mainTabs) do
+			v.Theme = {
+				TextColor = Color3.fromRGB(255, 255, 255),
+				TabColor = Color3.fromRGB(255, 255, 255),
+				SubTtitleTextColor = Color3.fromRGB(199, 199, 199),
+				TogleActivColor = Color3.fromRGB(28, 96, 255),
+				ButtonIcon = "rbxassetid://99811735506603",
+				InputTextColor = Color3.fromRGB(175, 175, 175),
+				BackGroundElemTran = 0.9,
+				BackGroundElemCol = Color3.fromRGB(255, 255, 255),
+				BackGroundButtonTran = 0.9,
+				ActionBackColor = Color3.fromRGB(255, 255, 255),
+				ToggleButton = Color3.fromRGB(255, 255, 255),
+				ToggleTran = 0.9,
+				SectionsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+				DropDownColor = Color3.fromRGB(47, 47, 47),
+				DropDownFrameColor = Color3.fromRGB(255, 255, 255),
+				SliderUnderLineColor = Color3.fromRGB(28, 96, 255),
+				Togglebtn = Color3.fromRGB(255, 255, 255),
+				Sliderball = Color3.fromRGB(255, 255, 255),
+				ColorPickerColoro = Color3.fromRGB(47, 47, 47)
+			}
+		end
+	end
+
+	if self.SearchImageLabel.Image == "rbxassetid://131200540387892" and themeName == "White" then
+		self.SearchImageLabel.Image = "rbxassetid://106057612152790"
+	elseif self.SearchImageLabel.Image == "rbxassetid://106057612152790" and themeName ~= "White" then
+		self.SearchImageLabel.Image = "rbxassetid://131200540387892"
+	end
+	self.Search.BackgroundColor3 =  self.Theme.dbtncolor
+	self.Search.BackgroundTransparency =  self.Theme.dbtntran
+	self.SearchTextBox2.TextColor3 = self.Theme.TextColor
+	self.ImageLabel.Image = self.Theme.BackGroundIcon
+	self.TextLabel.TextColor3 = self.Theme.TextColor
+	self.TextLabel_2.TextColor3 = self.Theme.SubTtitleTextColor
+	self.TextLabel_5.TextColor3 = self.Theme.TextColor
+	self.close.Image = self.Theme.HeaderCloseIcon
+	self.ImageButton_2.Image = self.Theme.HeaderMinimazeIcon
+	self.ImageButton.Image = self.Theme.HeaderMiniIcon
+	self.Frame.BackgroundColor3 = self.Theme.headerlinecolor
+	self.BackgroundTransparency = self.Theme.headerlinetrans
+	self.ScrollingFrame.ScrollBarImageColor3 = self.Theme.TabsScrollingBarFrameColor
+	if self.template  then
+		self.template.Image = self.Theme.NotiCloseImg
+		self.CloseButton.Image = self.Theme.NotiImg
+		self.Title.TextColor3 = self.Theme.NotiTitleColor
+	end
+	self.Header.BackgroundColor3 = self.Theme.HeaderColor
+	self.dFrame_2.BackgroundColor3 = self.Theme.DestroyGFrame
+	self.dTextLabel.TextColor3 = self.Theme.TextColor
+	self.dTextButton.TextColor3 = self.Theme.TextColor
+	self.dTextButton.BackgroundColor3 = self.Theme.dbtncolor
+	self.dTextButton_2.BackgroundColor3 = self.Theme.dbtncolor
+	self.dTextLabel_2.TextColor3 = self.Theme.SubTtitleTextColor
+	self.dTextButton_2.TextColor3 = self.Theme.TextColor
+	self.wTextLabel.TextColor3 = self.Theme.TextColor
+	self.wTextLabel_2.TextColor3 = self.Theme.SubTtitleTextColor
+	for i,v in pairs(self.mainTabs) do
+		v.Tab[1].BackgroundColor3 = v.Theme.TabColor
+		v.Tab[2].TextColor3 = v.Theme.TextColor
+		if v.Tab[4].Image == "rbxassetid://103450663687860" and themeName == "White" then
+			v.Tab[4].Image = "rbxassetid://107272757319367"
+		elseif v.Tab[4].Image == "rbxassetid://107272757319367" and themeName ~= "White" then
+			v.Tab[4].Image = "rbxassetid://103450663687860"
+		elseif v.Tab[4].Image == "rbxassetid://88552609982363" and themeName == "White" then
+			v.Tab[4].Image = "rbxassetid://127387822862188"
+		elseif v.Tab[4].Image == "rbxassetid://127387822862188" and themeName ~= "White" then
+			v.Tab[4].Image = "rbxassetid://88552609982363"
+		elseif v.Tab[4].Image == "rbxassetid://115824076979644" and themeName == "White" then
+			v.Tab[4].Image = "rbxassetid://122846403922442"
+		elseif v.Tab[4].Image == "rbxassetid://122846403922442" and themeName ~= "White" then
+			v.Tab[4].Image = "rbxassetid://115824076979644"
+		elseif v.Tab[4].Image == "rbxassetid://108715264661822" and themeName == "White" then
+			v.Tab[4].Image = "rbxassetid://95489688881951"
+		elseif v.Tab[4].Image == "rbxassetid://95489688881951" and themeName ~= "White" then
+			v.Tab[4].Image = "rbxassetid://108715264661822"
+		elseif v.Tab[4].Image == "rbxassetid://138832805084579" and themeName == "White" then
+			v.Tab[4].Image = "rbxassetid://97094424684790"
+		elseif v.Tab[4].Image == "rbxassetid://97094424684790" and themeName ~= "White" then
+			v.Tab[4].Image = "rbxassetid://138832805084579"
+		elseif v.Tab[4].Image == "rbxassetid://125163773482315" and themeName == "White" then
+			v.Tab[4].Image = "rbxassetid://107678550426269"
+		elseif v.Tab[4].Image == "rbxassetid://107678550426269" and themeName ~= "White" then
+			v.Tab[4].Image = "rbxassetid://125163773482315"
+		elseif v.Tab[4].Image == "rbxassetid://109675987433260" and themeName == "White" then
+			v.Tab[4].Image = "rbxassetid://139296203344551"
+		elseif v.Tab[4].Image == "rbxassetid://139296203344551" and themeName ~= "White" then
+			v.Tab[4].Image = "rbxassetid://109675987433260"
+		elseif v.Tab[4].Image == "rbxassetid://104651616243172" and themeName == "White" then
+			v.Tab[4].Image = "rbxassetid://90198470195102"
+		elseif v.Tab[4].Image == "rbxassetid://90198470195102" and themeName ~= "White" then
+			v.Tab[4].Image = "rbxassetid://104651616243172"
+		elseif v.Tab[4].Image == "rbxassetid://78108225641992" and themeName == "White" then
+			v.Tab[4].Image = "rbxassetid://132348897189260"
+		elseif v.Tab[4].Image == "rbxassetid://132348897189260" and themeName ~= "White" then
+			v.Tab[4].Image = "rbxassetid://78108225641992"
+		elseif v.Tab[4].Image == "rbxassetid://80456866422285" and themeName == "White" then
+			v.Tab[4].Image = "rbxassetid://85882665968234"
+		elseif v.Tab[4].Image == "rbxassetid://85882665968234" and themeName ~= "White" then
+			v.Tab[4].Image = "rbxassetid://80456866422285"
+		end
+		
+		v.Tab[3].BackgroundColor3 = v.Theme.TextColor
+		v.Tab[5].ScrollBarImageColor3 = v.Theme.SectionsScrollingBarFrameColor
+		for i2,v2 in pairs(v.ElemBtn) do
+			v2.BackgroundColor3 = v.Theme.BackGroundElemCol
+			v2.BackgroundTransparency = v.Theme.BackGroundElemTran
+		end
+		for i3,v3 in pairs(v.Texttitle) do
+			v3.TextColor3 = v.Theme.TextColor
+		end
+		for i3,v3 in pairs(v.Textsubtitle) do
+			v3.TextColor3 = v.Theme.SubTtitleTextColor
+		end
+		for i3,v3 in pairs(v.actionBakcColor) do
+			v3.BackgroundColor3 = v.Theme.BackGroundElemCol
+		end
+		for i3,v3 in pairs(v.BtnImg) do
+			v3.Image = v.Theme.ButtonIcon
+		end
+		for i3,v3 in pairs(v.DropImg) do
+			v3.BackgroundColor3 = v.Theme.DropDownColor
+		end
+		for i3,v3 in pairs(v.DropDownFrameColor) do
+			v3.BackgroundColor3 = v.Theme.DropDownFrameColor
+		end
+		for i3,v3 in pairs(v.ActiveToggleColor) do
+			v3.BackgroundColor3 = v.Theme.TogleActivColor
+		end
+		for i3,v3 in pairs(v.InputTextColor) do
+			v3.TextColor3 = v.Theme.InputTextColor
+		end
+		for i3,v3 in pairs(v.SliderUnderLineColor) do
+			v3.BackgroundColor3 = v.Theme.SliderUnderLineColor
+		end
+		for i3,v3 in pairs(v.Togglebtn) do
+			v3.BackgroundColor3 = v.Theme.Togglebtn
+		end
+		for i3,v3 in pairs(v.Sliderball) do
+			v3.BackgroundColor3 = v.Theme.Sliderball
+		end
+		for i3,v3 in pairs(v.ColorPickerColor) do
+			v3.BackgroundColor3 = v.Theme.ColorPickerColoro
+		end
+	end  
+end
+
+return Library
