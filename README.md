@@ -1,3 +1,4 @@
+```
 local UILibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/zxcursedsocute/UI-Library/refs/heads/main/UI-Library.txt"))()
 
 local windows = UILibrary.CreateWindow("CursedSaken v1.3.1 ","","590","480")
@@ -144,3 +145,4 @@ windows:Notification({
 windows:IsLoadConfig("zxcursedsocute/forsaken.json")
 
 windows:ScaleForMobileFixed()
+```
