@@ -2346,7 +2346,7 @@ function Library:AddTab(name : string,icon : string)
 
 		local namepos = 4
 
-		if config.Description == '' then
+		if Slider.Description == '' then
 			namepos = 12.5
 		end
 
