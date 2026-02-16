@@ -1800,7 +1800,7 @@ function Library:AddTab(name : string,icon : string)
 	function tab:AddButton(config)
 		local button = {
 			Name = config.Name,
-			Description = config.Description,
+			Description = config.Description or '',
 			Callback = config.Callback
 		}
 
@@ -2308,7 +2308,7 @@ function Library:AddTab(name : string,icon : string)
 	function tab:AddSlider(config)
 		local Slider = {
 			Name = config.Name,
-			Description = config.Description,
+			Description = config.Description or '',
 			min = config.Min or 0,
 			max = config.Max or 100,
 			Callback = config.Callback,
@@ -2971,7 +2971,7 @@ function Library:AddTab(name : string,icon : string)
 	function tab:AddDropdown(config)
 		local dropdown = {
 			Name = config.Name,
-			Description = config.Description,
+			Description = config.Description or '',
 			Options = config.Options or {},
 			Default = config.Default or "",
 			Multi = config.Multi or false,
