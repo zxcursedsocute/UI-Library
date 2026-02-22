@@ -90,7 +90,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	local randomFolderName = math.random(10000, 99999) .. "_" .. os.time()
 	self.RandomContainer = Instance.new("Folder")
 	self.RandomContainer.Name = randomFolderName
-	self.RandomContainer.Parent = Players.LocalPlayer:WaitForChild("PlayerGui") --CoreGui:FindFirstChild("RobloxGui")
+	self.RandomContainer.Parent = CoreGui:FindFirstChild("RobloxGui")
 
 	self.UI = Instance.new("ScreenGui")
 	self.UI.Name = "RobloxGui"
