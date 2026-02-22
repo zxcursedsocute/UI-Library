@@ -49,6 +49,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 		TogleActivColor = Color3.fromRGB(28, 96, 255),
 		ButtonIcon = "rbxassetid://99811735506603",
 		ArrowIcon = "rbxassetid://118262392757775",
+		DropDownArrowImg = Color3.fromRGB(255, 255, 255),
 		InputTextColor = Color3.fromRGB(175, 175, 175),
 		BackGroundElemTran = 0.95,
 		BackGroundElemCol = Color3.fromRGB(255, 255, 255),
@@ -80,7 +81,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.BlurEffect = nil
 	self.Connections = {}
 	self.ActiveTweens = {}
-	self.AllToggles = {}
+	--self.AllToggles = {}
 	self.Windowscd = false
 	self.userinfo = true
 	self.saveFolder = nil
@@ -94,7 +95,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	local randomFolderName = math.random(10000, 99999) .. "_" .. os.time()
 	self.RandomContainer = Instance.new("Folder")
 	self.RandomContainer.Name = randomFolderName
-	self.RandomContainer.Parent = CoreGui:FindFirstChild("RobloxGui")
+	self.RandomContainer.Parent = Players.LocalPlayer:WaitForChild("PlayerGui") --CoreGui:FindFirstChild("RobloxGui")
 
 	self.UI = Instance.new("ScreenGui")
 	self.UI.Name = "RobloxGui"
@@ -230,7 +231,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 
 	self.Destroy_gui.Parent = self.ImageLabel
 	self.Destroy_gui.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	self.Destroy_gui.BackgroundTransparency = 0.7
+	self.Destroy_gui.BackgroundTransparency = 0.4
 	self.Destroy_gui.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.Destroy_gui.BorderSizePixel = 0
 	self.Destroy_gui.Position = UDim2.new(0.017231673, 0, 0.0208332706, 0)
@@ -259,7 +260,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.dTextLabel.Position = UDim2.new(0.0291666668, 0, 0.0349650346, 0)
 	self.dTextLabel.Size = UDim2.new(0, 200, 0, 36)
 	self.dTextLabel.Font = Enum.Font.FredokaOne
-	self.dTextLabel.Text = "Destroy"
+	self.dTextLabel.Text = "Destroy Interface?"
 	self.dTextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 	self.dTextLabel.TextSize = 23.000
 	self.dTextLabel.TextWrapped = true
@@ -274,25 +275,26 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.dTextLabel_2.BackgroundTransparency = 1.000
 	self.dTextLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.dTextLabel_2.BorderSizePixel = 0
-	self.dTextLabel_2.Position = UDim2.new(0.0333333351, 0, 0.257692319, 0)
-	self.dTextLabel_2.Size = UDim2.new(0, 219, 0, 18)
+	self.dTextLabel_2.Position = UDim2.new(0.03, 0, 0.25, 0)
+	self.dTextLabel_2.Size = UDim2.new(0, 219, 0, 40)
 	self.dTextLabel_2.Font = Enum.Font.FredokaOne
-	self.dTextLabel_2.Text = "Do you really want to destroy the gui?"
+	self.dTextLabel_2.TextWrapped = true
+	self.dTextLabel_2.Text = "This action will permamently close the GUI."
 	self.dTextLabel_2.TextColor3 = Color3.fromRGB(184, 184, 184)
-	self.dTextLabel_2.TextSize = 14.500
+	self.dTextLabel_2.TextSize = 15
 	self.dTextLabel_2.Visible = false
 	self.dTextLabel_2.TextXAlignment = Enum.TextXAlignment.Left
 
 	self.dTextButton.Parent = self.dFrame_2
-	self.dTextButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	self.dTextButton.BackgroundTransparency = 0.950
+	self.dTextButton.BackgroundColor3 = Color3.fromRGB(207, 0, 0)
+	self.dTextButton.BackgroundTransparency = 0.4
 	self.dTextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.dTextButton.BorderSizePixel = 0
 	self.dTextButton.Position = UDim2.new(0.0170000009, 0, 0.721000016, 0)
 	self.dTextButton.Size = UDim2.new(0, 112, 0, 36)
 	self.dTextButton.ZIndex = 10
 	self.dTextButton.Font = Enum.Font.FredokaOne
-	self.dTextButton.Text = "Yes"
+	self.dTextButton.Text = "Destroy"
 	self.dTextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 	self.dTextButton.Visible = false
 	self.dTextButton.TextSize = 14.000
@@ -313,7 +315,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.dTextButton_2.Size = UDim2.new(0, 112, 0, 36)
 	self.dTextButton_2.ZIndex = 10
 	self.dTextButton_2.Font = Enum.Font.FredokaOne
-	self.dTextButton_2.Text = "No"
+	self.dTextButton_2.Text = "Close"
 	self.dTextButton_2.TextColor3 = Color3.fromRGB(255, 255, 255)
 	self.dTextButton_2.Visible = false
 	self.dTextButton_2.TextSize = 14.000
@@ -1221,7 +1223,7 @@ local TAB_ICONS = {
 	["Visual"]    = "rbxassetid://92250291747112",
 	["Player"]    = "rbxassetid://92793433656183", 
 	["Combat"]    = "rbxassetid://73787033062338", 
-	["Generator"] = "rbxassetid://138832805084579",
+	["Generator"] = "rbxassetid://88963434013027", 
 	["AutoFarm"]  = "rbxassetid://78576858777870", 
 	["Animation"] = "rbxassetid://126672101469278", 
 	["Items"]     = "rbxassetid://100873317961037", 
@@ -1262,6 +1264,7 @@ function Library:AddTab(name : string,icon : string)
 		ArrowImg = {},
 		ListFrames = {},
 		DropImg = {},
+		DropDownArrowImg = {},
 		DropDownFrameColor = {},
 		ActiveToggleColor = {},
 		InputTextColor = {},
@@ -2012,11 +2015,11 @@ function Library:AddTab(name : string,icon : string)
 
 		toggleController:UpdateVisuals(toggleController.Value)
 
-		local toggleData = {
+		--[[local toggleData = {
 			callback = toggle.Callback,
 			controller = toggleController
 		}
-		table.insert(self.Library.AllToggles, toggleData)
+		table.insert(self.Library.AllToggles, toggleData)--]]
 
 		Toggle.MouseButton1Click:Connect(function()
 			toggleController:Toggle()
@@ -3072,8 +3075,11 @@ function Library:AddTab(name : string,icon : string)
 		ImageLabel.BorderSizePixel = 0
 		ImageLabel.Position = UDim2.new(0.816335738, 0, 0.166666672, 0)
 		ImageLabel.Size = UDim2.new(0, 20, 0, 20)
-		ImageLabel.Image = "rbxassetid://138820474017746"
-
+		ImageLabel.Image = "rbxassetid://126982255108418"
+		
+		table.insert(tab.DropDownArrowImg, ImageLabel)
+		
+	
 		ImageLabel_2.Parent = self.Container.Parent.Parent
 		ImageLabel_2.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
 		ImageLabel_2.BackgroundTransparency = 1
@@ -3923,7 +3929,7 @@ function Library:Destroy()
 			connection:Disconnect()
 		end
 	end
-	for _, toggle in ipairs(self.AllToggles) do
+	--[[for _, toggle in ipairs(self.AllToggles) do
 		if toggle["controller"]["Value"] == true then
 			if toggle["callback"] then
 				task.spawn(function()
@@ -3931,10 +3937,15 @@ function Library:Destroy()
 				end)
 			end
 		end
+	end--]]
+	for name, controller in pairs(self.AllElements.Toggles) do
+		if controller.Value == true then
+			controller:SetState(false) 
+		end
 	end
 	self:ClearSearchResults()
 	self.Destroy_gui.Visible = false
-	self.AllToggles = {}
+	self.AllElements.Toggles = {}
 	self:BlurOff()
 	local tweenInfo = TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 	local tween = TweenService:Create(self.ImageLabel, tweenInfo, {ImageTransparency = 1})
@@ -3963,7 +3974,7 @@ function Library:ShowDestroyQ()
 		local newY = UDim.new(0, self.ImageLabel.Size.Y.Offset - 20)
 		self.Destroy_gui.Size = UDim2.new(newX, newY)
 		if self.ImageLabel.Size ~= UDim2.new(0, 620, 0, 40) and self.ImageLabel.Size ~= UDim2.new(0, 620, 0, 480)  then
-			self.dFrame_2.Position = UDim2.new(0.31, 0,0.329, 0)
+			self.dFrame_2.Position = UDim2.new(0.18, 0,0.329, 0)
 		else
 			self.dFrame_2.Position = UDim2.new(0.307, 0,0.329, 0)
 		end
@@ -3999,36 +4010,36 @@ function Library:Close()
 		self.ImageLabel.Visible = false
 	else
 		if self.Sections.Visible == false then
-			self:Tween(self.ImageLabel,{Size = UDim2.new(0, 590, 0, 40)},0)
+			self:Tween(self.ImageLabel,{Size = UDim2.new(0, 620, 0, 40)},0)
 		elseif self.Sections.Size == UDim2.new(0, 375,0, 370) then
 			self:Tween(self.ImageLabel,{Size = UDim2.new(0, 395,0, 480)},0)
 		else
-			self:Tween(self.ImageLabel,{Size = UDim2.new(0, 590, 0, 480)},0)
+			self:Tween(self.ImageLabel,{Size = UDim2.new(0, 620, 0, 480)},0)
 		end
 		self.ImageLabel.Visible = true
 	end
 end
 
-function Library:TurnOffAllFunctions(WhiteList,CallBack)
-	for _, toggle in ipairs(self.AllToggles) do
+function Library:TurnOffAllFunctions(WhiteList, CallBack)
+	for name, controller in pairs(self.AllElements.Toggles) do
 		local check = false
+
 		if WhiteList ~= nil then
-			for i,v in pairs(WhiteList) do
-				if v == toggle["controller"] then
+			for i, v in pairs(WhiteList) do
+				if v == controller then
 					check = true
+					break
 				end
 			end
 		end
+
 		if not check then
-			if toggle["controller"]["Value"] == true then
-				toggle["controller"]["Value"] = false
-				toggle["controller"]["UpdateVisuals"](false)
-				if toggle["callback"] then
-					toggle["callback"](false) 
-				end
+			if controller.Value == true then
+				controller:SetState(false)
 			end
 		end
 	end
+
 	if CallBack then
 		CallBack()
 	end
@@ -4407,6 +4418,7 @@ local Themes = {
 		TogleActivColor = Color3.fromRGB(28, 96, 255),
 		ButtonIcon = "rbxassetid://99811735506603",
 		ArrowIcon = "rbxassetid://118262392757775",
+		DropDownArrowImg = Color3.fromRGB(255, 255, 255),
 		InputTextColor = Color3.fromRGB(175, 175, 175),
 		BackGroundElemTran = 0.95,
 		BackGroundElemCol = Color3.fromRGB(255, 255, 255),
@@ -4457,6 +4469,7 @@ local Themes = {
 		TogleActivColor = Color3.fromRGB(84, 84, 84),
 		ButtonIcon = "rbxassetid://136618696247063",
 		ArrowIcon = "rbxassetid://119048016398485",
+		DropDownArrowImg = Color3.fromRGB(0, 0, 0),
 		InputTextColor = Color3.fromRGB(67, 67, 67),
 		BackGroundElemTran = 0.9,
 		BackGroundElemCol = Color3.fromRGB(0, 0, 0),
@@ -4505,6 +4518,7 @@ local Themes = {
 		TogleActivColor = Color3.fromRGB(28, 96, 255),
 		ButtonIcon = "rbxassetid://99811735506603",
 		ArrowIcon = "rbxassetid://118262392757775",
+		DropDownArrowImg = Color3.fromRGB(255, 255, 255),
 		InputTextColor = Color3.fromRGB(175, 175, 175),
 		BackGroundElemTran = 0.95,
 		BackGroundElemCol = Color3.fromRGB(255, 255, 255),
@@ -4555,6 +4569,7 @@ local Themes = {
 		TogleActivColor = Color3.fromRGB(0, 0, 0),
 		ButtonIcon = "rbxassetid://99811735506603",
 		ArrowIcon = "rbxassetid://118262392757775",
+		DropDownArrowImg = Color3.fromRGB(255, 255, 255),
 		InputTextColor = Color3.fromRGB(255, 255, 255),
 		BackGroundElemTran = 0.95,
 		BackGroundElemCol = Color3.fromRGB(255, 255, 255),
@@ -4588,8 +4603,8 @@ local Themes = {
 		NotiCollImg = "rbxassetid://75930996983661",
 		NotiTitleColor = Color3.fromRGB(255, 255, 255),
 		BackGroundTran = 0.05,
-		DestroyGFrame = Color3.fromRGB(255, 255, 255),
-		DestroyGFrameTransparency = 0.75,
+		DestroyGFrame = Color3.fromRGB(54, 54, 54),
+		DestroyGFrameTransparency = 0,
 		dbtntran = 0.95,
 		TabTransparancy = 0.95,
 		dbtncolor = Color3.fromRGB(255, 255, 255),
@@ -4603,6 +4618,7 @@ local Themes = {
 		TogleActivColor = Color3.fromRGB(28, 96, 255),
 		ButtonIcon = "rbxassetid://99811735506603",
 		ArrowIcon = "rbxassetid://118262392757775",
+		DropDownArrowImg = Color3.fromRGB(255, 255, 255),
 		InputTextColor = Color3.fromRGB(175, 175, 175),
 		BackGroundElemTran = 0.95,
 		BackGroundElemCol = Color3.fromRGB(255, 255, 255),
@@ -4638,8 +4654,8 @@ local Themes = {
 		NotiCollImg = "rbxassetid://75930996983661",
 		NotiTitleColor = Color3.fromRGB(255, 255, 255),
 		BackGroundTran = 0.05,
-		DestroyGFrame = Color3.fromRGB(255, 255, 255),
-		DestroyGFrameTransparency = 0.75,
+		DestroyGFrame = Color3.fromRGB(54, 54, 54),
+		DestroyGFrameTransparency = 0,
 		dbtntran = 0.85,
 		TabTransparancy = 0.95,
 		dbtncolor = Color3.fromRGB(255, 255, 255),
@@ -4653,6 +4669,7 @@ local Themes = {
 		TogleActivColor = Color3.fromRGB(28, 96, 255),
 		ButtonIcon = "rbxassetid://99811735506603",
 		ArrowIcon = "rbxassetid://118262392757775",
+		DropDownArrowImg = Color3.fromRGB(255, 255, 255),
 		InputTextColor = Color3.fromRGB(175, 175, 175),
 		BackGroundElemTran = 0.85,
 		BackGroundElemCol = Color3.fromRGB(231, 231, 231),
@@ -4689,7 +4706,7 @@ local Themes = {
 		NotiTitleColor = Color3.fromRGB(255, 255, 255),
 		BackGroundTran = 0.05,
 		DestroyGFrame = Color3.fromRGB(170, 85, 0),
-		DestroyGFrameTransparency = 0.1,
+		DestroyGFrameTransparency = 0,
 		dbtntran = 0.65,
 		TabTransparancy = 0.65,
 		dbtncolor = Color3.fromRGB(150, 75, 0),
@@ -4703,6 +4720,7 @@ local Themes = {
 		TogleActivColor = Color3.fromRGB(255, 85, 0),
 		ButtonIcon = "rbxassetid://99811735506603",
 		ArrowIcon = "rbxassetid://118262392757775",
+		DropDownArrowImg = Color3.fromRGB(255, 255, 255),
 		InputTextColor = Color3.fromRGB(175, 175, 175),
 		BackGroundElemTran = 0.65,
 		BackGroundElemCol = Color3.fromRGB(170, 85, 0),
@@ -4739,7 +4757,7 @@ local Themes = {
 		NotiTitleColor = Color3.fromRGB(230, 245, 255),
 		BackGroundTran = 0.12,
 		DestroyGFrame = Color3.fromRGB(15, 30, 55),
-		DestroyGFrameTransparency = 0.05,
+		DestroyGFrameTransparency = 0,
 		dbtntran = 0.85,
 		TabTransparancy = 0.88,
 		dbtncolor = Color3.fromRGB(210, 235, 255),
@@ -4753,6 +4771,7 @@ local Themes = {
 		TogleActivColor = Color3.fromRGB(0, 120, 255),
 		ButtonIcon = "rbxassetid://99811735506603",
 		ArrowIcon = "rbxassetid://118262392757775",
+		DropDownArrowImg = Color3.fromRGB(255, 255, 255),
 		InputTextColor = Color3.fromRGB(170, 200, 235),
 		BackGroundElemTran = 0.88,
 		BackGroundElemCol = Color3.fromRGB(225, 245, 255),
@@ -4771,38 +4790,6 @@ local Themes = {
 		ListFrameColor = Color3.fromRGB(66, 66, 66)
 	}
 }
-
-local IconTransform = {
-	["rbxassetid://121074539743502"] = "rbxassetid://83178629970264",
-	["rbxassetid://92250291747112"] = "rbxassetid://106420206563880",
-	["rbxassetid://92793433656183"] = "rbxassetid://76805495284493",
-	["rbxassetid://73787033062338"] = "rbxassetid://92957552481335",
-	["rbxassetid://138832805084579"] = "rbxassetid://97094424684790",
-	["rbxassetid://78576858777870"] = "rbxassetid://135123515433262",
-	["rbxassetid://126672101469278"] = "rbxassetid://117695712051556",
-	["rbxassetid://100873317961037"] = "rbxassetid://118984143556599",
-	["rbxassetid://93236186125909"] = "rbxassetid://105298014030817",
-	["rbxassetid://80456866422285"] = "rbxassetid://85882665968234",
-	["rbxassetid://88588775334975"] = "rbxassetid://98686905743158",
-	["rbxassetid://103472623123751"] = "rbxassetid://110877031913316",
-	["rbxassetid://115053236948532"] = "rbxassetid://132755485467308",
-	["rbxassetid://137583062645541"] = "rbxassetid://115208477289134",
-	["rbxassetid://94027029642332"] = "rbxassetid://92591625948839",
-	["rbxassetid://130183131122604"] = "rbxassetid://77116349960473",
-	["rbxassetid://132194046801272"] = "rbxassetid://75123850997345",
-	["rbxassetid://105045060721724"] = "rbxassetid://136777975238488",
-	["rbxassetid://120375090333993"] = "rbxassetid://101550380724059",
-	["rbxassetid://111088001331743"] = "rbxassetid://74767466399430",
-	["rbxassetid://82363507426406"] = "rbxassetid://117872715517812",
-	["rbxassetid://103950075513303"] = "rbxassetid://77542310555675",
-	["rbxassetid://128997687956087"] = "rbxassetid://121993912986680",
-	["rbxassetid://140272486271785"] = "rbxassetid://96968379736880",
-}
-
-local IconReverse = {}
-for dark, light in pairs(IconTransform) do
-	IconReverse[light] = dark
-end
 
 function Library:SetTheme(themeName : string)
 
@@ -4858,8 +4845,8 @@ function Library:SetTheme(themeName : string)
 	self.dFrame_2.BackgroundColor3 = self.Theme.DestroyGFrame
 	self.dFrame_2.BackgroundTransparency = self.Theme.DestroyGFrameTransparency
 	self.dTextLabel.TextColor3 = self.Theme.TextColor
-	self.dTextButton.TextColor3 = self.Theme.TextColor
-	self.dTextButton.BackgroundColor3 = self.Theme.dbtncolor
+	--self.dTextButton.TextColor3 = self.Theme.TextColor
+	--self.dTextButton.BackgroundColor3 = self.Theme.dbtncolor
 	self.dTextButton_2.BackgroundColor3 = self.Theme.dbtncolor
 	self.dTextLabel_2.TextColor3 = self.Theme.SubTtitleTextColor
 	self.dTextButton_2.TextColor3 = self.Theme.TextColor
@@ -4871,12 +4858,8 @@ function Library:SetTheme(themeName : string)
 		v.Tab[2].TextColor3 = theme.TabTextColor
 
 		local iconObj = v.Tab[4]
-
-		if themeName == "White" then
-			iconObj.Image = IconTransform[iconObj.Image] or iconObj.Image
-		else
-			iconObj.Image = IconReverse[iconObj.Image] or iconObj.Image
-		end
+		
+		iconObj.ImageColor3 = theme.DropDownArrowImg
 
 		v.Tab[3].BackgroundColor3 = theme.TabTextColor
 		v.Tab[5].ScrollBarImageColor3 = theme.SectionsScrollingBarFrameColor
@@ -4890,6 +4873,7 @@ function Library:SetTheme(themeName : string)
 			{v.BtnImg, "Image", theme.ButtonIcon},
 			{v.ArrowImg, "Image", theme.ArrowIcon},
 			{v.DropImg, "BackgroundColor3", theme.DropDownColor},
+			{v.DropDownArrowImg, "ImageColor3", theme.DropDownArrowImg},
 			{v.DropImg, "BackgroundTransparency", theme.DropDownTransparency},
 			{v.DropDownFrameColor, "BackgroundColor3", theme.DropDownFrameColor},
 			{v.ActiveToggleColor, "BackgroundColor3", theme.TogleActivColor},
