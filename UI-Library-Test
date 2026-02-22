@@ -1455,8 +1455,6 @@ function Library:AddTab(name : string,icon : string)
 		name.TextXAlignment = Enum.TextXAlignment.Left
 		table.insert(tab.Texttitle, name)
 
-
-		ImageLabel.Parent = List
 		ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		ImageLabel.BackgroundTransparency = 1.000
 		ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1465,6 +1463,8 @@ function Library:AddTab(name : string,icon : string)
 		ImageLabel.Rotation = -90
 		ImageLabel.Size = UDim2.new(0, 24, 0, 24)
 		ImageLabel.Image = "rbxassetid://126982255108418"
+		ImageLabel.ImageColor3 = self.Library.Theme.DropDownArrowImg
+		ImageLabel.Parent = List
 		table.insert(tab.ArrowImg, ImageLabel)
 
 		Frame.Parent = List
@@ -1856,6 +1856,7 @@ function Library:AddTab(name : string,icon : string)
 		ImageLabel.Position = UDim2.new(0.841222107, 0, 0.244000241, 0)
 		ImageLabel.Size = UDim2.new(0, 25, 0, 23)
 		ImageLabel.Image = "rbxassetid://140083176080437"
+		ImageLabel.ImageColor3 = self.Library.Theme.DropDownArrowImg
 		table.insert(tab.BtnImg, ImageLabel)
 
 		table.insert(self.Elements, Button)
@@ -3049,7 +3050,6 @@ function Library:AddTab(name : string,icon : string)
 		TextLabel.TextSize = 14.000
 		TextLabel.TextXAlignment = Enum.TextXAlignment.Left
 
-		ImageLabel.Parent = Select
 		ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		ImageLabel.BackgroundTransparency = 1.000
 		ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -3057,10 +3057,11 @@ function Library:AddTab(name : string,icon : string)
 		ImageLabel.Position = UDim2.new(0.816335738, 0, 0.166666672, 0)
 		ImageLabel.Size = UDim2.new(0, 20, 0, 20)
 		ImageLabel.Image = "rbxassetid://126982255108418"
+		ImageLabel.ImageColor3 = self.Library.Theme.DropDownArrowImg
+		ImageLabel.Parent = Select
 		
 		table.insert(tab.DropDownArrowImg, ImageLabel)
 		
-	
 		ImageLabel_2.Parent = self.Container.Parent.Parent
 		ImageLabel_2.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
 		ImageLabel_2.BackgroundTransparency = 1
