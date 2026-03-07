@@ -2785,7 +2785,6 @@ function Library:Minimaze()
 				self.Header.BackgroundTransparency = self.Theme.BackGroundTran
 				self.Tabs.Visible = false
 				self.Sections.Visible = false
-				self.IOSdragline.Visible = false
 				if self.Sections.Size == UDim2.new(0, 375,0, 370) then
 					self:Tween(self.ImageLabel,{Size = UDim2.new(0, 395,0, 40)},1)
 					self:Tween(self.Header,{Size = UDim2.new(0, 380,0, 40)},0)
@@ -2820,8 +2819,6 @@ function Library:Minimaze()
 				self.close.Visible = false
 				self.ImageButton.Visible = false
 				self.ImageButton_2.Visible = false
-
-				self.IOSdragline.Visible = false
 
 				if self.Sections.Size == UDim2.new(0, 375,0, 370) then
 					self:Tween(self.ImageLabel,{Size = UDim2.new(0, 55,0, 40)},1)
@@ -2866,7 +2863,6 @@ function Library:Minimaze()
 				self.Tabs.Visible = true
 				self.Sections.Visible = true
 				self.Windowscd = false
-				self.IOSdragline.Visible = true
 			else
 				local IsVisibleSearch = false
 				self.ImageButton_2.Visible = false
@@ -2917,8 +2913,6 @@ function Library:Minimaze()
 				self.Tabs.Visible = true
 				self.Sections.Visible = true
 				self.Windowscd = false
-
-				self.IOSdragline.Visible = true
 			end
 		end
 	end
