@@ -1592,7 +1592,7 @@ function Library:AddTab(name : string,icon : string)
 	end
 
 	function tab:AddKeybind(config)
-		if UserInputService.TouchEnabled then --and not UserInputService.KeyboardEnabled
+		if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
 			return nil
 		end
 		local Keybind = {
