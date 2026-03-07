@@ -107,7 +107,6 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.UI.Parent = getTargetContainer()
 
 	self.ImageLabel = Instance.new("ImageLabel")
-	self.ImageLabel.Parent = self.UI
 	self.ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	self.ImageLabel.BackgroundTransparency = 1
 	self.ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -127,91 +126,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.ImageLabel.Selectable = true
 	self.ImageLabel.Draggable = true
 	self.ImageLabel.ImageTransparency = 0.05
-
-	self.IOSdragline = Instance.new("Frame")
-	self.IOSdragline.Parent = self.ImageLabel
-	self.IOSdragline.BackgroundColor3 = self.Theme.IOSdraglineColor
-	self.IOSdragline.BackgroundTransparency = 0.4
-	self.IOSdragline.BorderSizePixel = 0
-	self.IOSdragline.Position = UDim2.new(0.31, 0, 0.99, 0)
-	self.IOSdragline.Size = UDim2.new(0.4, 0, 0, 5)
-	self.IOSdragline.ZIndex = 2
-
-	local UIcorner = Instance.new("UICorner")
-	UIcorner.Parent = self.IOSdragline
-	UIcorner.CornerRadius = UDim.new(0, 12)
-
-	self.IOSdragHitbox = Instance.new("Frame")
-	self.IOSdragHitbox.Parent = self.ImageLabel
-	self.IOSdragHitbox.BackgroundTransparency = 1
-	self.IOSdragHitbox.BorderSizePixel = 0
-
-	self.IOSdragHitbox.Size = UDim2.new(0, 300, 0, 40)
-	self.IOSdragHitbox.Position = UDim2.new(0.3, -25, 0.95, 0)
-	self.IOSdragHitbox.ZIndex = 1
-
-	self.IOSdragHitbox.Active = true
-	self.IOSdragHitbox.Selectable = true
-
-	local dragging = false
-	local dragInput
-	local startInputPos
-	local startGuiPos
-	local moveConnection
-
-	self.IOSdragHitbox.InputBegan:Connect(function(input)
-		if input.UserInputType ~= Enum.UserInputType.MouseButton1
-			and input.UserInputType ~= Enum.UserInputType.Touch then
-			return
-		end
-
-		for _, v in pairs(self.Frame_7:GetChildren()) do
-			if v:IsA("GuiObject") then
-				v.Interactable = false
-			end
-		end
-
-		dragging = true
-		dragInput = input
-		startInputPos = input.Position
-		startGuiPos = self.ImageLabel.Position
-
-		self:Tween(self.IOSdragline, { BackgroundTransparency = 0 }, 0.2)
-
-		moveConnection = input.Changed:Connect(function()
-			if not dragging then return end
-			if input.UserInputState ~= Enum.UserInputState.Change then return end
-
-			local delta = input.Position - startInputPos
-
-			self.ImageLabel.Position = UDim2.new(
-				startGuiPos.X.Scale,
-				startGuiPos.X.Offset + delta.X,
-				startGuiPos.Y.Scale,
-				startGuiPos.Y.Offset + delta.Y
-			)
-		end)
-	end)
-
-	self.IOSdragHitbox.InputEnded:Connect(function(input)
-		if input ~= dragInput then return end
-
-		for _, v in pairs(self.Frame_7:GetChildren()) do
-			if v:IsA("GuiObject") then
-				v.Interactable = true
-			end
-		end
-
-		dragging = false
-		dragInput = nil
-
-		if moveConnection then
-			moveConnection:Disconnect()
-			moveConnection = nil
-		end
-
-		self:Tween(self.IOSdragline, { BackgroundTransparency = 0.4 }, 0.2)
-	end)
+	self.ImageLabel.Parent = self.UI
 
 	self.Destroy_gui = Instance.new("Frame")
 	self.dFrame_2 = Instance.new("Frame")
@@ -224,30 +139,29 @@ function Library.CreateWindow(title,subtitle,size,version)
 	local dUICorner_3 = Instance.new("UICorner")
 	local dUICorner_4 = Instance.new("UICorner")
 
-	self.Destroy_gui.Parent = self.ImageLabel
 	self.Destroy_gui.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 	self.Destroy_gui.BackgroundTransparency = 0.4
 	self.Destroy_gui.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.Destroy_gui.BorderSizePixel = 0
-	self.Destroy_gui.Position = UDim2.new(0.017231673, 0, 0.0208332706, 0)
+	self.Destroy_gui.Position = UDim2.new(0.017, 0, 0.02, 0)
 	self.Destroy_gui.Size = UDim2.new(0, 560, 0, 460)
 	self.Destroy_gui.Visible = false
 	self.Destroy_gui.ZIndex = 10
+	self.Destroy_gui.Parent = self.ImageLabel
 
 	dUICorner_4.CornerRadius = UDim.new(0, 24)
 	dUICorner_4.Parent = self.Destroy_gui
 
-	self.dFrame_2.Parent = self.Destroy_gui
 	self.dFrame_2.BackgroundColor3 = self.Theme.DestroyGFrame
 	self.dFrame_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.dFrame_2.BorderSizePixel = 0
-	self.dFrame_2.Position = UDim2.new(0.306779772, 0, 0.328608334, 0)
+	self.dFrame_2.Position = UDim2.new(0.306, 0, 0.328, 0)
 	self.dFrame_2.Size = UDim2.new(0, 240, 0, 140)
 	self.dFrame_2.Transparency = 1
 	self.dFrame_2.BackgroundTransparency = self.Theme.DestroyGFrameTransparency
 	self.dFrame_2.ZIndex = 10
+	self.dFrame_2.Parent = self.Destroy_gui
 
-	self.dTextLabel.Parent = self.dFrame_2
 	self.dTextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	self.dTextLabel.BackgroundTransparency = 1.000
 	self.dTextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -261,11 +175,11 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.dTextLabel.TextWrapped = true
 	self.dTextLabel.Visible = false
 	self.dTextLabel.TextXAlignment = Enum.TextXAlignment.Left
+	self.dTextLabel.Parent = self.dFrame_2
 
 	dUICorner.CornerRadius = UDim.new(0, 12)
 	dUICorner.Parent = self.dFrame_2
 
-	self.dTextLabel_2.Parent = self.dFrame_2
 	self.dTextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	self.dTextLabel_2.BackgroundTransparency = 1.000
 	self.dTextLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -279,13 +193,13 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.dTextLabel_2.TextSize = 15
 	self.dTextLabel_2.Visible = false
 	self.dTextLabel_2.TextXAlignment = Enum.TextXAlignment.Left
+	self.dTextLabel_2.Parent = self.dFrame_2
 
-	self.dTextButton.Parent = self.dFrame_2
 	self.dTextButton.BackgroundColor3 = Color3.fromRGB(207, 0, 0)
 	self.dTextButton.BackgroundTransparency = 0.4
 	self.dTextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.dTextButton.BorderSizePixel = 0
-	self.dTextButton.Position = UDim2.new(0.0170000009, 0, 0.721000016, 0)
+	self.dTextButton.Position = UDim2.new(0.017, 0, 0.721, 0)
 	self.dTextButton.Size = UDim2.new(0, 112, 0, 36)
 	self.dTextButton.ZIndex = 10
 	self.dTextButton.Font = Enum.Font.FredokaOne
@@ -293,6 +207,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.dTextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 	self.dTextButton.Visible = false
 	self.dTextButton.TextSize = 14.000
+	self.dTextButton.Parent = self.dFrame_2
 
 	self.dTextButton.MouseButton1Click:Connect(function()
 		self:Destroy()
@@ -301,12 +216,11 @@ function Library.CreateWindow(title,subtitle,size,version)
 	dUICorner_2.CornerRadius = UDim.new(0, 5)
 	dUICorner_2.Parent = self.dTextButton
 
-	self.dTextButton_2.Parent = self.dFrame_2
 	self.dTextButton_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	self.dTextButton_2.BackgroundTransparency = 0.950
 	self.dTextButton_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.dTextButton_2.BorderSizePixel = 0
-	self.dTextButton_2.Position = UDim2.new(0.51700002, 0, 0.721000016, 0)
+	self.dTextButton_2.Position = UDim2.new(0.517, 0, 0.721, 0)
 	self.dTextButton_2.Size = UDim2.new(0, 112, 0, 36)
 	self.dTextButton_2.ZIndex = 10
 	self.dTextButton_2.Font = Enum.Font.FredokaOne
@@ -314,6 +228,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.dTextButton_2.TextColor3 = Color3.fromRGB(255, 255, 255)
 	self.dTextButton_2.Visible = false
 	self.dTextButton_2.TextSize = 14.000
+	self.dTextButton_2.Parent = self.dFrame_2
 
 	self.dTextButton_2.MouseButton1Click:Connect(function()
 		self:ShowDestroyQ()
@@ -323,20 +238,21 @@ function Library.CreateWindow(title,subtitle,size,version)
 	dUICorner_3.Parent = self.dTextButton_2
 
 	function self:Blur()
-		
+
 	end
 	function self:BlurOff()
 
 	end
+	
 	self.Header = Instance.new("Frame")
-	self.Header.Name = "Header"
-	self.Header.Parent = self.ImageLabel
 	self.Header.BackgroundColor3 = self.Theme.HeaderColor
 	self.Header.BackgroundTransparency = 1
 	self.Header.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.Header.BorderSizePixel = 0
-	self.Header.Position = UDim2.new(0.0203390867, 0, 0.0250000004, 0)
+	self.Header.Position = UDim2.new(0.02, 0, 0.025, 0)
 	self.Header.Size = UDim2.new(0, size - 24, 0, 40)
+	self.Header.Parent = self.ImageLabel
+	
 	local HeaderUICorner = Instance.new("UICorner")
 	HeaderUICorner.CornerRadius = UDim.new(0, 12)
 	HeaderUICorner.Parent = self.Header
@@ -389,18 +305,17 @@ function Library.CreateWindow(title,subtitle,size,version)
 		self:SearchAllTabs()
 	end)
 
-	self.Search.Parent = self.Header
 	self.Search.BackgroundColor3 =  self.Theme.dbtncolor
 	self.Search.BackgroundTransparency =  self.Theme.dbtntran
 	self.Search.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.Search.BorderSizePixel = 0
 	self.Search.Position = UDim2.new(0.570, 0, 0.19, 0)
 	self.Search.Size = UDim2.new(0, 140, 0, 26)
+	self.Search.Parent = self.Header
 
-	SearchUICorner.Parent = self.Search
 	SearchUICorner.CornerRadius = UDim.new(0.22, 0)
+	SearchUICorner.Parent = self.Search
 
-	self.SearchImageLabel.Parent = self.Search
 	self.SearchImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	self.SearchImageLabel.BackgroundTransparency = 1.000
 	self.SearchImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -408,8 +323,8 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.SearchImageLabel.Position = UDim2.new(0.81, 0, 0.1, 0)
 	self.SearchImageLabel.Size = UDim2.new(0, 20, 0, 20)
 	self.SearchImageLabel.Image = "rbxassetid://136089190882362"
+	self.SearchImageLabel.Parent = self.Search
 
-	self.SearchTextBox2.Parent = self.Search
 	self.SearchTextBox2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	self.SearchTextBox2.BackgroundTransparency = 1.000
 	self.SearchTextBox2.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -422,6 +337,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.SearchTextBox2.TextColor3 = self.Theme.TextColor
 	self.SearchTextBox2.TextSize = 14.000
 	self.SearchTextBox2.TextXAlignment = Enum.TextXAlignment.Left
+	self.SearchTextBox2.Parent = self.Search
 
 	local function substr(str)
 		local strlen = string.len(str)
@@ -443,7 +359,6 @@ function Library.CreateWindow(title,subtitle,size,version)
 	local subtitlesize = labelsize(subtitle)
 
 	self.TextLabel = Instance.new("TextLabel")
-	self.TextLabel.Parent = self.Header
 	self.TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	self.TextLabel.BackgroundTransparency = 1.000
 	self.TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -456,6 +371,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.TextLabel.TextSize = 16.000
 	self.TextLabel.TextWrapped = true
 	self.TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+	self.TextLabel.Parent = self.Header
 
 	local positionsubt = self.TextLabel.Position.X.Scale
 	local sizetitle = self.TextLabel.Size.X.Offset
@@ -463,7 +379,6 @@ function Library.CreateWindow(title,subtitle,size,version)
 	local trueposition = sizetitle + 10 + 5
 
 	self.TextLabel_2 = Instance.new("TextLabel")
-	self.TextLabel_2.Parent = self.Header
 	self.TextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	self.TextLabel_2.BackgroundTransparency = 1.000
 	self.TextLabel_2.BorderColor3 = Color3.fromRGB(59, 59, 59)
@@ -475,25 +390,24 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.TextLabel_2.TextColor3 = self.Theme.SubTtitleTextColor
 	self.TextLabel_2.TextSize = 12.000
 	self.TextLabel_2.TextXAlignment = Enum.TextXAlignment.Left
+	self.TextLabel_2.Parent = self.Header
 
 	if version then
 		self.version = Instance.new("Frame")
 		self.versionUICorner = Instance.new("UICorner")
 		self.versionTextLabel = Instance.new("TextLabel")
 
-		self.version.Parent = self.Header
 		self.version.BackgroundColor3 = self.Theme.versionBackgroundColor3
 		self.version.BackgroundTransparency = self.Theme.versionBackgroundTransparency
 		self.version.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		self.version.BorderSizePixel = 0
 		self.version.Position = UDim2.new(0, trueposition + subtitlesize - 2, 0.20, 0)
 		self.version.Size = UDim2.new(0, 55, 0, 24)
+		self.version.Parent = self.Header
 
-		self.versionUICorner.Parent = self.version
 		self.versionUICorner.CornerRadius = UDim.new(0, 11)
+		self.versionUICorner.Parent = self.version
 
-
-		self.versionTextLabel.Parent = self.version
 		self.versionTextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		self.versionTextLabel.BackgroundTransparency = 1.000
 		self.versionTextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -504,33 +418,34 @@ function Library.CreateWindow(title,subtitle,size,version)
 		self.versionTextLabel.Text = version
 		self.versionTextLabel.TextColor3 = self.Theme.versionTextColor
 		self.versionTextLabel.TextSize = 14.000
+		self.versionTextLabel.Parent = self.version
 	end
 
 	self.Frame = Instance.new("Frame")
-	self.Frame.Parent = self.Header
 	self.Frame.BackgroundColor3 = self.Theme.headerlinecolor
 	self.Frame.BackgroundTransparency = 0.95
 	self.Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.Frame.BorderSizePixel = 0
 	self.Frame.Position = UDim2.new(0, -1, 1, 0)
 	self.Frame.Size = UDim2.new(0, 197, 0, 2)
+	self.Frame.Parent = self.Header
 
 	self.close = Instance.new("ImageButton")
-	self.close.Parent = self.Header
 	self.close.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	self.close.BackgroundTransparency = 1.000
 	self.close.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.close.BorderSizePixel = 0
-	self.close.Position = UDim2.new(0.935, 0, 0.2, 0)
+	self.close.Position = UDim2.new(0.945, 0, 0.2, 0)
 	self.close.Size = UDim2.new(0, 24, 0, 24)
 	self.close.Image = "rbxassetid://115483385285173"
+	self.close.Parent = self.Header
 
 	local btnclose = Instance.new("TextButton")
-	btnclose.Parent = self.close
 	btnclose.Size = UDim2.new(0, 24, 0, 24)
 	btnclose.Text = ""
 	btnclose.Transparency = 1
 	btnclose.Position = UDim2.new(0, 0 , 0, 0)
+	btnclose.Parent = self.close
 
 	local btnclose3 = Instance.new("TextButton")
 
@@ -539,42 +454,42 @@ function Library.CreateWindow(title,subtitle,size,version)
 	end)
 
 	self.ImageButton = Instance.new("ImageButton")
-	self.ImageButton.Parent = self.Header
 	self.ImageButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	self.ImageButton.BackgroundTransparency = 1.000
 	self.ImageButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.ImageButton.BorderSizePixel = 0
-	self.ImageButton.Position = UDim2.new(0.887, 0, 0.35, 0)
+	self.ImageButton.Position = UDim2.new(0.897, 0, 0.35, 0)
 	self.ImageButton.Size = UDim2.new(0, 16, 0, 12)
 	self.ImageButton.Image = "rbxassetid://89738650787294"
+	self.ImageButton.Parent = self.Header
 
 	local btnclose2 = Instance.new("TextButton")
-	btnclose2.Parent = self.ImageButton
 	btnclose2.Size = UDim2.new(0, 20, 0, 20)
 	btnclose2.Text = ""
 	btnclose2.Transparency = 1
 	btnclose2.Position = UDim2.new(0, -2.9 , 0, -4)
+	btnclose2.Parent = self.ImageButton
 
 	btnclose2.MouseButton1Click:Connect(function()
 		self:ColumnWindow()
 	end)
 
 	self.ImageButton_2 = Instance.new("ImageButton")
-	self.ImageButton_2.Parent = self.Header
 	self.ImageButton_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	self.ImageButton_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.ImageButton_2.BorderSizePixel = 0
-	self.ImageButton_2.Position = UDim2.new(0.825, 0, 0.29, 0)
+	self.ImageButton_2.Position = UDim2.new(0.835, 0, 0.29, 0)
 	self.ImageButton_2.Size = UDim2.new(0, 18, 0, 18)
 	self.ImageButton_2.Image = "rbxassetid://122178947900744"
 	self.ImageButton_2.BackgroundTransparency = 1.000
+	self.ImageButton_2.Parent = self.Header
 
 	local btnclose3 = Instance.new("TextButton")
-	btnclose3.Parent = self.ImageButton_2
 	btnclose3.Size = UDim2.new(0, 22, 0, 20)
 	btnclose3.Text = ""
 	btnclose3.Transparency = 1
-	btnclose3.Position = UDim2.new(0, -2 , 0, -9)
+	btnclose3.Position = UDim2.new(0, -2 , 0, -2)
+	btnclose3.Parent = self.ImageButton_2
 
 	btnclose3.MouseButton1Click:Connect(function()
 		self:Minimaze()
@@ -586,14 +501,14 @@ function Library.CreateWindow(title,subtitle,size,version)
 	local ImageButton_4 = Instance.new("ImageButton")
 	local ImageButton_5 = Instance.new("ImageButton")
 	self.ScrollingFrame = Instance.new("ScrollingFrame")
-	self.Tabs.Name = "Tabs"
-	self.Tabs.Parent = self.ImageLabel
+	
 	self.Tabs.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	self.Tabs.BackgroundTransparency = 1
 	self.Tabs.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.Tabs.BorderSizePixel = 0
 	self.Tabs.Position = UDim2.new(0.035, 0, 0.116, 0)
 	self.Tabs.Size = UDim2.new(0, 185, 0, 372)
+	self.Tabs.Parent = self.ImageLabel
 
 	self.WindowUser = Instance.new("Frame")
 	local ImageLabel = Instance.new("ImageLabel")
@@ -602,24 +517,24 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.wTextLabel = Instance.new("TextLabel")
 	self.wTextLabel_2 = Instance.new("TextLabel")
 
-	self.WindowUser.Parent = self.Tabs
 	self.WindowUser.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	self.WindowUser.BackgroundTransparency = 0.95
 	self.WindowUser.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.WindowUser.BorderSizePixel = 0
 	self.WindowUser.Position = UDim2.new(0, 0, 0.97, 0)
 	self.WindowUser.Size = UDim2.new(0, 175, 0, 45)
+	self.WindowUser.Parent = self.Tabs
 
 	UICorner_User.CornerRadius = UDim.new(0.3, 0)
 	UICorner_User.Parent = self.WindowUser
 
-	ImageLabel.Parent = self.WindowUser
 	ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	ImageLabel.BorderSizePixel = 0
-	ImageLabel.Position = UDim2.new(0.05, 0, 0.15, 0)
+	ImageLabel.Position = UDim2.new(0.05, 0, 0, 8)
 	ImageLabel.Size = UDim2.new(0, 30, 0, 30)
 	ImageLabel.Image = "rbxasset://textures/ui/LuaChat/graphic/gr-profile-placeholder-70x70.png"
+	ImageLabel.Parent = self.WindowUser
 
 	local userimg = "rbxasset://textures/ui/LuaChat/graphic/gr-profile-placeholder-70x70.png"
 
@@ -692,7 +607,6 @@ function Library.CreateWindow(title,subtitle,size,version)
 		end
 	end)
 
-	self.wTextLabel.Parent = self.WindowUser
 	self.wTextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	self.wTextLabel.BackgroundTransparency = 1.000
 	self.wTextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -704,8 +618,8 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.wTextLabel.TextSize = 14.000
 	self.wTextLabel.Text = realDisplay
 	self.wTextLabel.TextXAlignment = Enum.TextXAlignment.Left
+	self.wTextLabel.Parent = self.WindowUser
 
-	self.wTextLabel_2.Parent = self.WindowUser
 	self.wTextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	self.wTextLabel_2.BackgroundTransparency = 1.000
 	self.wTextLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -717,16 +631,16 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.wTextLabel_2.TextSize = 14.000
 	self.wTextLabel_2.Text = "@" .. realName
 	self.wTextLabel_2.TextXAlignment = Enum.TextXAlignment.Left
+	self.wTextLabel_2.Parent = self.WindowUser
 
-	self.Frame_2.Parent = self.Tabs
 	self.Frame_2.BackgroundColor3 = Color3.fromRGB(165, 165, 165)
-	self.Frame_2.BackgroundTransparency = 0.95 --0.550
+	self.Frame_2.BackgroundTransparency = 0.95
 	self.Frame_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.Frame_2.BorderSizePixel = 0
 	self.Frame_2.Position = UDim2.new(1, 0, 0, 0)
 	self.Frame_2.Size = UDim2.new(0, 2, 0, 413)
+	self.Frame_2.Parent = self.Tabs
 
-	self.ScrollingFrame.Parent = self.Tabs
 	self.ScrollingFrame.Active = true
 	self.ScrollingFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	self.ScrollingFrame.BackgroundTransparency = 1.000
@@ -736,19 +650,19 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.ScrollingFrame.Size = UDim2.new(0, 187, 0, 358)
 	self.ScrollingFrame.ScrollBarThickness = 2
 	self.ScrollingFrame.ScrollBarImageColor3 = self.Theme.TabsScrollingBarFrameColor
+	self.ScrollingFrame.Parent = self.Tabs
 
 	self.Sections = Instance.new("Frame")
-	self.Sections.Name = "Sections"
-	self.Sections.Parent = self.ImageLabel
+	--self.Sections.Name = "Sections"
 	self.Sections.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	self.Sections.BackgroundTransparency = 1
 	self.Sections.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.Sections.BorderSizePixel = 0
 	self.Sections.Position = UDim2.new(0.35, 0, 0.11, 0)
 	self.Sections.Size = UDim2.new(0, 380, 0, 414)
+	self.Sections.Parent = self.ImageLabel
 
 	self.TextLabel_5 = Instance.new("TextLabel")
-	self.TextLabel_5.Parent = self.Sections
 	self.TextLabel_5.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	self.TextLabel_5.BackgroundTransparency = 1.000
 	self.TextLabel_5.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -761,15 +675,16 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.TextLabel_5.TextSize = 24.000
 	self.TextLabel_5.TextWrapped = true
 	self.TextLabel_5.TextXAlignment = Enum.TextXAlignment.Left
+	self.TextLabel_5.Parent = self.Sections
 
 	self.Frame_7 = Instance.new("Frame")
-	self.Frame_7.Parent = self.Sections
 	self.Frame_7.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	self.Frame_7.BackgroundTransparency = 1.000
 	self.Frame_7.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.Frame_7.BorderSizePixel = 0
-	self.Frame_7.Position = UDim2.new(0, 0, 0.08454106, 0)
+	self.Frame_7.Position = UDim2.new(0, 0, 0.084, 0)
 	self.Frame_7.Size = UDim2.new(0, 366, 0, 379)
+	self.Frame_7.Parent = self.Sections
 
 	local TypeIcons = {
 		Notification = "rbxassetid://75930996983661",
@@ -798,7 +713,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 		end
 
 		local Notification = self.NotificationTemplate:Clone()
-		
+
 		local img = TypeIcons[notiType]
 		if notiType == 'Notification' then
 			Notification.Icon.ImageColor3 = self.Theme.TabsIconColor
@@ -819,7 +734,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 		Notification.Title.TextColor3 = self.Theme.TextColor
 		Notification.Description.TextColor3 = self.Theme.Notisubtitlecolor
 		Notification.CloseButton.ImageColor3 = self.Theme.TabsIconColor
-		
+
 		Notification.CloseButton.MouseButton1Click:Connect(function()
 			self:CloseNotification(notificationId)
 		end)
@@ -862,15 +777,14 @@ function Library.CreateWindow(title,subtitle,size,version)
 
 		local Icon = Instance.new("ImageLabel")
 		Icon.Name = "Icon"
-		Icon.Parent = template
 		Icon.BackgroundTransparency = 1.000
 		Icon.Position = UDim2.new(0.04, 0, 0.24, 0)
 		Icon.Size = UDim2.new(0, 18, 0, 18)
 		Icon.ZIndex = 51
+		Icon.Parent = template
 
 		local Description = Instance.new("TextLabel")
 		Description.Name = "Description"
-		Description.Parent = template
 		Description.BackgroundTransparency = 1.000
 		Description.Position = UDim2.new(0.04, 0, 0.47, 0)
 		Description.Size = UDim2.new(0, 321, 0, 23)
@@ -878,10 +792,10 @@ function Library.CreateWindow(title,subtitle,size,version)
 		Description.TextSize = 14.000
 		Description.TextXAlignment = Enum.TextXAlignment.Left
 		Description.ZIndex = 51
+		Description.Parent = template
 
 		local Title = Instance.new("TextLabel")
 		Title.Name = "Title"
-		Title.Parent = template
 		Title.BackgroundTransparency = 1.000
 		Title.Position = UDim2.new(0.11, 0, 0.19, 0)
 		Title.Size = UDim2.new(0, 200, 0, 24)
@@ -889,15 +803,16 @@ function Library.CreateWindow(title,subtitle,size,version)
 		Title.TextSize = 18.000
 		Title.TextXAlignment = Enum.TextXAlignment.Left
 		Title.ZIndex = 51
+		Title.Parent = template
 
 		local CloseButton = Instance.new("ImageButton")
 		CloseButton.Name = "CloseButton"
-		CloseButton.Parent = template
 		CloseButton.BackgroundTransparency = 1.000
 		CloseButton.Position = UDim2.new(0.91, 0, 0.21, 0)
 		CloseButton.Size = UDim2.new(0, 14, 0, 14)
 		CloseButton.ZIndex = 51
 		CloseButton.Image = "rbxassetid://134899599114088"
+		CloseButton.Parent = template
 
 		self.NotificationTemplate = template
 	end
@@ -946,8 +861,6 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.close.Visible = false
 	self.ImageButton.Visible = false
 	self.ImageButton_2.Visible = false
-	self.IOSdragline.Visible = false
-	self.IOSdragHitbox.Visible = false
 	self.Frame.Visible = false
 
 	self:Tween(self.ImageLabel,{Size = UDim2.new(0,size,0,480)},0.9)
@@ -963,8 +876,6 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.close.Visible = true
 	self.ImageButton.Visible = true
 	self.ImageButton_2.Visible = true
-	self.IOSdragline.Visible = true
-	self.IOSdragHitbox.Visible = true
 
 	return self
 end
@@ -993,7 +904,7 @@ local TAB_ICONS = {
 	["Shop"]      = "rbxassetid://82363507426406",
 	["Boat"]      = "rbxassetid://103950075513303",
 	["Trade"]     = "rbxassetid://128997687956087",
-	["Text"]   = "rbxassetid://140272486271785", 
+	["Text"]      = "rbxassetid://140272486271785", 
 }
 
 function Library:AddTab(name : string,icon : string)
@@ -1016,7 +927,7 @@ function Library:AddTab(name : string,icon : string)
 		DropImg = {},
 		DropDownArrowImg = {},
 		DropDownFrameColor = {},
-		ActiveToggleColor = {},
+		--ActiveToggleColor = {},
 		InputTextColor = {},
 		SliderUnderLineColor = {},
 		Togglebtn = {},
@@ -1034,7 +945,6 @@ function Library:AddTab(name : string,icon : string)
 	local TextLabel_3 = Instance.new("TextLabel")
 	local Frame_4 = Instance.new("Frame")
 
-	Frame_3.Parent = self.ScrollingFrame
 	Frame_3.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	Frame_3.BackgroundTransparency = 1.000
 	Frame_3.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1042,6 +952,7 @@ function Library:AddTab(name : string,icon : string)
 	Frame_3.Position = UDim2.new(0, 0, 0, 8 + self.tabpos) --5
 	Frame_3.Size = UDim2.new(0, 173, 0, 35)
 	Frame_3.Text = ''
+	
 	table.insert(tab.Tab, Frame_3)
 
 	self.tabpos += 40
@@ -1063,6 +974,8 @@ function Library:AddTab(name : string,icon : string)
 	Frame_3.MouseButton1Click:Connect(function()
 		self:SelectTab(tab,Frame_3)
 	end)
+	
+	Frame_3.Parent = self.ScrollingFrame
 
 	UICorner.CornerRadius = UDim.new(0, 12)
 	UICorner.Parent = Frame_3
@@ -1078,7 +991,6 @@ function Library:AddTab(name : string,icon : string)
 
 	icon = TAB_ICONS[icon] or icon
 
-	TextLabel_3.Parent = Frame_3
 	TextLabel_3.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	TextLabel_3.BackgroundTransparency = 1.000
 	TextLabel_3.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1091,19 +1003,20 @@ function Library:AddTab(name : string,icon : string)
 	table.insert(tab.Tab, TextLabel_3)
 	TextLabel_3.TextSize = 14.000
 	TextLabel_3.TextXAlignment = Enum.TextXAlignment.Left
+	TextLabel_3.Parent = Frame_3
 
-	Frame_4.Parent = Frame_3
+	
 	Frame_4.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	Frame_4.BackgroundTransparency = 1.000
 	Frame_4.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Frame_4.BorderSizePixel = 0
 	Frame_4.Position = UDim2.new(0, 1, 0.171428576, 0)
 	Frame_4.Size = UDim2.new(0, 2, 0, 0)
+	Frame_4.Parent = Frame_3
 	table.insert(tab.Tab, 3,Frame_4)
 
 	local ScrollingFrame_2 = Instance.new("ScrollingFrame")
 	ScrollingFrame_2.Name = "ScrollingFrame"
-	ScrollingFrame_2.Parent = self.Frame_7
 	ScrollingFrame_2.Active = true
 	ScrollingFrame_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	ScrollingFrame_2.BackgroundTransparency = 1.000
@@ -1114,11 +1027,11 @@ function Library:AddTab(name : string,icon : string)
 	ScrollingFrame_2.CanvasSize = UDim2.new(0, 0, 0, 0)
 	ScrollingFrame_2.ScrollBarThickness = 2
 	ScrollingFrame_2.Visible = false
+	ScrollingFrame_2.Parent = self.Frame_7
 	table.insert(tab.Tab, 5,ScrollingFrame_2)
 
 	local ImageLabel = Instance.new("ImageLabel")
 
-	ImageLabel.Parent = Frame_3
 	ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	ImageLabel.BackgroundTransparency = 1.000
 	ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1126,8 +1039,9 @@ function Library:AddTab(name : string,icon : string)
 	ImageLabel.Position = UDim2.new(0, 8, 0, 6.5)
 	ImageLabel.Size = UDim2.new(0, 22, 0, 22)
 	ImageLabel.Image = icon
+	ImageLabel.Parent = Frame_3
 	table.insert(tab.Tab,4,ImageLabel)
-
+	
 	tab.Container = ScrollingFrame_2
 	tab.Button = Frame_3
 	tab.Frame = Frame_4
@@ -1183,7 +1097,6 @@ function Library:AddTab(name : string,icon : string)
 		local UICorner_2 = Instance.new("UICorner")
 
 		List.Name = "List"
-		List.Parent = self.Container
 		List.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
 		List.BackgroundTransparency = self.Theme.BackGroundElemTran
 		List.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1191,6 +1104,7 @@ function Library:AddTab(name : string,icon : string)
 		List.Position = UDim2.new(0, 7, 0, self.pos)
 		List.Size = UDim2.new(0, 360, 0, 30)
 		List.Text = ""
+		List.Parent = self.Container
 		table.insert(tab.ElemBtn, List)
 
 		UICorner.CornerRadius = UDim.new(0, 12)
@@ -1449,6 +1363,12 @@ function Library:AddTab(name : string,icon : string)
 		table.insert(self.Elements, TextLabel)
 		self.pos += 26
 		tab:CalcScroll()
+		
+		local Section = {
+			Elem = TextLabel
+		}
+		
+		return Section
 	end
 
 	function tab:AddButton(config)
@@ -1467,8 +1387,6 @@ function Library:AddTab(name : string,icon : string)
 		table.insert(tab.Textsubtitle, subtext)
 		local ImageLabel = Instance.new("ImageLabel")
 
-		Button.Name = "Button"
-		Button.Parent = self.Container
 		Button.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
 		Button.BackgroundTransparency = self.Theme.BackGroundElemTran
 		Button.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1476,6 +1394,7 @@ function Library:AddTab(name : string,icon : string)
 		Button.Position = UDim2.new(0, 7, 0, self.pos)
 		Button.Size = UDim2.new(0, 360, 0, 45)
 		Button.Text = ''
+		Button.Parent = self.Container
 
 		Button.MouseButton1Click:Connect(function()
 			if button.Callback then
@@ -1483,46 +1402,46 @@ function Library:AddTab(name : string,icon : string)
 			end
 		end)
 
-		UICorner.Parent = Button
 		UICorner.CornerRadius = UDim.new(0, 12)
+		UICorner.Parent = Button
 
 		local namepos = config.Description and config.Description ~= '' and 4 or 12.5
 
-		name.Parent = Button
 		name.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		name.BackgroundTransparency = 1.000
 		name.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		name.BorderSizePixel = 0
-		name.Position = UDim2.new(0.0290000141, 0, 0, namepos)
+		name.Position = UDim2.new(0.029, 0, 0, namepos)
 		name.Size = UDim2.new(0, 77, 0, 20)
 		name.Font = Enum.Font.FredokaOne
 		name.Text = button.Name
 		name.TextColor3 = self.Theme.TabTextColor
 		name.TextSize = 16.000
 		name.TextXAlignment = Enum.TextXAlignment.Left
+		name.Parent = Button
 
-		subtext.Parent = Button
 		subtext.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		subtext.BackgroundTransparency = 1.000
 		subtext.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		subtext.BorderSizePixel = 0
-		subtext.Position = UDim2.new(0.0289855078, 0, 0, 25)
+		subtext.Position = UDim2.new(0.029, 0, 0, 25)
 		subtext.Size = UDim2.new(0, 193, 0, 14)
 		subtext.Font = Enum.Font.FredokaOne
 		subtext.Text = button.Description
 		subtext.TextColor3 = self.Theme.TabSubTtitleTextColor
 		subtext.TextSize = 14.000
 		subtext.TextXAlignment = Enum.TextXAlignment.Left
+		subtext.Parent = Button
 
-		ImageLabel.Parent = Button
 		ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		ImageLabel.BackgroundTransparency = 1.000
 		ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		ImageLabel.BorderSizePixel = 0
-		ImageLabel.Position = UDim2.new(0.841222107, 0, 0.244000241, 0)
+		ImageLabel.Position = UDim2.new(0.841, 0, 0.244, 0)
 		ImageLabel.Size = UDim2.new(0, 25, 0, 23)
 		ImageLabel.Image = "rbxassetid://140083176080437"
 		ImageLabel.ImageColor3 = self.Theme.DropDownArrowImg
+		ImageLabel.Parent = Button
 		table.insert(tab.BtnImg, ImageLabel)
 
 		table.insert(self.Elements, Button)
@@ -1553,17 +1472,13 @@ function Library:AddTab(name : string,icon : string)
 		table.insert(tab.Texttitle, name)
 		local subtext = Instance.new("TextLabel")
 		table.insert(tab.Textsubtitle, subtext)
+
 		local sliderbutton = Instance.new("Frame")
-		table.insert(tab.actionBakcColor, sliderbutton)
 		local UICorner_2 = Instance.new("UICorner")
 		local Frame = Instance.new("Frame")
-		local UICorner_3 = Instance.new("UICorner")
-		local Frame2 = Instance.new("Frame")
 		table.insert(tab.Togglebtn, Frame)
-		local UICorner2 = Instance.new("UICorner")
+		local UICorner_3 = Instance.new("UICorner")
 
-		Toggle.Name = "Toggle"
-		Toggle.Parent = self.Container
 		Toggle.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
 		Toggle.BackgroundTransparency = self.Theme.BackGroundElemTran
 		Toggle.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1571,98 +1486,96 @@ function Library:AddTab(name : string,icon : string)
 		Toggle.Position = UDim2.new(0, 7, 0, self.pos)
 		Toggle.Size = UDim2.new(0, 360, 0, 45)
 		Toggle.Text = ''
+		Toggle.Parent = self.Container
 
-		UICorner.Parent = Toggle
 		UICorner.CornerRadius = UDim.new(0, 12)
+		UICorner.Parent = Toggle
 
 		local namepos = config.Description and config.Description ~= '' and 4 or 12.5
 
-		name.Parent = Toggle
 		name.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		name.BackgroundTransparency = 1.000
 		name.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		name.BorderSizePixel = 0
-		name.Position = UDim2.new(0.0290000141, 0, 0, namepos)
+		name.Position = UDim2.new(0.029, 0, 0, namepos)
 		name.Size = UDim2.new(0, 77, 0, 20)
 		name.Font = Enum.Font.FredokaOne
 		name.Text = toggle.Name
 		name.TextColor3 = self.Theme.TabTextColor
 		name.TextSize = 15.000
 		name.TextXAlignment = Enum.TextXAlignment.Left
+		name.Parent = Toggle
 
-		subtext.Parent = Toggle
 		subtext.BackgroundColor3 = Color3.fromRGB(199, 199, 199)
 		subtext.BackgroundTransparency = 1.000
 		subtext.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		subtext.BorderSizePixel = 0
-		subtext.Position = UDim2.new(0.0289855078, 0, 0, 25)
+		subtext.Position = UDim2.new(0.028, 0, 0, 25)
 		subtext.Size = UDim2.new(0, 193, 0, 14)
 		subtext.Font = Enum.Font.FredokaOne
 		subtext.Text = toggle.Description
 		subtext.TextColor3 = self.Theme.TabSubTtitleTextColor
 		subtext.TextSize = 14.000
 		subtext.TextXAlignment = Enum.TextXAlignment.Left
+		subtext.Parent = Toggle
 
-		sliderbutton.Parent = Toggle
 		sliderbutton.BackgroundColor3 = self.Theme.ToggleButton
 		sliderbutton.BackgroundTransparency = self.Theme.ToggleTran
 		sliderbutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		sliderbutton.BorderSizePixel = 0
-		sliderbutton.Position = UDim2.new(0.801999986, 0, 0.206, 0)
+		sliderbutton.Position = UDim2.new(0.8, 0, 0.206, 0)
 		sliderbutton.Size = UDim2.new(0, 54, 0, 25)
+		sliderbutton.Parent = Toggle
 
 		UICorner_2.Parent = sliderbutton
 
-		Frame.Parent = sliderbutton
 		Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Frame.BorderSizePixel = 0
-		Frame.Position = UDim2.new(0, 3, 0.119999997, 0)
+		Frame.Position = UDim2.new(0, 3, 0.12, 0)
 		Frame.Size = UDim2.new(0, 19, 0, 19)
+		Frame.Parent = sliderbutton
 
-		Frame2.Parent = sliderbutton
-		Frame2.BackgroundColor3 = self.Theme.TogleActivColor
-		table.insert(tab.ActiveToggleColor, Frame2)
-		Frame2.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Frame2.BorderSizePixel = 0
-		Frame2.Position = UDim2.new(0, 3, 0.119999997, 0)
-		Frame2.Size = UDim2.new(0, 0, 0, 19)
-		Frame2.ZIndex = -1
-
-		UICorner2.Parent = Frame2
 		UICorner_3.Parent = Frame
 
 		local toggleController = {
 			Elem = Toggle,
 			Value = toggle.Default,
-			UpdateVisuals = function(self, state)
-				if state then
-					Library:Tween(Frame, {Position = UDim2.new(0, 32, 0.12, 0)}, 0.2)
-					Library:Tween(Frame2, {Size = UDim2.new(0, 47, 0, 19), BackgroundTransparency = 0}, 0.2)
+			UpdateVisuals = function(ctrl, state, instant)
+				local currentTheme = Library.Theme or self.Theme
+
+				local targetPos = state and UDim2.new(0, 32, 0.12, 0) or UDim2.new(0, 3, 0.12, 0)
+				local targetColor = state and currentTheme.TogleActivColor or currentTheme.ToggleButton
+				local targetTran = state and 0 or currentTheme.ToggleTran
+
+				if instant then
+					Frame.Position = targetPos
+					sliderbutton.BackgroundColor3 = targetColor
+					sliderbutton.BackgroundTransparency = targetTran
 				else
-					Library:Tween(Frame, {Position = UDim2.new(0, 3, 0.12, 0)}, 0.2)
-					Library:Tween(Frame2, {Size = UDim2.new(0, 0, 0, 19), BackgroundTransparency = 1}, 0.2)
+					Library:Tween(Frame, {Position = targetPos}, 0.2)
+					Library:Tween(sliderbutton, {BackgroundColor3 = targetColor, BackgroundTransparency = targetTran}, 0.2)
 				end
 			end,
-			SetState = function(self, state)
-				if state == self.Value then return end
-				self.Value = state
-				self:UpdateVisuals(state)
+			SetState = function(ctrl, state)
+				if state == ctrl.Value then return end
+				ctrl.Value = state
+				ctrl:UpdateVisuals(state, false)
 				if toggle.Callback then
 					task.spawn(function()
 						toggle.Callback(state)
 					end)
 				end
 			end,
-			GetState = function(self)
-				return self.Value
+			GetState = function(ctrl)
+				return ctrl.Value
 			end,
-			Toggle = function(self)
-				self:SetState(not self.Value)
+			Toggle = function(ctrl)
+				ctrl:SetState(not ctrl.Value)
 			end
 		}
 
-		toggleController:UpdateVisuals(toggleController.Value)
+		--toggleController:UpdateVisuals(toggleController.Value, true)
 
 		Toggle.MouseButton1Click:Connect(function()
 			toggleController:Toggle()
@@ -1673,17 +1586,18 @@ function Library:AddTab(name : string,icon : string)
 		tab:CalcScroll()
 
 		self.AllElements.Toggles[config.Name] = toggleController
-
 		self.SearchData[Toggle] = config.Name .. " " .. (config.Description or "")
-
 
 		return toggleController
 	end
 
 	function tab:AddKeybind(config)
+		if UserInputService.TouchEnabled then --and not UserInputService.KeyboardEnabled
+			return nil
+		end
 		local Keybind = {
 			Name = config.Name,
-			Description = config.Description,
+			Description = config.Description or '',
 			key = config.Default,
 			Callback = config.Callback
 		}
@@ -1701,8 +1615,6 @@ function Library:AddTab(name : string,icon : string)
 		tab.Textsubtitle[#tab.Textsubtitle + 1] = subtext
 		tab.actionBakcColor[#tab.actionBakcColor + 1] = bindButton
 
-		container.Name = "keybind"
-		container.Parent = self.Container
 		container.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
 		container.BackgroundTransparency = self.Theme.BackGroundElemTran
 		container.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1710,13 +1622,13 @@ function Library:AddTab(name : string,icon : string)
 		container.Position = UDim2.new(0, 7, 0, self.pos)
 		container.Size = UDim2.new(0, 360, 0, 45)
 		container.Text = ''
+		container.Parent = self.Container
 
 		UICorner.CornerRadius = UDim.new(0, 12)
 		UICorner.Parent = container
 
 		local namepos = (config.Description and config.Description ~= '') and 4 or 12.5
 
-		name.Parent = container
 		name.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		name.BackgroundTransparency = 1.000
 		name.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1728,8 +1640,8 @@ function Library:AddTab(name : string,icon : string)
 		name.TextColor3 = self.Theme.TabTextColor
 		name.TextSize = 16.000
 		name.TextXAlignment = Enum.TextXAlignment.Left
+		name.Parent = container
 
-		subtext.Parent = container
 		subtext.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		subtext.BackgroundTransparency = 1.000
 		subtext.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1741,8 +1653,8 @@ function Library:AddTab(name : string,icon : string)
 		subtext.TextColor3 = self.Theme.TabSubTtitleTextColor
 		subtext.TextSize = 14.000
 		subtext.TextXAlignment = Enum.TextXAlignment.Left
+		subtext.Parent = container
 
-		bindButton.Parent = container
 		bindButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		bindButton.BackgroundTransparency = self.Theme.BackGroundButtonTran
 		bindButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1752,6 +1664,7 @@ function Library:AddTab(name : string,icon : string)
 		bindButton.Font = Enum.Font.FredokaOne
 		bindButton.TextColor3 = self.Theme.TabTextColor
 		bindButton.TextSize = 14.000
+		bindButton.Parent = container
 
 		UICorner_2.CornerRadius = UDim.new(0, 5)
 		UICorner_2.Parent = bindButton
@@ -1819,7 +1732,7 @@ function Library:AddTab(name : string,icon : string)
 	function tab:AddInput(config)
 		local Input = {
 			Name = config.Name,
-			Description = config.Description,
+			Description = config.Description or '',
 			SaveUserText = config.SaveUserText or false,
 			SaveConfig = config.SaveConfig or false,
 			Default = config.Default or "Default",
@@ -1837,8 +1750,6 @@ function Library:AddTab(name : string,icon : string)
 		table.insert(tab.actionBakcColor, TextBox)
 		local UICorner_2 = Instance.new("UICorner")
 
-		input.Name = "input"
-		input.Parent = self.Container
 		input.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
 		input.BackgroundTransparency = self.Theme.BackGroundElemTran
 		input.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1846,17 +1757,13 @@ function Library:AddTab(name : string,icon : string)
 		input.Position = UDim2.new(0, 7, 0, self.pos)
 		input.Size = UDim2.new(0, 360, 0, 45)
 		input.Text = ''
+		input.Parent = self.Container
 
-		UICorner.Parent = input
 		UICorner.CornerRadius = UDim.new(0, 12)
+		UICorner.Parent = input
 
-		local namepos = 4
+		local namepos = (config.Description and config.Description ~= '') and 4 or 12.5
 
-		if config.Description == '' then
-			namepos = 12.5
-		end
-
-		name.Parent = input
 		name.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		name.BackgroundTransparency = 1.000
 		name.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1868,8 +1775,8 @@ function Library:AddTab(name : string,icon : string)
 		name.TextColor3 = self.Theme.TabTextColor
 		name.TextSize = 16.000
 		name.TextXAlignment = Enum.TextXAlignment.Left
+		name.Parent = input
 
-		subtext.Parent = input
 		subtext.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		subtext.BackgroundTransparency = 1.000
 		subtext.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1881,8 +1788,8 @@ function Library:AddTab(name : string,icon : string)
 		subtext.TextColor3 = self.Theme.TabSubTtitleTextColor
 		subtext.TextSize = 14.000
 		subtext.TextXAlignment = Enum.TextXAlignment.Left
+		subtext.Parent = input
 
-		TextBox.Parent = input
 		TextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		TextBox.BackgroundTransparency = self.Theme.BackGroundButtonTran
 		TextBox.BorderColor3 = Color3.fromRGB(255, 255, 255)
@@ -1893,6 +1800,7 @@ function Library:AddTab(name : string,icon : string)
 		TextBox.Text = Input.Default
 		TextBox.TextColor3 = self.Theme.InputTextColor
 		TextBox.TextSize = 14.000
+		TextBox.Parent = input
 		table.insert(tab.InputTextColor, TextBox)
 
 		UICorner_2.CornerRadius = UDim.new(0, 5)
@@ -1936,8 +1844,6 @@ function Library:AddTab(name : string,icon : string)
 		return InputObj
 	end
 
-	local UserInputService = game:GetService("UserInputService")
-
 	function tab:AddSlider(config)
 		local Slider = {
 			Name = config.Name,
@@ -1968,21 +1874,19 @@ function Library:AddTab(name : string,icon : string)
 		table.insert(tab.SliderUnderLineColor, underline)
 		table.insert(tab.Sliderball, sliderball)
 
-		slider.Name = "slider"
-		slider.Parent = self.Container
 		slider.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
 		slider.BackgroundTransparency = self.Theme.BackGroundElemTran
 		slider.BorderSizePixel = 0
 		slider.Position = UDim2.new(0, 7, 0, self.pos)
 		slider.Size = UDim2.new(0, 360, 0, 45)
 		slider.Text = ''
+		slider.Parent = self.Container
 
-		UICorner.Parent = slider
 		UICorner.CornerRadius = UDim.new(0, 12)
+		UICorner.Parent = slider
 
-		local namepos = (Slider.Description == '') and 12.5 or 4
+		local namepos = (config.Description and config.Description ~= '') and 4 or 12.5
 
-		name.Parent = slider
 		name.BackgroundTransparency = 1.000
 		name.Position = UDim2.new(0.029, 0, 0, namepos)
 		name.Size = UDim2.new(0, 77, 0, 20)
@@ -1991,8 +1895,8 @@ function Library:AddTab(name : string,icon : string)
 		name.TextColor3 = self.Theme.TabTextColor
 		name.TextSize = 16.000
 		name.TextXAlignment = Enum.TextXAlignment.Left
+		name.Parent = slider
 
-		subtext.Parent = slider
 		subtext.BackgroundTransparency = 1.000
 		subtext.Position = UDim2.new(0.029, 0, 0, 25)
 		subtext.Size = UDim2.new(0, 193, 0, 14)
@@ -2001,42 +1905,44 @@ function Library:AddTab(name : string,icon : string)
 		subtext.TextColor3 = self.Theme.TabSubTtitleTextColor
 		subtext.TextSize = 14.000
 		subtext.TextXAlignment = Enum.TextXAlignment.Left
+		subtext.Parent = slider
 
-		sliderbutton.Parent = slider
 		sliderbutton.BackgroundTransparency = 1.000
 		sliderbutton.Position = UDim2.new(0.671, 0, 0.244, 0)
 		sliderbutton.Size = UDim2.new(0, 100, 0, 22)
+		sliderbutton.Parent = slider
 
-		sliderline.Parent = sliderbutton
 		sliderline.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		sliderline.BorderSizePixel = 0
 		sliderline.Position = UDim2.new(0, 0, 0.455, 0)
 		sliderline.Size = UDim2.new(1, 0, 0, 2)
+		sliderline.Parent = sliderbutton
 
-		sliderball.Parent = sliderbutton
 		sliderball.BackgroundColor3 = self.Theme.Sliderball
 		sliderball.BorderSizePixel = 0
 		sliderball.AnchorPoint = Vector2.new(0.5, 0.5)
 		sliderball.Position = UDim2.new(0, 0, 0.5, 0)
 		sliderball.Size = UDim2.new(0, 15, 0, 15)
 		sliderball.ZIndex = 2
-		UICorner_2.Parent = sliderball
+		sliderball.Parent = sliderbutton
+		
 		UICorner_2.CornerRadius = UDim.new(1, 0)
+		UICorner_2.Parent = sliderball
 
-		slideramount.Parent = sliderbutton
 		slideramount.BackgroundTransparency = 1.000
 		slideramount.Position = UDim2.new(0, -35, 0.075, 0)
 		slideramount.Size = UDim2.new(0, 21, 0, 18)
 		slideramount.Font = Enum.Font.FredokaOne
 		slideramount.TextColor3 = self.Theme.TabTextColor
 		slideramount.TextSize = 14.000
+		slideramount.Parent = sliderbutton
 		table.insert(tab.Texttitle, slideramount)
 
-		underline.Parent = sliderbutton
 		underline.BackgroundColor3 = self.Theme.SliderUnderLineColor
 		underline.BorderSizePixel = 0
 		underline.Position = UDim2.new(0, 0, 0.455, 0)
 		underline.Size = UDim2.new(0, 0, 0, 2)
+		underline.Parent = sliderbutton
 
 		local dragging = false
 
@@ -2119,7 +2025,6 @@ function Library:AddTab(name : string,icon : string)
 		local namepos = config.Description and config.Description ~= '' and 4 or 12.5
 
 		local ColorPick = create("TextButton", {
-			Name = "ColorPick",
 			Parent = self.Container,
 			BackgroundColor3 = Color3.fromRGB(225, 225, 225),
 			BackgroundTransparency = self.Theme.BackGroundElemTran,
@@ -2154,55 +2059,45 @@ function Library:AddTab(name : string,icon : string)
 		create("UICorner", {CornerRadius = UDim.new(0, 5), Parent = colorButton})
 
 		local currentColor = colorPicker.Default
-		local colorPaletteFrame, modalBackground
 		local hue, saturation, value = currentColor:ToHSV()
 
-		local svGradient, hueSlider, svSelector, innerCircle, previewFrame, hexInput
-
-		local function updateVisuals()
-			if not colorPaletteFrame then return end
-			svGradient.BackgroundColor3 = Color3.fromHSV(hue, 1, 1)
-			hueSlider.Position = UDim2.new(0, 0, hue, -2)
-			svSelector.Position = UDim2.new(saturation, 0, 1 - value, 0)
-			innerCircle.BackgroundColor3 = currentColor
-			previewFrame.BackgroundColor3 = currentColor
-
-			local r, g, b = math.floor(currentColor.R * 255), math.floor(currentColor.G * 255), math.floor(currentColor.B * 255)
-			hexInput.Text = string.format("#%02X%02X%02X", r, g, b)
-		end
-
-		local function setColor(color)
+		-- Оптимизированный метод setColor: теперь принимает h, s, v во избежание потери Hue
+		local function setColor(color, newH, newS, newV)
 			if not color then return end
 			currentColor = color
 			colorButton.BackgroundColor3 = color
-			hue, saturation, value = color:ToHSV()
-			updateVisuals()
+
+			if newH and newS and newV then
+				hue, saturation, value = newH, newS, newV
+			else
+				local extH, extS, extV = color:ToHSV()
+				-- Защита от сброса Hue в 0 при клике на белые/чёрные зоны
+				hue = (extS == 0 or extV == 0) and hue or extH 
+				saturation = extS
+				value = extV
+			end
+
+			if self.ActiveColorPicker == ColorPick and self.UpdateSharedPaletteVisuals then
+				self.UpdateSharedPaletteVisuals(currentColor, hue, saturation, value)
+			end
+
 			if colorPicker.Callback then colorPicker.Callback(color) end
 		end
 
 		setColor(colorPicker.Default)
 
 		local function togglePalette()
-			if colorPaletteFrame and colorPaletteFrame.Visible then
-				local tween = TweenService:Create(colorPaletteFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-					Size = UDim2.new(0, 0, 0, 0)
-				})
-				tween:Play()
-				tween.Completed:Once(function()
-					colorPaletteFrame.Visible = false
-					modalBackground.Visible = false
-				end)
-				return
-			end
+			if not self.SharedPaletteUI then
+				self.SharedPaletteUI = {}
 
-			if not modalBackground then
-				modalBackground = create("Frame", {
+				local modalBackground = create("Frame", {
 					Name = "ModalBackground", Parent = self.ImageLabel, BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-					BackgroundTransparency = 0.5, Size = UDim2.new(0.966, 0, 0.96, 0), Position = UDim2.new(0, 10, 0, 10), ZIndex = 40
+					BackgroundTransparency = 0.5, Size = UDim2.new(0.966, 0, 0.96, 0), Position = UDim2.new(0, 10, 0, 10), ZIndex = 40, Visible = false
 				})
 				create("UICorner", {CornerRadius = UDim.new(0, 24), Parent = modalBackground})
+				self.SharedPaletteUI.Modal = modalBackground
 
-				colorPaletteFrame = create("Frame", {
+				local colorPaletteFrame = create("Frame", {
 					Name = "ColorPalette", Parent = self.ImageLabel, BackgroundColor3 = self.Theme.ColorPickerColoro,
 					BorderSizePixel = 0, ZIndex = 50, Visible = false, Size = UDim2.new(0, 0, 0, 0),
 					Position = UDim2.new(0.5, 0, 0.5, 0), AnchorPoint = Vector2.new(0.5, 0.5)
@@ -2210,24 +2105,35 @@ function Library:AddTab(name : string,icon : string)
 				table.insert(tab.ColorPickerColor, colorPaletteFrame)
 				create("UICorner", {CornerRadius = UDim.new(0, 12), Parent = colorPaletteFrame})
 				create("UIStroke", {Color = Color3.fromRGB(60, 60, 70), Thickness = 2, Parent = colorPaletteFrame})
+				self.SharedPaletteUI.Frame = colorPaletteFrame
 
 				local titleFrame = create("Frame", {Parent = colorPaletteFrame, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 40), ZIndex = 51})
 				local titleLabel = create("TextLabel", {
-					Parent = titleFrame, Text = "Сhoose a color", Font = Enum.Font.GothamSemibold, TextSize = 16,
+					Parent = titleFrame, Text = "Choose a color", Font = Enum.Font.GothamSemibold, TextSize = 16,
 					TextColor3 = self.Theme.TabTextColor, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 1, 0), ZIndex = 52
 				})
 				table.insert(tab.Texttitle, titleLabel)
 
-				svGradient = create("Frame", {Parent = colorPaletteFrame, Size = UDim2.new(0, 200, 0, 200), Position = UDim2.new(0.435, -100, 0, 50), ZIndex = 51})
+				-- ИСПРАВЛЕНИЕ: Разбиваем градиенты по дочерним фреймам
+				local svGradient = create("Frame", {Parent = colorPaletteFrame, Size = UDim2.new(0, 200, 0, 200), Position = UDim2.new(0.435, -100, 0, 50), ZIndex = 51})
 				create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = svGradient})
-				create("UIGradient", {Parent = svGradient, Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(1, 1)})})
-				create("UIGradient", {Parent = svGradient, Rotation = 90, Color = ColorSequence.new(Color3.new(0, 0, 0)), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(1, 0)})})
+				self.SharedPaletteUI.SVGradient = svGradient
 
-				svSelector = create("Frame", {Parent = svGradient, Size = UDim2.new(0, 14, 0, 14), AnchorPoint = Vector2.new(0.5, 0.5), BackgroundTransparency = 1, BorderSizePixel = 2, BorderColor3 = Color3.new(1, 1, 1), ZIndex = 52})
+				local whiteOverlay = create("Frame", {Parent = svGradient, Size = UDim2.new(1, 0, 1, 0), BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 51})
+				create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = whiteOverlay})
+				create("UIGradient", {Parent = whiteOverlay, Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(1, 1)})})
+
+				local blackOverlay = create("Frame", {Parent = svGradient, Size = UDim2.new(1, 0, 1, 0), BackgroundColor3 = Color3.new(0, 0, 0), ZIndex = 51})
+				create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = blackOverlay})
+				create("UIGradient", {Parent = blackOverlay, Rotation = 90, Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(1, 0)})})
+
+				local svSelector = create("Frame", {Parent = svGradient, Size = UDim2.new(0, 14, 0, 14), AnchorPoint = Vector2.new(0.5, 0.5), BackgroundTransparency = 1, BorderSizePixel = 2, BorderColor3 = Color3.new(1, 1, 1), ZIndex = 52})
 				create("UICorner", {CornerRadius = UDim.new(1, 0), Parent = svSelector})
+				self.SharedPaletteUI.SVSelector = svSelector
 
-				innerCircle = create("Frame", {Parent = svSelector, Size = UDim2.new(0, 6, 0, 6), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, 0.5, 0), ZIndex = 53})
+				local innerCircle = create("Frame", {Parent = svSelector, Size = UDim2.new(0, 6, 0, 6), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, 0.5, 0), ZIndex = 53})
 				create("UICorner", {CornerRadius = UDim.new(1, 0), Parent = innerCircle})
+				self.SharedPaletteUI.InnerCircle = innerCircle
 
 				local hueFrame = create("Frame", {Parent = colorPaletteFrame, Size = UDim2.new(0, 20, 0, 200), Position = UDim2.new(0.82, 0, 0, 50), BackgroundTransparency = 1, ZIndex = 51})
 				local hueGradientFrame = create("Frame", {Parent = hueFrame, Size = UDim2.new(1, 0, 1, 0), ZIndex = 51})
@@ -2237,12 +2143,13 @@ function Library:AddTab(name : string,icon : string)
 				for i = 0, 6 do table.insert(hueColors, ColorSequenceKeypoint.new(i/6, Color3.fromHSV(i/6, 1, 1))) end
 				create("UIGradient", {Parent = hueGradientFrame, Rotation = 90, Color = ColorSequence.new(hueColors)})
 
-				hueSlider = create("Frame", {Parent = hueFrame, Size = UDim2.new(1, 0, 0, 4), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 52})
+				local hueSlider = create("Frame", {Parent = hueFrame, Size = UDim2.new(1, 0, 0, 4), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 52})
 				create("UICorner", {CornerRadius = UDim.new(0, 2), Parent = hueSlider})
+				self.SharedPaletteUI.HueSlider = hueSlider
 
 				local inputFrame = create("Frame", {Parent = colorPaletteFrame, BackgroundTransparency = 1, Size = UDim2.new(1, -40, 0, 40), Position = UDim2.new(0, 30, 0, 260), ZIndex = 51})
 
-				hexInput = create("TextBox", {
+				local hexInput = create("TextBox", {
 					Parent = inputFrame, Size = UDim2.new(0.7, 0, 1, 0), BackgroundColor3 = Color3.fromRGB(40, 40, 45),
 					BackgroundTransparency = 0.5, TextColor3 = self.Theme.TabTextColor, Font = Enum.Font.Gotham,
 					TextSize = 14, TextXAlignment = Enum.TextXAlignment.Center, ZIndex = 52
@@ -2250,35 +2157,40 @@ function Library:AddTab(name : string,icon : string)
 				table.insert(tab.Texttitle, hexInput)
 				create("UICorner", {CornerRadius = UDim.new(0, 6), Parent = hexInput})
 				create("UIStroke", {Color = Color3.fromRGB(60, 60, 70), Thickness = 1, Parent = hexInput})
+				self.SharedPaletteUI.HexInput = hexInput
 
-				previewFrame = create("Frame", {Parent = colorPaletteFrame, Size = UDim2.new(0, 40, 0, 40), Position = UDim2.new(0.76, 0, 0, 260), ZIndex = 51})
+				local previewFrame = create("Frame", {Parent = colorPaletteFrame, Size = UDim2.new(0, 40, 0, 40), Position = UDim2.new(0.76, 0, 0, 260), ZIndex = 51})
 				create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = previewFrame})
 				create("UIStroke", {Color = Color3.fromRGB(60, 60, 70), Thickness = 2, Parent = previewFrame})
+				self.SharedPaletteUI.PreviewFrame = previewFrame
 
 				local function processInput(input, frame, isHueMode)
+					if not self.ActiveColorPickerData then return end
+					local h, s, v = self.ActiveColorPickerData.GetHSV()
+
 					local y = math.clamp((input.Position.Y - frame.AbsolutePosition.Y) / frame.AbsoluteSize.Y, 0, 1)
 					if isHueMode then
-						hue = y
+						h = y
 					else
 						local x = math.clamp((input.Position.X - frame.AbsolutePosition.X) / frame.AbsoluteSize.X, 0, 1)
-						saturation, value = x, 1 - y
+						s, v = x, 1 - y
 					end
-					setColor(Color3.fromHSV(hue, saturation, value))
+
+					-- Передаем точные значения для предотвращения сброса Hue
+					self.ActiveColorPickerData.SetColor(Color3.fromHSV(h, s, v), h, s, v)
 				end
 
 				local draggingHue, draggingSV = false, false
 
 				hueFrame.InputBegan:Connect(function(input)
 					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-						draggingHue = true
-						processInput(input, hueFrame, true)
+						draggingHue = true; processInput(input, hueFrame, true)
 					end
 				end)
 
 				svGradient.InputBegan:Connect(function(input)
 					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-						draggingSV = true
-						processInput(input, svGradient, false)
+						draggingSV = true; processInput(input, svGradient, false)
 					end
 				end)
 
@@ -2296,33 +2208,77 @@ function Library:AddTab(name : string,icon : string)
 				end)
 
 				hexInput.FocusLost:Connect(function(enterPressed)
-					if enterPressed then
+					if enterPressed and self.ActiveColorPickerData then
 						local hex = hexInput.Text:gsub("#", "")
 						if #hex == 6 then
 							local r, g, b = tonumber(hex:sub(1, 2), 16), tonumber(hex:sub(3, 4), 16), tonumber(hex:sub(5, 6), 16)
-							if r and g and b then setColor(Color3.fromRGB(r / 255, g / 255, b / 255)) end
+							if r and g and b then 
+								-- ИСПРАВЛЕНИЕ: fromRGB не требует деления на 255
+								local c = Color3.fromRGB(r, g, b)
+								local h, s, v = c:ToHSV()
+								self.ActiveColorPickerData.SetColor(c, h, s, v) 
+							end
 						else
-							updateVisuals()
+							local d = self.ActiveColorPickerData
+							local h, s, v = d.GetHSV()
+							self.UpdateSharedPaletteVisuals(d.GetCurrentColor(), h, s, v)
 						end
 					end
 				end)
+
+				self.TogglePaletteOff = function()
+					if colorPaletteFrame.Visible then
+						local tween = TweenService:Create(colorPaletteFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+							Size = UDim2.new(0, 0, 0, 0)
+						})
+						tween:Play()
+						tween.Completed:Once(function()
+							colorPaletteFrame.Visible = false
+							modalBackground.Visible = false
+							self.ActiveColorPicker = nil
+							self.ActiveColorPickerData = nil
+						end)
+					end
+				end
 
 				modalBackground.InputBegan:Connect(function(input)
 					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 						local pos, absPos, absSize = input.Position, colorPaletteFrame.AbsolutePosition, colorPaletteFrame.AbsoluteSize
 						if pos.X < absPos.X or pos.X > absPos.X + absSize.X or pos.Y < absPos.Y or pos.Y > absPos.Y + absSize.Y then
-							togglePalette()
+							self.TogglePaletteOff()
 						end
 					end
 				end)
 
-				updateVisuals()
-			else
-				modalBackground.Visible = true
+				self.UpdateSharedPaletteVisuals = function(cColor, cHue, cSat, cVal)
+					self.SharedPaletteUI.SVGradient.BackgroundColor3 = Color3.fromHSV(cHue, 1, 1)
+					self.SharedPaletteUI.HueSlider.Position = UDim2.new(0, 0, cHue, -2)
+					self.SharedPaletteUI.SVSelector.Position = UDim2.new(cSat, 0, 1 - cVal, 0)
+					self.SharedPaletteUI.InnerCircle.BackgroundColor3 = cColor
+					self.SharedPaletteUI.PreviewFrame.BackgroundColor3 = cColor
+
+					local r, g, b = math.floor(cColor.R * 255), math.floor(cColor.G * 255), math.floor(cColor.B * 255)
+					self.SharedPaletteUI.HexInput.Text = string.format("#%02X%02X%02X", r, g, b)
+				end
 			end
 
-			colorPaletteFrame.Visible = true
-			TweenService:Create(colorPaletteFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+			if self.SharedPaletteUI.Frame.Visible and self.ActiveColorPicker == ColorPick then
+				self.TogglePaletteOff()
+				return
+			end
+
+			self.ActiveColorPicker = ColorPick
+			self.ActiveColorPickerData = {
+				GetHSV = function() return hue, saturation, value end,
+				GetCurrentColor = function() return currentColor end,
+				SetColor = setColor
+			}
+
+			self.UpdateSharedPaletteVisuals(currentColor, hue, saturation, value)
+
+			self.SharedPaletteUI.Modal.Visible = true
+			self.SharedPaletteUI.Frame.Visible = true
+			TweenService:Create(self.SharedPaletteUI.Frame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
 				Size = UDim2.new(0, 300, 0, 310)
 			}):Play()
 		end
@@ -2374,9 +2330,7 @@ function Library:AddTab(name : string,icon : string)
 		local Options = Instance.new("ScrollingFrame")
 		local UICorner_3 = Instance.new("UICorner")
 		local UIListLayout = Instance.new("UIListLayout")
-
-		Dropdown.Name = "Dropdown"
-		Dropdown.Parent = self.Container
+		
 		Dropdown.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
 		Dropdown.BackgroundTransparency = self.Theme.BackGroundElemTran
 		Dropdown.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -2384,13 +2338,14 @@ function Library:AddTab(name : string,icon : string)
 		Dropdown.Position = UDim2.new(0, 7, 0, pos)
 		Dropdown.Size = UDim2.new(0, 360, 0, 45)
 		Dropdown.Text = ''
+		Dropdown.Parent = self.Container
 
-		UICorner.Parent = Dropdown
 		UICorner.CornerRadius = UDim.new(0, 12)
+		UICorner.Parent = Dropdown
 
 		local namepos = config.Description and config.Description ~= '' and 4 or 12.5
 
-		name.Name = "name"
+		--name.Name = "name"
 		name.Parent = Dropdown
 		name.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		name.BackgroundTransparency = 1.000
@@ -2404,8 +2359,7 @@ function Library:AddTab(name : string,icon : string)
 		name.TextSize = 16.000
 		name.TextXAlignment = Enum.TextXAlignment.Left
 
-		subtext.Name = "subtext"
-		subtext.Parent = Dropdown
+		--subtext.Name = "subtext"
 		subtext.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		subtext.BackgroundTransparency = 1.000
 		subtext.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -2417,9 +2371,10 @@ function Library:AddTab(name : string,icon : string)
 		subtext.TextColor3 = self.Theme.TabSubTtitleTextColor
 		subtext.TextSize = 14.000
 		subtext.TextXAlignment = Enum.TextXAlignment.Left
+		subtext.Parent = Dropdown
 
-		Select.Name = "Select"
-		Select.Parent = Dropdown
+		--Select.Name = "Select"
+		
 		Select.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		Select.BackgroundTransparency = self.Theme.BackGroundButtonTran
 		Select.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -2427,11 +2382,11 @@ function Library:AddTab(name : string,icon : string)
 		Select.Position = UDim2.new(0.576207817, 0, 0.155555561, 0)
 		Select.Size = UDim2.new(0, 135, 0, 30)
 		Select.Text = ''
+		Select.Parent = Dropdown
 
 		UICorner_2.CornerRadius = UDim.new(0, 5)
 		UICorner_2.Parent = Select
 
-		TextLabel.Parent = Select
 		TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		TextLabel.BackgroundTransparency = 1.000
 		TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -2444,6 +2399,7 @@ function Library:AddTab(name : string,icon : string)
 		TextLabel.TextColor3 = self.Theme.TabTextColor
 		TextLabel.TextSize = 14.000
 		TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+		TextLabel.Parent = Select
 
 		ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		ImageLabel.BackgroundTransparency = 1.000
@@ -2457,7 +2413,7 @@ function Library:AddTab(name : string,icon : string)
 
 		table.insert(tab.DropDownArrowImg, ImageLabel)
 
-		ImageLabel_2.Parent = self.Container.Parent.Parent
+		
 		ImageLabel_2.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
 		ImageLabel_2.BackgroundTransparency = 1
 		ImageLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -2468,9 +2424,9 @@ function Library:AddTab(name : string,icon : string)
 		ImageLabel_2.Image = "ImageLabel_2"
 		ImageLabel_2.ImageTransparency = 0.9
 		ImageLabel_2.ClipsDescendants = true
+		ImageLabel_2.Parent = self.Container.Parent.Parent
 
-		Options.Name = "Options"
-		Options.Parent = ImageLabel_2
+		--Options.Name = "Options"
 		Options.Active = true
 		Options.BackgroundColor3 = self.Theme.DropDownColor
 		Options.BackgroundTransparency = self.Theme.DropDownTransparency
@@ -2482,13 +2438,14 @@ function Library:AddTab(name : string,icon : string)
 		Options.ScrollBarThickness = 2
 		Options.CanvasSize = UDim2.new(0, 0, 0, 0)
 		Options.ClipsDescendants = true
+		Options.Parent = ImageLabel_2
 		table.insert(tab.DropImg, Options)
 
 		UICorner_3.CornerRadius = UDim.new(0, 5)
 		UICorner_3.Parent = Options
 
-		UIListLayout.Parent = Options
 		UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+		UIListLayout.Parent = Options
 
 		local dropdownElements = {
 			Dropdown = Dropdown,
@@ -2589,16 +2546,13 @@ function Library:AddTab(name : string,icon : string)
 			local Option = Instance.new("TextButton")
 			local OptionTextLabel = Instance.new("TextLabel")
 			local Frame = Instance.new("Frame")
-			local UICornerBtn = Instance.new("UICorner")
-			local UICornerFrame = Instance.new("UICorner")
 
-			Option.Name = optionText
-			Option.Parent = Options
 			Option.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 			Option.BackgroundTransparency = 1
 			Option.Size = UDim2.new(0, 135, 0, 30)
 			Option.ZIndex = 21
 			Option.Text = ''
+			Option.Parent = Options
 
 			optionElements[optionText] = Frame
 
@@ -2618,7 +2572,6 @@ function Library:AddTab(name : string,icon : string)
 				end
 			end)
 
-			OptionTextLabel.Parent = Option
 			OptionTextLabel.BackgroundTransparency = 1
 			OptionTextLabel.Position = UDim2.new(0.047, 0, 0, 0)
 			OptionTextLabel.Size = UDim2.new(0, 124, 0, 30)
@@ -2628,21 +2581,17 @@ function Library:AddTab(name : string,icon : string)
 			OptionTextLabel.TextSize = 14
 			OptionTextLabel.TextXAlignment = Enum.TextXAlignment.Left
 			OptionTextLabel.ZIndex = 22
+			OptionTextLabel.Parent = Option
 			table.insert(tab.Texttitle, OptionTextLabel)
 
-			Frame.Parent = Option
 			Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 			Frame.BorderSizePixel = 0
 			Frame.Position = UDim2.new(0.01, 0, 0, 4)
 			Frame.Size = UDim2.new(0, 2, 0, 0)
 			Frame.ZIndex = 22
 			Frame.Transparency = 1
+			Frame.Parent = Option
 			table.insert(tab.DropDownFrameColor, Frame)
-
-			UICornerFrame.CornerRadius = UDim.new(0, 20)
-			UICornerFrame.Parent = Frame
-			UICornerBtn.CornerRadius = UDim.new(0, 5)
-			UICornerBtn.Parent = Option
 
 			Option.MouseButton1Click:Connect(function()
 				handleOptionClick(optionText)
@@ -3045,9 +2994,9 @@ function Library:ColumnWindow()
 			self:Tween(self.ImageLabel, {Size = UDim2.new(0, 620,0, 480)}, 1)
 			self:Tween(self.Frame, {Size = UDim2.new(0, 197,0, 1)}, 1)
 			self:Tween(self.Header, {Size = UDim2.new(0, 596,0, 40)}, 1)
-			self:Tween(self.close, {Position = UDim2.new(0.935, 0,0.2, 0)}, 1)
-			self:Tween(self.ImageButton, {Position = UDim2.new(0.887, 0,0.35, 0)}, 1)
-			self:Tween(self.ImageButton_2, {Position = UDim2.new(0.825, 0,0.29, 0)}, 1)
+			self:Tween(self.close, {Position = UDim2.new(0.945, 0,0.2, 0)}, 1)
+			self:Tween(self.ImageButton, {Position = UDim2.new(0.897, 0,0.35, 0)}, 1)
+			self:Tween(self.ImageButton_2, {Position = UDim2.new(0.835, 0,0.29, 0)}, 1)
 			self.Tabs.Visible = false
 			self.Sections.Visible = false
 			self.Frame_2.Visible = true
@@ -3140,14 +3089,17 @@ function Library:ShowDestroyQ()
 		wait(0.15)
 		self.Destroy_gui.Visible = false
 	else
-		local newX = UDim.new(0, self.ImageLabel.Size.X.Offset - 22)
-		local newY = UDim.new(0, self.ImageLabel.Size.Y.Offset - 20)
-		self.Destroy_gui.Size = UDim2.new(newX, newY)
+		local newX
+		local newY = UDim.new(0, self.ImageLabel.Size.Y.Offset - 18)
+		
 		if self.ImageLabel.Size ~= UDim2.new(0, 620, 0, 40) and self.ImageLabel.Size ~= UDim2.new(0, 620, 0, 480)  then
+			newX = UDim.new(0, self.ImageLabel.Size.X.Offset - 14)
 			self.dFrame_2.Position = UDim2.new(0.18, 0,0.329, 0)
 		else
+			newX = UDim.new(0, self.ImageLabel.Size.X.Offset - 20)
 			self.dFrame_2.Position = UDim2.new(0.307, 0,0.329, 0)
 		end
+		self.Destroy_gui.Size = UDim2.new(newX, newY)
 		self.Destroy_gui.Visible = true
 		self:Tween(self.ImageLabel,{Position = UDim2.new(0.5, 0, 0.5, 0)},0.25)
 		self:Tween(self.dFrame_2,{Transparency = self.Theme.DestroyGFrameTransparency},0.15)
@@ -3274,35 +3226,35 @@ function Library:SaveConfig(foldername,filename)
 end
 
 function Library:IsLoadConfig(filename)
-    if not isfile(filename) then 
-        return false 
-    end
+	if not isfile(filename) then 
+		return false 
+	end
 
-    local success, data = pcall(function()
-        return game:GetService("HttpService"):JSONDecode(readfile(filename))
-    end)
+	local success, data = pcall(function()
+		return game:GetService("HttpService"):JSONDecode(readfile(filename))
+	end)
 
-    if not success or not data or not data.Toggles then 
-        return false 
-    end
+	if not success or not data or not data.Toggles then 
+		return false 
+	end
 
-    local toggles = self.AllElements.Toggles
-    local savedToggles = data.Toggles
+	local toggles = self.AllElements.Toggles
+	local savedToggles = data.Toggles
 
-    -- Список имен тоглов для проверки
-    local configKeys = {"Load Config", "Auto Load Config"}
+	-- Список имен тоглов для проверки
+	local configKeys = {"Load Config", "Auto Load Config"}
 
-    for _, key in ipairs(configKeys) do
-        local toggleElement = toggles[key]
-        local savedState = savedToggles[key]
+	for _, key in ipairs(configKeys) do
+		local toggleElement = toggles[key]
+		local savedState = savedToggles[key]
 
-        if toggleElement and savedState == true then
-            toggleElement:SetState(true)
-            return true -- Возвращаем true, если нашли и активировали автозагрузку
-        end
-    end
+		if toggleElement and savedState == true then
+			toggleElement:SetState(true)
+			return true -- Возвращаем true, если нашли и активировали автозагрузку
+		end
+	end
 
-    return false
+	return false
 end
 
 function Library:LoadConfig(filename)
@@ -3580,13 +3532,15 @@ local Themes = {
 		TabTextColor = Color3.fromRGB(0, 0, 0),
 		TabColor = Color3.fromRGB(0, 0, 0),
 		TabSubTtitleTextColor = Color3.fromRGB(67, 67, 67),
-		TogleActivColor = Color3.fromRGB(84, 84, 84),
+		TogleActivColor = Color3.fromRGB(103, 103, 103),
 		DropDownArrowImg = Color3.fromRGB(0, 0, 0),
 		TabsIconColor = Color3.fromRGB(0, 0, 0),
 		InputTextColor = Color3.fromRGB(67, 67, 67),
 		BackGroundElemTran = 0.9,
 		BackGroundElemCol = Color3.fromRGB(0, 0, 0),
 		ActionBackColor = Color3.fromRGB(33, 33, 33),
+		ToggleButton = Color3.fromRGB(0, 0, 0),
+		ToggleTran = 0.9,
 		BackGroundButtonTran = 0.9,
 		SectionsScrollingBarFrameColor = Color3.fromRGB(0, 0, 0),
 		DropDownColor = Color3.fromRGB(202, 202, 202),
@@ -3673,6 +3627,8 @@ local Themes = {
 		BackGroundElemTran = 0.95,
 		BackGroundElemCol = Color3.fromRGB(255, 255, 255),
 		ActionBackColor = Color3.fromRGB(255, 255, 255),
+		ToggleButton = Color3.fromRGB(255, 255, 255),
+		ToggleTran = 0.9,
 		BackGroundButtonTran = 0.9,
 		SectionsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
 		DropDownColor = Color3.fromRGB(0, 0, 0),
@@ -3771,50 +3727,6 @@ local Themes = {
 		Sliderball = Color3.fromRGB(255, 255, 255),
 		ColorPickerColoro = Color3.fromRGB(16, 17, 31),
 		ListFrameColor = Color3.fromRGB(16, 17, 31)
-	},
-	["Ocean"] = {
-		BackGroundIcon = "rbxassetid://105905712253823",
-		TextColor = Color3.fromRGB(235, 245, 255),
-		SubTtitleTextColor = Color3.fromRGB(150, 190, 220),
-		Notisubtitlecolor = Color3.fromRGB(180, 210, 235),
-		HeaderColor = Color3.fromRGB(20, 40, 70),
-		headerlinecolor = Color3.fromRGB(120, 170, 220),
-		headerlinetrans = 0.3,
-		TabsScrollingBarFrameColor = Color3.fromRGB(200, 230, 255),
-		NotiImg = "rbxassetid://126290083909491",
-		NotiTitleColor = Color3.fromRGB(230, 245, 255),
-		BackGroundTran = 0.12,
-		DestroyGFrame = Color3.fromRGB(15, 30, 55),
-		DestroyGFrameTransparency = 0,
-		dbtntran = 0.85,
-		TabTransparancy = 0.88,
-		dbtncolor = Color3.fromRGB(210, 235, 255),
-		versionBackgroundColor3 = Color3.fromRGB(74, 98, 255),
-		versionBackgroundTransparency = 0,
-		versionTextColor = Color3.fromRGB(0, 0, 0),
-		IOSdraglineColor = Color3.fromRGB(255, 255, 255),
-		TabTextColor = Color3.fromRGB(235, 245, 255),
-		TabColor = Color3.fromRGB(190, 220, 255),
-		TabSubTtitleTextColor = Color3.fromRGB(160, 195, 230),
-		TogleActivColor = Color3.fromRGB(0, 120, 255),
-		DropDownArrowImg = Color3.fromRGB(255, 255, 255),
-		TabsIconColor = Color3.fromRGB(255, 255, 255),
-		InputTextColor = Color3.fromRGB(170, 200, 235),
-		BackGroundElemTran = 0.88,
-		BackGroundElemCol = Color3.fromRGB(225, 245, 255),
-		BackGroundButtonTran = 0.85,
-		ActionBackColor = Color3.fromRGB(230, 245, 255),
-		ToggleButton = Color3.fromRGB(200, 230, 255),
-		ToggleTran = 0.83,
-		SectionsScrollingBarFrameColor = Color3.fromRGB(200, 225, 255),
-		DropDownColor = Color3.fromRGB(25, 45, 75),
-		DropDownTransparency = 0.1,
-		DropDownFrameColor = Color3.fromRGB(220, 240, 255),
-		SliderUnderLineColor = Color3.fromRGB(25, 130, 255),
-		Togglebtn = Color3.fromRGB(235, 245, 255),
-		Sliderball = Color3.fromRGB(255, 255, 255),
-		ColorPickerColoro = Color3.fromRGB(30, 50, 80),
-		ListFrameColor = Color3.fromRGB(66, 66, 66)
 	}
 }
 
@@ -3843,7 +3755,6 @@ function Library:SetTheme(themeName : string)
 	self.Frame.BackgroundColor3 = theme.TextColor
 	self.WindowUser.BackgroundColor3 = theme.versionBackgroundColor3
 	self.version.BackgroundColor3 = theme.versionBackgroundColor3
-	self.IOSdragline.BackgroundColor3 = theme.IOSdraglineColor
 	self.version.BackgroundTransparency = theme.versionBackgroundTransparency
 	self.versionTextLabel.TextColor3 = theme.versionTextColor
 	self.Search.BackgroundColor3 =  theme.dbtncolor
@@ -3868,7 +3779,8 @@ function Library:SetTheme(themeName : string)
 	self.dTextButton_2.TextColor3 = theme.TextColor
 	self.wTextLabel.TextColor3 = theme.TextColor
 	self.wTextLabel_2.TextColor3 = theme.SubTtitleTextColor
-	self.CurrentTab ["Tab"][1].BackgroundTransparency = theme.TabTransparancy
+	self.CurrentTab["Tab"][1].BackgroundTransparency = theme.TabTransparancy
+
 	for i,v in pairs(self.mainTabs) do
 		v.Tab[1].BackgroundColor3 = theme.TabColor
 		v.Tab[2].TextColor3 = theme.TabTextColor
@@ -3888,7 +3800,6 @@ function Library:SetTheme(themeName : string)
 			{v.DropDownArrowImg, "ImageColor3", theme.DropDownArrowImg},
 			{v.DropImg, "BackgroundTransparency", theme.DropDownTransparency},
 			{v.DropDownFrameColor, "BackgroundColor3", theme.DropDownFrameColor},
-			{v.ActiveToggleColor, "BackgroundColor3", theme.TogleActivColor},
 			{v.InputTextColor, "TextColor3", theme.InputTextColor},
 			{v.SliderUnderLineColor, "BackgroundColor3", theme.SliderUnderLineColor},
 			{v.Togglebtn, "BackgroundColor3", theme.Togglebtn},
@@ -3912,6 +3823,12 @@ function Library:SetTheme(themeName : string)
 			end
 		end
 	end  
+
+	if self.AllElements and self.AllElements.Toggles then
+		for _, tgl in pairs(self.AllElements.Toggles) do
+			tgl:UpdateVisuals(tgl.Value, true)
+		end
+	end
 end
 
 return Library
