@@ -243,7 +243,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	function self:BlurOff()
 
 	end
-	
+
 	self.Header = Instance.new("Frame")
 	self.Header.BackgroundColor3 = self.Theme.HeaderColor
 	self.Header.BackgroundTransparency = 1
@@ -252,7 +252,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.Header.Position = UDim2.new(0.02, 0, 0.025, 0)
 	self.Header.Size = UDim2.new(0, size - 24, 0, 40)
 	self.Header.Parent = self.ImageLabel
-	
+
 	local HeaderUICorner = Instance.new("UICorner")
 	HeaderUICorner.CornerRadius = UDim.new(0, 12)
 	HeaderUICorner.Parent = self.Header
@@ -501,7 +501,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	local ImageButton_4 = Instance.new("ImageButton")
 	local ImageButton_5 = Instance.new("ImageButton")
 	self.ScrollingFrame = Instance.new("ScrollingFrame")
-	
+
 	self.Tabs.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	self.Tabs.BackgroundTransparency = 1
 	self.Tabs.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -952,7 +952,7 @@ function Library:AddTab(name : string,icon : string)
 	Frame_3.Position = UDim2.new(0, 0, 0, 8 + self.tabpos) --5
 	Frame_3.Size = UDim2.new(0, 173, 0, 35)
 	Frame_3.Text = ''
-	
+
 	table.insert(tab.Tab, Frame_3)
 
 	self.tabpos += 40
@@ -974,7 +974,7 @@ function Library:AddTab(name : string,icon : string)
 	Frame_3.MouseButton1Click:Connect(function()
 		self:SelectTab(tab,Frame_3)
 	end)
-	
+
 	Frame_3.Parent = self.ScrollingFrame
 
 	UICorner.CornerRadius = UDim.new(0, 12)
@@ -1005,7 +1005,7 @@ function Library:AddTab(name : string,icon : string)
 	TextLabel_3.TextXAlignment = Enum.TextXAlignment.Left
 	TextLabel_3.Parent = Frame_3
 
-	
+
 	Frame_4.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	Frame_4.BackgroundTransparency = 1.000
 	Frame_4.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1041,7 +1041,7 @@ function Library:AddTab(name : string,icon : string)
 	ImageLabel.Image = icon
 	ImageLabel.Parent = Frame_3
 	table.insert(tab.Tab,4,ImageLabel)
-	
+
 	tab.Container = ScrollingFrame_2
 	tab.Button = Frame_3
 	tab.Frame = Frame_4
@@ -1363,11 +1363,11 @@ function Library:AddTab(name : string,icon : string)
 		table.insert(self.Elements, TextLabel)
 		self.pos += 26
 		tab:CalcScroll()
-		
+
 		local Section = {
 			Elem = TextLabel
 		}
-		
+
 		return Section
 	end
 
@@ -1925,7 +1925,7 @@ function Library:AddTab(name : string,icon : string)
 		sliderball.Size = UDim2.new(0, 15, 0, 15)
 		sliderball.ZIndex = 2
 		sliderball.Parent = sliderbutton
-		
+
 		UICorner_2.CornerRadius = UDim.new(1, 0)
 		UICorner_2.Parent = sliderball
 
@@ -2311,8 +2311,54 @@ function Library:AddTab(name : string,icon : string)
 		}
 
 		local pos = self.pos
-		local clickConnection = nil
-		local optionElements = {}
+		local guiRoot = self.Container.Parent.Parent -- Корень твоего GUI
+
+		if not guiRoot:FindFirstChildOfClass("ImageLabel") then
+			local SharedContainer = Instance.new("ImageLabel")
+			SharedContainer.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
+			SharedContainer.BackgroundTransparency = 1
+			SharedContainer.BorderColor3 = Color3.fromRGB(0, 0, 0)
+			SharedContainer.BorderSizePixel = 0
+			SharedContainer.Size = UDim2.new(0, 135, 0, 0)
+			SharedContainer.Visible = false
+			SharedContainer.ZIndex = 50
+			SharedContainer.Image = "ImageLabel_2"
+			SharedContainer.ImageTransparency = 0.9
+			SharedContainer.ClipsDescendants = true
+			SharedContainer.Parent = guiRoot
+
+			local SharedOptions = Instance.new("ScrollingFrame")
+			SharedOptions.Active = true
+			SharedOptions.BackgroundColor3 = self.Theme.DropDownColor
+			SharedOptions.BackgroundTransparency = self.Theme.DropDownTransparency
+			SharedOptions.BorderSizePixel = 0
+			SharedOptions.Position = UDim2.new(0.0277, 0, 0.035, 0)
+			SharedOptions.Size = UDim2.new(0, 135, 0, 0)
+			SharedOptions.ZIndex = 50
+			SharedOptions.ScrollBarThickness = 2
+			SharedOptions.ClipsDescendants = true
+			SharedOptions.Parent = SharedContainer
+
+			local UICorner_3 = Instance.new("UICorner")
+			UICorner_3.CornerRadius = UDim.new(0, 5)
+			UICorner_3.Parent = SharedOptions
+
+			local UIListLayout = Instance.new("UIListLayout")
+			UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+			UIListLayout.Parent = SharedOptions
+			
+			table.insert(tab.DropImg, SharedOptions)
+
+			Library.SharedDropdownState = {
+				Container = SharedContainer,
+				OptionsFrame = SharedOptions,
+				ActiveCloseFunc = nil,
+				ClickConnection = nil
+			}
+		end
+
+		local SharedContainer = Library.SharedDropdownState.Container
+		local SharedOptions = Library.SharedDropdownState.OptionsFrame
 
 		local Dropdown = Instance.new("TextButton")
 		table.insert(tab.ElemBtn, Dropdown)
@@ -2326,14 +2372,9 @@ function Library:AddTab(name : string,icon : string)
 		local UICorner_2 = Instance.new("UICorner")
 		local TextLabel = Instance.new("TextLabel")
 		local ImageLabel = Instance.new("ImageLabel")
-		local ImageLabel_2 = Instance.new("ImageLabel")
-		local Options = Instance.new("ScrollingFrame")
-		local UICorner_3 = Instance.new("UICorner")
-		local UIListLayout = Instance.new("UIListLayout")
-		
+
 		Dropdown.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
 		Dropdown.BackgroundTransparency = self.Theme.BackGroundElemTran
-		Dropdown.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Dropdown.BorderSizePixel = 0
 		Dropdown.Position = UDim2.new(0, 7, 0, pos)
 		Dropdown.Size = UDim2.new(0, 360, 0, 45)
@@ -2345,13 +2386,9 @@ function Library:AddTab(name : string,icon : string)
 
 		local namepos = config.Description and config.Description ~= '' and 4 or 12.5
 
-		--name.Name = "name"
 		name.Parent = Dropdown
-		name.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		name.BackgroundTransparency = 1.000
-		name.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		name.BorderSizePixel = 0
-		name.Position = UDim2.new(0.0290000141, 0, 0, namepos)
+		name.Position = UDim2.new(0.029, 0, 0, namepos)
 		name.Size = UDim2.new(0, 77, 0, 20)
 		name.Font = Enum.Font.FredokaOne
 		name.Text = dropdown.Name
@@ -2359,39 +2396,30 @@ function Library:AddTab(name : string,icon : string)
 		name.TextSize = 16.000
 		name.TextXAlignment = Enum.TextXAlignment.Left
 
-		--subtext.Name = "subtext"
-		subtext.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		subtext.Parent = Dropdown
 		subtext.BackgroundTransparency = 1.000
-		subtext.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		subtext.BorderSizePixel = 0
-		subtext.Position = UDim2.new(0.0289855078, 0, 0, 25)
+		subtext.Position = UDim2.new(0.0289, 0, 0, 25)
 		subtext.Size = UDim2.new(0, 193, 0, 14)
 		subtext.Font = Enum.Font.FredokaOne
 		subtext.Text = dropdown.Description
 		subtext.TextColor3 = self.Theme.TabSubTtitleTextColor
 		subtext.TextSize = 14.000
 		subtext.TextXAlignment = Enum.TextXAlignment.Left
-		subtext.Parent = Dropdown
 
-		--Select.Name = "Select"
-		
+		Select.Parent = Dropdown
 		Select.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		Select.BackgroundTransparency = self.Theme.BackGroundButtonTran
-		Select.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Select.BorderSizePixel = 0
-		Select.Position = UDim2.new(0.576207817, 0, 0.155555561, 0)
+		Select.Position = UDim2.new(0.576, 0, 0.155, 0)
 		Select.Size = UDim2.new(0, 135, 0, 30)
 		Select.Text = ''
-		Select.Parent = Dropdown
 
 		UICorner_2.CornerRadius = UDim.new(0, 5)
 		UICorner_2.Parent = Select
 
-		TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		TextLabel.Parent = Select
 		TextLabel.BackgroundTransparency = 1.000
-		TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		TextLabel.BorderSizePixel = 0
-		TextLabel.Position = UDim2.new(0.038557943, 0, -0.0200012214, 0)
+		TextLabel.Position = UDim2.new(0.038, 0, -0.02, 0)
 		TextLabel.Size = UDim2.new(0, 88, 0, 30)
 		TextLabel.Font = Enum.Font.FredokaOne
 		TextLabel.Text = "Select..."
@@ -2399,110 +2427,37 @@ function Library:AddTab(name : string,icon : string)
 		TextLabel.TextColor3 = self.Theme.TabTextColor
 		TextLabel.TextSize = 14.000
 		TextLabel.TextXAlignment = Enum.TextXAlignment.Left
-		TextLabel.Parent = Select
 
-		ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		ImageLabel.Parent = Select
 		ImageLabel.BackgroundTransparency = 1.000
-		ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		ImageLabel.BorderSizePixel = 0
-		ImageLabel.Position = UDim2.new(0.816335738, 0, 0.166666672, 0)
+		ImageLabel.Position = UDim2.new(0.816, 0, 0.166, 0)
 		ImageLabel.Size = UDim2.new(0, 20, 0, 20)
 		ImageLabel.Image = "rbxassetid://126982255108418"
 		ImageLabel.ImageColor3 = self.Theme.DropDownArrowImg
-		ImageLabel.Parent = Select
-
 		table.insert(tab.DropDownArrowImg, ImageLabel)
 
-		
-		ImageLabel_2.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
-		ImageLabel_2.BackgroundTransparency = 1
-		ImageLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		ImageLabel_2.BorderSizePixel = 0
-		ImageLabel_2.Size = UDim2.new(0, 135, 0, 0)
-		ImageLabel_2.Visible = false
-		ImageLabel_2.ZIndex = 20
-		ImageLabel_2.Image = "ImageLabel_2"
-		ImageLabel_2.ImageTransparency = 0.9
-		ImageLabel_2.ClipsDescendants = true
-		ImageLabel_2.Parent = self.Container.Parent.Parent
+		local optionElements = {}
 
-		--Options.Name = "Options"
-		Options.Active = true
-		Options.BackgroundColor3 = self.Theme.DropDownColor
-		Options.BackgroundTransparency = self.Theme.DropDownTransparency
-		Options.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Options.BorderSizePixel = 0
-		Options.Position = UDim2.new(0.027777778, 0, 0.0350000001, 0)
-		Options.Size = UDim2.new(0, 135, 0, 0)
-		Options.ZIndex = 20
-		Options.ScrollBarThickness = 2
-		Options.CanvasSize = UDim2.new(0, 0, 0, 0)
-		Options.ClipsDescendants = true
-		Options.Parent = ImageLabel_2
-		table.insert(tab.DropImg, Options)
-
-		UICorner_3.CornerRadius = UDim.new(0, 5)
-		UICorner_3.Parent = Options
-
-		UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-		UIListLayout.Parent = Options
-
-		local dropdownElements = {
-			Dropdown = Dropdown,
-			Select = Select,
-			TextLabel = TextLabel,
-			ImageLabel_2 = ImageLabel_2,
-			Options = Options
-		}
-
-		local function formatMultiText(selectedData)
-			local selectedText = ""
-			for opt, sel in pairs(selectedData) do
-				if sel then
-					selectedText = selectedText .. (selectedText == "" and opt or "," .. opt)
-				end
-			end
-
-			if selectedText == "" then return "Select..." end
-
+		local function formatTextWrap(str, wrapLimit, maxLimit)
+			if not str or str == "" then return "Select..." end
 			local visible_count = 0
-
-			for i = 1, #selectedText do
-				local c = selectedText:sub(i, i)
-				if c ~= " " and c ~= "," then
-					visible_count = visible_count + 1
-				end
-
-				if visible_count >= 14 then
+			for i = 1, #str do
+				local c = str:sub(i, i)
+				if c ~= " " and c ~= "," then visible_count = visible_count + 1 end
+				if visible_count >= wrapLimit then
 					local break_pos = i
-					for j = i + 1, #selectedText do
-						local next_char = selectedText:sub(j, j)
-						if next_char ~= " " and next_char ~= "," then
-							break
-						end
+					for j = i + 1, #str do
+						local next_char = str:sub(j, j)
+						if next_char ~= " " and next_char ~= "," then break end
 						break_pos = j
 					end
-
-					local str = selectedText
-
-					if #str >= 28 then
-						str = str:sub(1, 28) .. "..."
-					end
-					return str:sub(1, break_pos) .. "\n" .. str:sub(break_pos + 1)
+					local result = str
+					if #result >= maxLimit then result = result:sub(1, maxLimit) .. "..." end
+					return result:sub(1, break_pos) .. "\n" .. result:sub(break_pos + 1)
 				end
 			end
-
-			if #selectedText >= 28 then
-				selectedText = selectedText:sub(1, 28) .. "..."
-			end
-
-			return selectedText
-		end
-
-		local function formatSingleText(optionStr)
-			local result = optionStr
-			if #result >= 26 then result = result:sub(1, 26) .. "..." end
-			return result
+			if #str >= maxLimit then return str:sub(1, maxLimit) .. "..." end
+			return str
 		end
 
 		local function refreshVisuals()
@@ -2517,29 +2472,43 @@ function Library:AddTab(name : string,icon : string)
 		end
 
 		local function closeDropdown()
-			if not ImageLabel_2.Visible then return end
-			Library:Tween(ImageLabel_2, {Size = UDim2.new(0, 140, 0, 0)}, 0.2)
-			Library:Tween(Options, {Size = UDim2.new(0, 135, 0, 0)}, 0.2)
-			task.wait(0.2)
-			ImageLabel_2.Visible = false
-			if clickConnection then clickConnection:Disconnect() clickConnection = nil end
+			if not SharedContainer.Visible then return end
+			Library:Tween(SharedContainer, {Size = UDim2.new(0, 140, 0, 0)}, 0.2)
+			Library:Tween(SharedOptions, {Size = UDim2.new(0, 135, 0, 0)}, 0.2)
+
+			if Library.SharedDropdownState.ClickConnection then 
+				Library.SharedDropdownState.ClickConnection:Disconnect() 
+				Library.SharedDropdownState.ClickConnection = nil 
+			end
+
+			task.delay(0.2, function()
+				-- Проверка, чтобы не скрыть меню, если сразу же открыли другой дропдаун
+				if Library.SharedDropdownState.ActiveCloseFunc == closeDropdown then
+					SharedContainer.Visible = false
+					table.clear(optionElements)
+				end
+			end)
 		end
 
 		local function handleOptionClick(option)
 			if dropdown.Multi then
 				dropdown.Selected[option] = not dropdown.Selected[option]
-				TextLabel.Text = formatMultiText(dropdown.Selected)
+
+				-- Собираем мульти-текст
+				local selectedText = ""
+				for opt, sel in pairs(dropdown.Selected) do
+					if sel then selectedText = selectedText .. (selectedText == "" and opt or "," .. opt) end
+				end
+				TextLabel.Text = formatTextWrap(selectedText, 14, 28)
 				refreshVisuals()
 			else
-				TextLabel.Text = formatSingleText(option)
+				TextLabel.Text = formatTextWrap(option, 14, 28)
 				dropdown.Selected = option
 				refreshVisuals()
 				closeDropdown()
 			end
 
-			if dropdown.Callback then
-				dropdown.Callback(dropdown.Multi and dropdown.Selected or option)
-			end
+			if dropdown.Callback then dropdown.Callback(dropdown.Multi and dropdown.Selected or option) end
 		end
 
 		local function createOption(optionText)
@@ -2547,12 +2516,10 @@ function Library:AddTab(name : string,icon : string)
 			local OptionTextLabel = Instance.new("TextLabel")
 			local Frame = Instance.new("Frame")
 
-			Option.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 			Option.BackgroundTransparency = 1
 			Option.Size = UDim2.new(0, 135, 0, 30)
-			Option.ZIndex = 21
 			Option.Text = ''
-			Option.Parent = Options
+			Option.Parent = SharedOptions
 
 			optionElements[optionText] = Frame
 
@@ -2576,39 +2543,29 @@ function Library:AddTab(name : string,icon : string)
 			OptionTextLabel.Position = UDim2.new(0.047, 0, 0, 0)
 			OptionTextLabel.Size = UDim2.new(0, 124, 0, 30)
 			OptionTextLabel.Font = Enum.Font.FredokaOne
-			OptionTextLabel.Text = optionText
+			OptionTextLabel.Text = formatTextWrap(optionText, 18, 38)
 			OptionTextLabel.TextColor3 = self.Theme.TabTextColor
 			OptionTextLabel.TextSize = 14
 			OptionTextLabel.TextXAlignment = Enum.TextXAlignment.Left
-			OptionTextLabel.ZIndex = 22
 			OptionTextLabel.Parent = Option
-			table.insert(tab.Texttitle, OptionTextLabel)
-
-			Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+			
+			Frame.BackgroundColor3 = self.Theme.DropDownFrameColor
 			Frame.BorderSizePixel = 0
 			Frame.Position = UDim2.new(0.01, 0, 0, 4)
 			Frame.Size = UDim2.new(0, 2, 0, 0)
-			Frame.ZIndex = 22
 			Frame.Transparency = 1
 			Frame.Parent = Option
-			table.insert(tab.DropDownFrameColor, Frame)
 
-			Option.MouseButton1Click:Connect(function()
-				handleOptionClick(optionText)
-			end)
-
-			return Option
+			Option.MouseButton1Click:Connect(function() handleOptionClick(optionText) end)
 		end
 
-		for _, option in ipairs(dropdown.Options) do createOption(option) end
-		Options.CanvasSize = UDim2.new(0, 0, 0, #dropdown.Options * 30)
-
 		local function updateDropdownPosition()
+			if not SharedContainer.Visible then return end
 			local absolutePos = Select.AbsolutePosition
-			local containerPos = ImageLabel_2.Parent.AbsolutePosition
+			local containerPos = guiRoot.AbsolutePosition
 
 			local currentScale = 1
-			local ancestor = ImageLabel_2.Parent
+			local ancestor = guiRoot
 			while ancestor and not ancestor:IsA("ScreenGui") do
 				local uiScale = ancestor:FindFirstChildWhichIsA("UIScale")
 				if uiScale then currentScale *= uiScale.Scale end
@@ -2617,34 +2574,51 @@ function Library:AddTab(name : string,icon : string)
 
 			local x = (absolutePos.X - containerPos.X) / currentScale - 4
 			local y = (absolutePos.Y - containerPos.Y + Select.AbsoluteSize.Y) / currentScale
-
-			ImageLabel_2.Position = UDim2.new(0, x, 0, y)
+			SharedContainer.Position = UDim2.new(0, x, 0, y)
 		end
 
-		local function posselect()
+		local function openDropdown()
+			-- Если открыт другой дропдаун, закрываем его
+			if Library.SharedDropdownState.ActiveCloseFunc and Library.SharedDropdownState.ActiveCloseFunc ~= closeDropdown then
+				Library.SharedDropdownState.ActiveCloseFunc()
+			end
+
+			-- Устанавливаем текущий дропдаун как активный
+			Library.SharedDropdownState.ActiveCloseFunc = closeDropdown
+
+			-- Очищаем общий контейнер от старых кнопок
+			for _, child in pairs(SharedOptions:GetChildren()) do
+				if child:IsA("TextButton") then child:Destroy() end
+			end
+			table.clear(optionElements)
+
+			-- Создаем опции именно для ЭТОГО дропдауна
+			for _, option in ipairs(dropdown.Options) do createOption(option) end
+			SharedOptions.CanvasSize = UDim2.new(0, 0, 0, #dropdown.Options * 30)
+
+			-- Анимация и позиция
+			updateDropdownPosition()
+			SharedContainer.Visible = true
+			local height = math.min(150, #dropdown.Options * 30)
+			Library:Tween(SharedContainer, {Size = UDim2.new(0, 140, 0, height + 10)}, 0.2)
+			Library:Tween(SharedOptions, {Size = UDim2.new(0, 135, 0, height)}, 0.2)
+			refreshVisuals()
+
+			-- Отслеживание позиции в реальном времени
 			task.spawn(function()
-				while ImageLabel_2.Visible do
+				while SharedContainer.Visible and Library.SharedDropdownState.ActiveCloseFunc == closeDropdown do
 					updateDropdownPosition()
 					task.wait()
 				end
 			end)
-		end
 
-		local function openDropdown()
-			updateDropdownPosition()
-			ImageLabel_2.Visible = true
-			local height = math.min(150, #dropdown.Options * 30)
-			Library:Tween(ImageLabel_2, {Size = UDim2.new(0, 140, 0, height + 10)}, 0.2)
-			Library:Tween(Options, {Size = UDim2.new(0, 135, 0, height)}, 0.2)
-			refreshVisuals()
-			posselect()
-
-			if clickConnection then clickConnection:Disconnect() end
-			clickConnection = UserInputService.InputBegan:Connect(function(input)
+			-- Обработчик клика вне окна (один глобальный)
+			if Library.SharedDropdownState.ClickConnection then Library.SharedDropdownState.ClickConnection:Disconnect() end
+			Library.SharedDropdownState.ClickConnection = UserInputService.InputBegan:Connect(function(input)
 				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 					local pos = input.Position
 					local inSelect = pos.X >= Select.AbsolutePosition.X and pos.X <= Select.AbsolutePosition.X + Select.AbsoluteSize.X and pos.Y >= Select.AbsolutePosition.Y and pos.Y <= Select.AbsolutePosition.Y + Select.AbsoluteSize.Y
-					local inOptions = pos.X >= ImageLabel_2.AbsolutePosition.X and pos.X <= ImageLabel_2.AbsolutePosition.X + ImageLabel_2.AbsoluteSize.X and pos.Y >= ImageLabel_2.AbsolutePosition.Y and pos.Y <= ImageLabel_2.AbsolutePosition.Y + ImageLabel_2.AbsoluteSize.Y
+					local inOptions = pos.X >= SharedContainer.AbsolutePosition.X and pos.X <= SharedContainer.AbsolutePosition.X + SharedContainer.AbsoluteSize.X and pos.Y >= SharedContainer.AbsolutePosition.Y and pos.Y <= SharedContainer.AbsolutePosition.Y + SharedContainer.AbsoluteSize.Y
 
 					if not inSelect and not inOptions then closeDropdown() end
 				end
@@ -2652,7 +2626,11 @@ function Library:AddTab(name : string,icon : string)
 		end
 
 		Select.MouseButton1Click:Connect(function()
-			if ImageLabel_2.Visible then closeDropdown() else openDropdown() end
+			if SharedContainer.Visible and Library.SharedDropdownState.ActiveCloseFunc == closeDropdown then 
+				closeDropdown() 
+			else 
+				openDropdown() 
+			end
 		end)
 
 		table.insert(self.Elements, Dropdown)
@@ -2674,32 +2652,34 @@ function Library:AddTab(name : string,icon : string)
 							if selected and table.find(self.Options, option) then dropdown.Selected[option] = true end
 						end
 					end
-					TextLabel.Text = formatMultiText(dropdown.Selected)
+					local selectedText = ""
+					for opt, sel in pairs(dropdown.Selected) do
+						if sel then selectedText = selectedText .. (selectedText == "" and opt or "," .. opt) end
+					end
+					TextLabel.Text = formatTextWrap(selectedText, 14, 28)
 				else
 					if table.find(self.Options, value) then
 						dropdown.Selected = value
-						TextLabel.Text = formatSingleText(value)
+						TextLabel.Text = formatTextWrap(value, 14, 28)
 					end
 				end
-				refreshVisuals()
+				-- Если меню открыто прямо сейчас, обновляем его визуально
+				if Library.SharedDropdownState.ActiveCloseFunc == closeDropdown then refreshVisuals() end
 				if config.Callback then config.Callback(dropdown.Selected) end
 			end,
 			UpdateOptions = function(self, newOptions, newDefault)
 				self.Options = newOptions
 				dropdown.Options = newOptions
-				table.clear(optionElements)
-				for _, child in pairs(Options:GetChildren()) do
-					if child:IsA("TextButton") then child:Destroy() end
+				-- Если это меню открыто прямо сейчас, перерисовываем его
+				if SharedContainer.Visible and Library.SharedDropdownState.ActiveCloseFunc == closeDropdown then
+					openDropdown()
 				end
-				for _, option in ipairs(newOptions) do createOption(option) end
-				Options.CanvasSize = UDim2.new(0, 0, 0, #newOptions * 30)
 				self:SetValue(newDefault or (dropdown.Multi and {} or nil))
 			end,
 			SetVisible = function(self, visible) Dropdown.Visible = visible end,
 			Destroy = function(self)
-				if clickConnection then clickConnection:Disconnect() end
+				if Library.SharedDropdownState.ActiveCloseFunc == closeDropdown then closeDropdown() end
 				Dropdown:Destroy()
-				ImageLabel_2:Destroy()
 			end
 		}
 
@@ -3085,7 +3065,7 @@ function Library:ShowDestroyQ()
 	else
 		local newX
 		local newY = UDim.new(0, self.ImageLabel.Size.Y.Offset - 18)
-		
+
 		if self.ImageLabel.Size ~= UDim2.new(0, 620, 0, 40) and self.ImageLabel.Size ~= UDim2.new(0, 620, 0, 480)  then
 			newX = UDim.new(0, self.ImageLabel.Size.X.Offset - 14)
 			self.dFrame_2.Position = UDim2.new(0.18, 0,0.329, 0)
@@ -3290,7 +3270,7 @@ function Library:LoadConfig(filename)
 	if data.Dropdowns then
 		for name, value in pairs(data.Dropdowns) do
 			local obj = self.AllElements.Dropdowns[name]
-			if obj then
+			if obj and obj.SetValue then
 				if obj.Multi and type(value) == "table" then
 					local fixed = {}
 					for k, v in pairs(value) do
@@ -3793,7 +3773,6 @@ function Library:SetTheme(themeName : string)
 			{v.DropImg, "BackgroundColor3", theme.DropDownColor},
 			{v.DropDownArrowImg, "ImageColor3", theme.DropDownArrowImg},
 			{v.DropImg, "BackgroundTransparency", theme.DropDownTransparency},
-			{v.DropDownFrameColor, "BackgroundColor3", theme.DropDownFrameColor},
 			{v.InputTextColor, "TextColor3", theme.InputTextColor},
 			{v.SliderUnderLineColor, "BackgroundColor3", theme.SliderUnderLineColor},
 			{v.Togglebtn, "BackgroundColor3", theme.Togglebtn},
