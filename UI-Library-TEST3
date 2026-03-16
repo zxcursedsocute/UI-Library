@@ -2415,7 +2415,11 @@ function Library:AddTab(name : string,icon : string)
 				closeDropdown()
 			end
 
-			if dropdown.Callback then dropdown.Callback(dropdown.Multi and dropdown.Selected or option) end
+			if type(dropdown.Callback) == "function" then
+				task.spawn(function()
+					local success, err = pcall(dropdown.Callback, dropdown.Multi and dropdown.Selected or option)
+				end)
+			end
 		end
 
 		local function createOption(optionText)
