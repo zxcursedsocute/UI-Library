@@ -2004,7 +2004,7 @@ function Library:AddTab(name : string,icon : string)
 			if colorPicker.Callback then colorPicker.Callback(color) end
 		end
 
-		setColor(colorPicker.Default)
+		--setColor(colorPicker.Default)
 
 		local function togglePalette()
 			if not self.SharedPaletteUI then
