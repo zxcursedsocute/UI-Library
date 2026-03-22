@@ -3081,28 +3081,39 @@ function Library:Close()
 end
 
 function Library:TurnOffAllFunctions(WhiteList, CallBack)
-	for name, controller in pairs(self.AllElements.Toggles) do
-		local check = false
+    local ignoredNames = {
+        ["Auto Load Config"] = true,
+        ["Auto Save Config"] = true,
+        ["Transparency"] = true,
+        ["User info"] = true,
+        ["Search"] = true,
+		["Turn off all functions if staff detected"] = true
+    }
 
-		if WhiteList ~= nil then
-			for i, v in pairs(WhiteList) do
-				if v == controller then
-					check = true
-					break
-				end
-			end
-		end
+    for name, controller in pairs(self.AllElements.Toggles) do
+        if not ignoredNames[name] then
+            local check = false
 
-		if not check then
-			if controller.Value == true then
-				controller:SetState(false)
-			end
-		end
-	end
+            if WhiteList ~= nil then
+                for i, v in pairs(WhiteList) do
+                    if v == controller then
+                        check = true
+                        break
+                    end
+                end
+            end
 
-	if CallBack then
-		CallBack()
-	end
+            if not check then
+                if controller.Value == true then
+                    controller:SetState(false)
+                end
+            end
+        end
+    end
+
+    if CallBack then
+        CallBack()
+    end
 end
 
 function Library:GetConfig(filename)
