@@ -1530,7 +1530,7 @@ function Library:AddTab(name : string,icon : string)
 		return toggleController
 	end
 
-	function tab:AddKeybind(config)
+		function tab:AddKeybind(config)
 		if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
 			return nil
 		end
@@ -1542,20 +1542,6 @@ function Library:AddTab(name : string,icon : string)
 			Description = config.Description or "",
 			Callback = config.Callback
 		}
-
-		if not self.SharedKeybindHandler then
-			self.SharedKeybindHandler = UserInputService.InputBegan:Connect(function(input, gameProcessed)
-				if gameProcessed then return end
-				if input.UserInputType ~= Enum.UserInputType.Keyboard then return end
-
-				for _, keybindData in pairs(self.AllElements.Keybinds) do
-					local assignedKey = keybindData.GetState()
-					if assignedKey and input.KeyCode == assignedKey and keybindData.Callback then
-						task.spawn(keybindData.Callback)
-					end
-				end
-			end)
-		end
 
 		local container = Instance.new("Frame")
 		local UICorner = Instance.new("UICorner")
@@ -1651,6 +1637,13 @@ function Library:AddTab(name : string,icon : string)
 		end)
 		table.insert(tab.Connections, selectConnection)
 
+		local actionConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+			if not gameProcessed and currentKey and input.KeyCode == currentKey and Keybind.Callback then
+				task.spawn(Keybind.Callback)
+			end
+		end)
+		table.insert(tab.KeybindConnections, actionConnection) -- Сохраняем в таблицу вкладки, чтобы UI не тек по памяти при удалении!
+
 		local keybindObj = {
 			Name = Keybind.Name,
 			Elem = container,
@@ -1661,8 +1654,13 @@ function Library:AddTab(name : string,icon : string)
 			Callback = Keybind.Callback
 		}
 
-		self.AllElements.Keybinds[Keybind.Name] = keybindObj
-		self.SearchData[container] = (tostring(Keybind.Name) .. " " .. tostring(Keybind.Description)):lower()
+		if self.AllElements and self.AllElements.Keybinds then
+			self.AllElements.Keybinds[Keybind.Name] = keybindObj
+		end
+
+		if self.SearchData then
+			self.SearchData[container] = (tostring(Keybind.Name) .. " " .. tostring(Keybind.Description)):lower()
+		end
 
 		return keybindObj
 	end
