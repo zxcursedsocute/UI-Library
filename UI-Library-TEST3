@@ -1534,12 +1534,28 @@ function Library:AddTab(name : string,icon : string)
 		if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
 			return nil
 		end
+
+		local currentKey = (typeof(config.Default) == "EnumItem") and config.Default or nil
+
 		local Keybind = {
-			Name = config.Name,
-			Description = config.Description or '',
-			key = config.Default,
+			Name = config.Name or "Keybind",
+			Description = config.Description or "",
 			Callback = config.Callback
 		}
+
+		if not self.SharedKeybindHandler then
+			self.SharedKeybindHandler = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+				if gameProcessed then return end
+				if input.UserInputType ~= Enum.UserInputType.Keyboard then return end
+
+				for _, keybindData in pairs(self.AllElements.Keybinds) do
+					local assignedKey = keybindData.GetState()
+					if assignedKey and input.KeyCode == assignedKey and keybindData.Callback then
+						task.spawn(keybindData.Callback)
+					end
+				end
+			end)
+		end
 
 		local container = Instance.new("Frame")
 		local UICorner = Instance.new("UICorner")
@@ -1548,15 +1564,14 @@ function Library:AddTab(name : string,icon : string)
 		local bindButton = Instance.new("TextButton")
 		local UICorner_2 = Instance.new("UICorner")
 
-		tab.ElemBtn[#tab.ElemBtn + 1] = container
-		tab.Texttitle[#tab.Texttitle + 1] = name
-		tab.Texttitle[#tab.Texttitle + 1] = bindButton
-		tab.Textsubtitle[#tab.Textsubtitle + 1] = subtext
-		tab.actionBakcColor[#tab.actionBakcColor + 1] = bindButton
+		table.insert(tab.ElemBtn, container)
+		table.insert(tab.Texttitle, name)
+		table.insert(tab.Texttitle, bindButton)
+		table.insert(tab.Textsubtitle, subtext)
+		table.insert(tab.actionBakcColor, bindButton)
 
 		container.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
 		container.BackgroundTransparency = self.Theme.BackGroundElemTran
-		container.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		container.BorderSizePixel = 0
 		container.Size = UDim2.new(0, 360, 0, 45)
 		container.Parent = self.Container
@@ -1564,12 +1579,9 @@ function Library:AddTab(name : string,icon : string)
 		UICorner.CornerRadius = UDim.new(0, 12)
 		UICorner.Parent = container
 
-		local namepos = (config.Description and config.Description ~= '') and 4 or 12.5
+		local namepos = (Keybind.Description ~= '') and 4 or 12.5
 
-		name.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		name.BackgroundTransparency = 1.000
-		name.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		name.BorderSizePixel = 0
 		name.Position = UDim2.new(0.029, 0, 0, namepos)
 		name.Size = UDim2.new(0, 77, 0, 20)
 		name.Font = Enum.Font.FredokaOne
@@ -1579,14 +1591,11 @@ function Library:AddTab(name : string,icon : string)
 		name.TextXAlignment = Enum.TextXAlignment.Left
 		name.Parent = container
 
-		subtext.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		subtext.BackgroundTransparency = 1.000
-		subtext.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		subtext.BorderSizePixel = 0
 		subtext.Position = UDim2.new(0.0289, 0, 0, 25)
 		subtext.Size = UDim2.new(0, 193, 0, 14)
 		subtext.Font = Enum.Font.FredokaOne
-		subtext.Text = Keybind.Description or ""
+		subtext.Text = Keybind.Description
 		subtext.TextColor3 = self.Theme.TabSubTtitleTextColor
 		subtext.TextSize = 14.000
 		subtext.TextXAlignment = Enum.TextXAlignment.Left
@@ -1594,8 +1603,6 @@ function Library:AddTab(name : string,icon : string)
 
 		bindButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		bindButton.BackgroundTransparency = self.Theme.BackGroundButtonTran
-		bindButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		bindButton.BorderSizePixel = 0
 		bindButton.Position = UDim2.new(0.672, 0, 0.221, 0)
 		bindButton.Size = UDim2.new(0, 100, 0, 25)
 		bindButton.Font = Enum.Font.FredokaOne
@@ -1606,58 +1613,56 @@ function Library:AddTab(name : string,icon : string)
 		UICorner_2.CornerRadius = UDim.new(0, 5)
 		UICorner_2.Parent = bindButton
 
-		local currentKey = Keybind.key
-
-		if typeof(currentKey) == "EnumItem" then
-			bindButton.Text = currentKey.Name
-		else
-			bindButton.Text = "None"
-		end
-
 		local function setKey(newKey)
 			currentKey = newKey
 			bindButton.Text = (typeof(newKey) == "EnumItem" and newKey.Name) or "None"
 		end
 
-		local selectConnection = bindButton.MouseButton1Click:Connect(function()
+		setKey(currentKey)
+
+		local BlacklistedKeys = {
+			[Enum.KeyCode.Unknown] = true, [Enum.KeyCode.W] = true,
+			[Enum.KeyCode.A] = true, [Enum.KeyCode.S] = true,
+			[Enum.KeyCode.D] = true, [Enum.KeyCode.Escape] = true,
+			[Enum.KeyCode.Space] = true, [Enum.KeyCode.Backspace] = true
+		}
+
+		local selectConnection
+		selectConnection = bindButton.MouseButton1Click:Connect(function()
 			bindButton.Text = "..."
 			local connection
 
 			connection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
 				task.wait()
-				if gameProcessed then return end
+				if gameProcessed and input.UserInputType == Enum.UserInputType.Keyboard then return end
 
-				if input.UserInputType == Enum.UserInputType.MouseButton1 then
-					setKey(nil)
+				if input.UserInputType == Enum.UserInputType.Keyboard then
+					if not BlacklistedKeys[input.KeyCode] then
+						setKey(input.KeyCode)
+					else
+						setKey(nil)
+					end
 					connection:Disconnect()
-				elseif input.UserInputType == Enum.UserInputType.Keyboard then
-					setKey(input.KeyCode)
+				elseif input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.MouseButton2 then
+					setKey(nil)
 					connection:Disconnect()
 				end
 			end)
 		end)
-		tab.Connections[#tab.Connections + 1] = selectConnection
-
-		local actionConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
-			if not gameProcessed and currentKey and input.KeyCode == currentKey and config.Callback then
-				config.Callback()
-			end
-		end)
-		tab.KeybindConnections[#tab.KeybindConnections + 1] = actionConnection
+		table.insert(tab.Connections, selectConnection)
 
 		local keybindObj = {
-			Name = config.Name,
+			Name = Keybind.Name,
 			Elem = container,
-			Key = currentKey,
 			SetKey = setKey,
 			GetState = function()
-				return bindButton.Text
+				return currentKey
 			end,
-			Callback = config.Callback
+			Callback = Keybind.Callback
 		}
 
-		self.AllElements.Keybinds[config.Name] = keybindObj
-		self.SearchData[container] = (tostring(config.Name or "") .. " " .. tostring(config.Description or "")):lower()
+		self.AllElements.Keybinds[Keybind.Name] = keybindObj
+		self.SearchData[container] = (tostring(Keybind.Name) .. " " .. tostring(Keybind.Description)):lower()
 
 		return keybindObj
 	end
