@@ -3772,7 +3772,7 @@ function Library:AddCategory(name)
 	local IsOpen = true
 
 	local function GetTargetHeight()
-		return (UIListLayout.AbsoluteContentSize.Y / Window.ScaleFactor) + 4
+		return (UIListLayout.AbsoluteContentSize.Y / Window.ScaleFactor)
 	end
 
 	HeaderBtn.MouseButton1Click:Connect(function()
