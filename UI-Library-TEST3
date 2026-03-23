@@ -749,7 +749,9 @@ function Library.CreateWindow(title,subtitle,size,version)
 		Notification.CloseButton.ImageColor3 = self.Theme.TabsIconColor
 
 		Notification.CloseButton.MouseButton1Click:Connect(function()
-			self:CloseNotification(notificationId)
+			if self and self.CloseNotification then
+		        self:CloseNotification(notificationId)
+		    end
 		end)
 
 		self.ActiveNotifications[notificationId] = {
@@ -1530,7 +1532,7 @@ function Library:AddTab(name : string,icon : string)
 		return toggleController
 	end
 
-		function tab:AddKeybind(config)
+	function tab:AddKeybind(config)
 		if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
 			return nil
 		end
@@ -1637,12 +1639,21 @@ function Library:AddTab(name : string,icon : string)
 		end)
 		table.insert(tab.Connections, selectConnection)
 
-		local actionConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
-			if not gameProcessed and currentKey and input.KeyCode == currentKey and Keybind.Callback then
-				task.spawn(Keybind.Callback)
-			end
-		end)
-		table.insert(tab.KeybindConnections, actionConnection) -- Сохраняем в таблицу вкладки, чтобы UI не тек по памяти при удалении!
+		if not self.GlobalKeybindConnection then
+			self.GlobalKeybindConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+				if gameProcessed then return end
+				
+				if input.UserInputType == Enum.UserInputType.Keyboard then
+					-- Перебираем все сохраненные бинды
+					for _, kbObj in pairs(self.AllElements.Keybinds) do
+						local key = kbObj:GetState()
+						if key and input.KeyCode == key and kbObj.Callback then
+							task.spawn(kbObj.Callback)
+						end
+					end
+				end
+			end)
+		end
 
 		local keybindObj = {
 			Name = Keybind.Name,
