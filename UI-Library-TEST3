@@ -1639,8 +1639,9 @@ function Library:AddTab(name : string,icon : string)
 		end)
 		table.insert(tab.Connections, selectConnection)
 
-		if not self.GlobalKeybindConnection then
-			self.GlobalKeybindConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+		-- Создаем единственный глобальный слушатель в общей таблице AllElements
+		if not self.AllElements.GlobalKeybindConnection then
+			self.AllElements.GlobalKeybindConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
 				if gameProcessed then return end
 				
 				if input.UserInputType == Enum.UserInputType.Keyboard then
