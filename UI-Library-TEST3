@@ -3002,6 +3002,10 @@ function Library:ColumnWindow()
 end
 
 function Library:Destroy()
+	if self.GlobalKeybindConnection then
+		self.GlobalKeybindConnection:Disconnect()
+		self.GlobalKeybindConnection = nil
+	end
 	for _, tab in ipairs(self.mainTabs) do
 		for _, connection in ipairs(tab.Connections) do
 			connection:Disconnect()
