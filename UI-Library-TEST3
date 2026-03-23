@@ -3003,10 +3003,10 @@ function Library:ColumnWindow()
 end
 
 function Library:Destroy()
-	if self.GlobalKeybindConnection then
-		self.GlobalKeybindConnection:Disconnect()
-		self.GlobalKeybindConnection = nil
-	end
+	if self.AllElements and self.AllElements.GlobalKeybindConnection then
+        self.AllElements.GlobalKeybindConnection:Disconnect()
+        self.AllElements.GlobalKeybindConnection = nil -- Убираем ссылку
+    end
 	for _, tab in ipairs(self.mainTabs) do
 		for _, connection in ipairs(tab.Connections) do
 			connection:Disconnect()
