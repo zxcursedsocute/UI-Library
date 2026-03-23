@@ -2605,6 +2605,21 @@ function Library:AddTab(name : string,icon : string)
 		return dropdownObj
 	end
 
+	function Library:AddLine()
+		local Line = Instance.new("Frame")
+		Line.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
+		Line.BackgroundTransparency = self.Theme.BackGroundElemTran
+		Line.Size = UDim2.new(0, 360, 0, 3)
+		Line.Parent = self.Container
+		
+		table.insert(tab.ElemBtn, Line)
+		
+		local obj = {
+			Elem = Line,
+		}
+		return obj
+	end
+
 	return tab
 end
 
