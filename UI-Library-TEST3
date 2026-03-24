@@ -1753,22 +1753,26 @@ function Library:AddTab(name : string,icon : string)
 		UICorner_2.CornerRadius = UDim.new(0, 5)
 		UICorner_2.Parent = TextBox
 
-		TextBox.FocusLost:Connect(function(enterPressed)
-			if enterPressed and config.Callback then
-				config.Callback(TextBox.Text)
-			end
-		end)
-
 		TextBox.FocusLost:Connect(function()
-			task.wait(0.01)
+			local currentText = TextBox.Text
+
 			if not Input.SaveUserText then
-				TextBox.Text = Input.Default
+				task.spawn(function()
+					task.wait()
+					TextBox.Text = Input.Default
+				end)
+			end
+
+			if config.Callback then
+				config.Callback(currentText)
 			end
 		end)
 
 		local function SetInput(Text2)
 			TextBox.Text = Text2
-			config.Callback(TextBox.Text)
+			if config.Callback then
+				config.Callback(Text2)
+			end
 		end
 
 		local InputObj = {
