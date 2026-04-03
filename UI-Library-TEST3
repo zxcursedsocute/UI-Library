@@ -1,8 +1,10 @@
-local HttpService = game:GetService("HttpService")
-local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
+local cloneref = (cloneref or clonereference or function(instance) return instance end)
+
+local HttpService = cloneref(game:GetService("HttpService"))
+local TweenService = cloneref(game:GetService("TweenService"))
+local UserInputService = cloneref(game:GetService("UserInputService"))
+local RunService = cloneref(game:GetService("RunService"))
+local Players = cloneref(game:GetService("Players"))
 
 local Library = {}
 Library.__index = Library
@@ -750,8 +752,8 @@ function Library.CreateWindow(title,subtitle,size,version)
 
 		Notification.CloseButton.MouseButton1Click:Connect(function()
 			if self and self.CloseNotification then
-		        self:CloseNotification(notificationId)
-		    end
+				self:CloseNotification(notificationId)
+			end
 		end)
 
 		self.ActiveNotifications[notificationId] = {
@@ -1644,7 +1646,7 @@ function Library:AddTab(name : string,icon : string)
 		if not self.AllElements.GlobalKeybindConnection then
 			self.AllElements.GlobalKeybindConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
 				if gameProcessed then return end
-				
+
 				if input.UserInputType == Enum.UserInputType.Keyboard then
 					-- Перебираем все сохраненные бинды
 					for _, kbObj in pairs(self.AllElements.Keybinds) do
@@ -2615,9 +2617,9 @@ function Library:AddTab(name : string,icon : string)
 		Line.BackgroundTransparency = self.Theme.BackGroundElemTran
 		Line.Size = UDim2.new(0, 360, 0, 3)
 		Line.Parent = self.Container
-		
+
 		table.insert(tab.ElemBtn, Line)
-		
+
 		local obj = {
 			Elem = Line,
 		}
@@ -3024,9 +3026,9 @@ end
 
 function Library:Destroy()
 	if self.AllElements and self.AllElements.GlobalKeybindConnection then
-        self.AllElements.GlobalKeybindConnection:Disconnect()
-        self.AllElements.GlobalKeybindConnection = nil -- Убираем ссылку
-    end
+		self.AllElements.GlobalKeybindConnection:Disconnect()
+		self.AllElements.GlobalKeybindConnection = nil -- Убираем ссылку
+	end
 	for _, tab in ipairs(self.mainTabs) do
 		for _, connection in ipairs(tab.Connections) do
 			connection:Disconnect()
@@ -3120,39 +3122,39 @@ function Library:Close()
 end
 
 function Library:TurnOffAllFunctions(WhiteList, CallBack)
-    local ignoredNames = {
-        ["Auto Load Config"] = true,
-        ["Auto Save Config"] = true,
-        ["Transparency"] = true,
-        ["User info"] = true,
-        ["Search"] = true,
+	local ignoredNames = {
+		["Auto Load Config"] = true,
+		["Auto Save Config"] = true,
+		["Transparency"] = true,
+		["User info"] = true,
+		["Search"] = true,
 		["Turn off all functions if staff detected"] = true
-    }
+	}
 
-    for name, controller in pairs(self.AllElements.Toggles) do
-        if not ignoredNames[name] then
-            local check = false
+	for name, controller in pairs(self.AllElements.Toggles) do
+		if not ignoredNames[name] then
+			local check = false
 
-            if WhiteList ~= nil then
-                for i, v in pairs(WhiteList) do
-                    if v == controller then
-                        check = true
-                        break
-                    end
-                end
-            end
+			if WhiteList ~= nil then
+				for i, v in pairs(WhiteList) do
+					if v == controller then
+						check = true
+						break
+					end
+				end
+			end
 
-            if not check then
-                if controller.Value == true then
-                    controller:SetState(false)
-                end
-            end
-        end
-    end
+			if not check then
+				if controller.Value == true then
+					controller:SetState(false)
+				end
+			end
+		end
+	end
 
-    if CallBack then
-        CallBack()
-    end
+	if CallBack then
+		CallBack()
+	end
 end
 
 function Library:GetConfig(filename)
