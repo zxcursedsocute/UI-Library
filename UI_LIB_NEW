@@ -1190,27 +1190,23 @@ function Library:AddTab(name : string,icon : string)
 			end
 		end)
 	end
-	
+
 	function tab:AddDiscordInvite(config)
 		local inviteLink = config.Invite or ""
 		local fallbackIcon = config.Icon or "rbxassetid://14458925526"
 
-		-- Получаем код приглашения
 		local inviteCode = inviteLink:match("discord%.gg/([%w-]+)") or inviteLink:match("discord%.com/invite/([%w-]+)") or inviteLink
 
-		-- Создаем основной фрейм (адаптируем под стиль твоих элементов) 
 		local DiscordWidget = Instance.new("Frame")
-		DiscordWidget.Name = "DiscordInvite"
-		DiscordWidget.BackgroundColor3 = Color3.fromRGB(30, 31, 34) -- Темный стиль Discord
-		DiscordWidget.BackgroundTransparency = self.Theme.BackGroundElemTran -- Используем твою тему 
-		DiscordWidget.Size = UDim2.new(0, 360, 0, 100) -- Размер как у твоих кнопок, но выше 
-		DiscordWidget.Parent = self.Container -- Добавляем в скролл-фрейм таба 
+		DiscordWidget.BackgroundColor3 = self.Theme.BackGroundElemCol 
+		DiscordWidget.BackgroundTransparency = self.Theme.BackGroundElemTran
+		DiscordWidget.Size = UDim2.new(0, 360, 0, 110)
+		DiscordWidget.Parent = self.Container 
 
 		local UICorner = Instance.new("UICorner")
 		UICorner.CornerRadius = UDim.new(0, 10)
 		UICorner.Parent = DiscordWidget
 
-		-- Иконка сервера
 		local ServerIcon = Instance.new("ImageLabel")
 		ServerIcon.Size = UDim2.new(0, 50, 0, 50)
 		ServerIcon.Position = UDim2.new(0, 12, 0, 12)
@@ -1222,19 +1218,17 @@ function Library:AddTab(name : string,icon : string)
 		IconCorner.CornerRadius = UDim.new(0, 12)
 		IconCorner.Parent = ServerIcon
 
-		-- Название сервера
 		local ServerName = Instance.new("TextLabel")
 		ServerName.Position = UDim2.new(0, 75, 0, 15)
 		ServerName.Size = UDim2.new(0, 270, 0, 20)
 		ServerName.BackgroundTransparency = 1
-		ServerName.Font = Enum.Font.FredokaOne -- Твой основной шрифт 
+		ServerName.Font = Enum.Font.FredokaOne 
 		ServerName.Text = "Loading Discord..."
 		ServerName.TextColor3 = self.Theme.TabTextColor
 		ServerName.TextSize = 16
 		ServerName.TextXAlignment = Enum.TextXAlignment.Left
 		ServerName.Parent = DiscordWidget
 
-		-- Статистика (Онлайн/Всего)
 		local StatusText = Instance.new("TextLabel")
 		StatusText.Position = UDim2.new(0, 75, 0, 38)
 		StatusText.Size = UDim2.new(0, 270, 0, 15)
@@ -1246,8 +1240,7 @@ function Library:AddTab(name : string,icon : string)
 		StatusText.TextXAlignment = Enum.TextXAlignment.Left
 		StatusText.RichText = true
 		StatusText.Parent = DiscordWidget
-
-		-- Кнопка "Join" (копирование ссылки)
+		
 		local JoinBtn = Instance.new("TextButton")
 		JoinBtn.Size = UDim2.new(1, -24, 0, 30)
 		JoinBtn.Position = UDim2.new(0, 12, 0, 70)
@@ -1262,7 +1255,6 @@ function Library:AddTab(name : string,icon : string)
 		BtnCorner.CornerRadius = UDim.new(0, 8)
 		BtnCorner.Parent = JoinBtn
 
-		-- Логика кнопки
 		JoinBtn.MouseButton1Click:Connect(function()
 			if setclipboard then
 				setclipboard("https://discord.gg/" .. inviteCode)
@@ -1272,9 +1264,8 @@ function Library:AddTab(name : string,icon : string)
 			end
 		end)
 
-		-- API Запрос (через твой Library:GetAsset)
 		task.spawn(function()
-			local req = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+			local req = (syn and syn.request) or (http and http.request) or http_request or request
 			if req then
 				local res = req({Url = "https://discord.com/api/v9/invites/" .. inviteCode .. "?with_counts=true", Method = "GET"})
 				if res.StatusCode == 200 then
@@ -1291,7 +1282,7 @@ function Library:AddTab(name : string,icon : string)
 			end
 		end)
 
-		table.insert(tab.ElemBtn, DiscordWidget) -- Чтобы элемент учитывался в поиске или репозиции 
+		table.insert(tab.ElemBtn, DiscordWidget)
 		return DiscordWidget
 	end
 
