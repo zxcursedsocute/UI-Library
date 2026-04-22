@@ -9,12 +9,23 @@ local Players = cloneref(game:GetService("Players"))
 local Library = {}
 Library.__index = Library
 
+function Library:AddThemeObject(instance, property, themeKey)
+	if not self.ThemeObjects then self.ThemeObjects = {} end
+	table.insert(self.ThemeObjects, {Instance = instance, Property = property, ThemeKey = themeKey})
+
+	if self.Theme and self.Theme[themeKey] ~= nil then
+		instance[property] = self.Theme[themeKey]
+	end
+end
+
 function Library.CreateWindow(title,subtitle,size,version)
 	local self = setmetatable({}, Library)
 
 	self.mainTabs = {}
 	self.CurrentTab = nil
 	self.Notipos = 0.9
+	self.ThemeObjects = {} -- Централизованный реестр элементов для тем
+
 	self.Theme = {
 		BackGroundIcon = "rbxassetid://139069464889319",
 		TextColor = Color3.fromRGB(255, 255, 255),
@@ -118,7 +129,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 		self.ScaleFactor = 0.75
 	end
 
-	self.ImageLabel.Image = self.Theme.BackGroundIcon
+	self:AddThemeObject(self.ImageLabel, "Image", "BackGroundIcon")
 	self.ImageLabel.Active = true
 	self.ImageLabel.Selectable = true
 	self.ImageLabel.Draggable = true
@@ -149,7 +160,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	dUICorner_4.CornerRadius = UDim.new(0, 24)
 	dUICorner_4.Parent = self.Destroy_gui
 
-	self.dFrame_2.BackgroundColor3 = self.Theme.DestroyGFrame
+	self:AddThemeObject(self.dFrame_2, "BackgroundColor3", "DestroyGFrame")
 	self.dFrame_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.dFrame_2.BorderSizePixel = 0
 	self.dFrame_2.Position = UDim2.new(0.306, 0, 0.328, 0)
@@ -174,7 +185,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.dTextLabel.Size = UDim2.new(0, 200, 0, 36)
 	self.dTextLabel.Font = Enum.Font.FredokaOne
 	self.dTextLabel.Text = "Destroy Interface?"
-	self.dTextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	self:AddThemeObject(self.dTextLabel, "TextColor3", "TextColor")
 	self.dTextLabel.TextSize = 23.000
 	self.dTextLabel.TextWrapped = true
 	self.dTextLabel.Visible = false
@@ -193,7 +204,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.dTextLabel_2.Font = Enum.Font.FredokaOne
 	self.dTextLabel_2.TextWrapped = true
 	self.dTextLabel_2.Text = "This action will permamently close the GUI."
-	self.dTextLabel_2.TextColor3 = Color3.fromRGB(184, 184, 184)
+	self:AddThemeObject(self.dTextLabel_2, "TextColor3", "SubTtitleTextColor")
 	self.dTextLabel_2.TextSize = 15
 	self.dTextLabel_2.Visible = false
 	self.dTextLabel_2.TextXAlignment = Enum.TextXAlignment.Left
@@ -220,7 +231,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	dUICorner_2.CornerRadius = UDim.new(0, 10)
 	dUICorner_2.Parent = self.dTextButton
 
-	self.dTextButton_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self:AddThemeObject(self.dTextButton_2, "BackgroundColor3", "dbtncolor")
 	self.dTextButton_2.BackgroundTransparency = 0.950
 	self.dTextButton_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.dTextButton_2.BorderSizePixel = 0
@@ -229,7 +240,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.dTextButton_2.ZIndex = 10
 	self.dTextButton_2.Font = Enum.Font.FredokaOne
 	self.dTextButton_2.Text = "Close"
-	self.dTextButton_2.TextColor3 = Color3.fromRGB(255, 255, 255)
+	self:AddThemeObject(self.dTextButton_2, "TextColor3", "TextColor")
 	self.dTextButton_2.Visible = false
 	self.dTextButton_2.TextSize = 14.000
 	self.dTextButton_2.Parent = self.dFrame_2
@@ -241,15 +252,8 @@ function Library.CreateWindow(title,subtitle,size,version)
 	dUICorner_3.CornerRadius = UDim.new(0, 10)
 	dUICorner_3.Parent = self.dTextButton_2
 
-	function self:Blur()
-
-	end
-	function self:BlurOff()
-
-	end
-
 	self.Header = Instance.new("Frame")
-	self.Header.BackgroundColor3 = self.Theme.HeaderColor
+	self:AddThemeObject(self.Header, "BackgroundColor3", "HeaderColor")
 	self.Header.BackgroundTransparency = 1
 	self.Header.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.Header.BorderSizePixel = 0
@@ -309,8 +313,8 @@ function Library.CreateWindow(title,subtitle,size,version)
 		self:SearchAllTabs()
 	end)
 
-	self.Search.BackgroundColor3 =  self.Theme.dbtncolor
-	self.Search.BackgroundTransparency =  self.Theme.dbtntran
+	self:AddThemeObject(self.Search, "BackgroundColor3", "dbtncolor")
+	self:AddThemeObject(self.Search, "BackgroundTransparency", "dbtntran")
 	self.Search.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.Search.BorderSizePixel = 0
 	self.Search.Position = UDim2.new(0.570, 0, 0.19, 0)
@@ -327,6 +331,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.SearchImageLabel.Position = UDim2.new(0.81, 0, 0.1, 0)
 	self.SearchImageLabel.Size = UDim2.new(0, 20, 0, 20)
 	self.SearchImageLabel.Image = "rbxassetid://136089190882362"
+	self:AddThemeObject(self.SearchImageLabel, "ImageColor3", "TabsIconColor")
 	self.SearchImageLabel.Parent = self.Search
 
 	self.SearchTextBox2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -335,10 +340,9 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.SearchTextBox2.BorderSizePixel = 0
 	self.SearchTextBox2.Position = UDim2.new(0.04, 0, 0.115000002, -0.9)
 	self.SearchTextBox2.Size = UDim2.new(0, 90, 0, 20)
-	self.SearchTextBox2.Font = Enum.Font.SourceSans
-	self.SearchTextBox2.Text = "Search..."
 	self.SearchTextBox2.Font = Enum.Font.FredokaOne
-	self.SearchTextBox2.TextColor3 = self.Theme.TextColor
+	self.SearchTextBox2.Text = "Search..."
+	self:AddThemeObject(self.SearchTextBox2, "TextColor3", "TextColor")
 	self.SearchTextBox2.TextSize = 14.000
 	self.SearchTextBox2.TextXAlignment = Enum.TextXAlignment.Left
 	self.SearchTextBox2.Parent = self.Search
@@ -371,7 +375,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.TextLabel.Size = UDim2.new(0, titlesize, 0, 40)
 	self.TextLabel.Font = Enum.Font.FredokaOne
 	self.TextLabel.Text = title
-	self.TextLabel.TextColor3 = self.Theme.TextColor
+	self:AddThemeObject(self.TextLabel, "TextColor3", "TextColor")
 	self.TextLabel.TextSize = 16.000
 	self.TextLabel.TextWrapped = true
 	self.TextLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -391,7 +395,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.TextLabel_2.Size = UDim2.new(0, subtitlesize, 0, 40)
 	self.TextLabel_2.Font = Enum.Font.FredokaOne
 	self.TextLabel_2.Text = subtitle
-	self.TextLabel_2.TextColor3 = self.Theme.SubTtitleTextColor
+	self:AddThemeObject(self.TextLabel_2, "TextColor3", "SubTtitleTextColor")
 	self.TextLabel_2.TextSize = 12.000
 	self.TextLabel_2.TextXAlignment = Enum.TextXAlignment.Left
 	self.TextLabel_2.Parent = self.Header
@@ -401,8 +405,8 @@ function Library.CreateWindow(title,subtitle,size,version)
 		self.versionUICorner = Instance.new("UICorner")
 		self.versionTextLabel = Instance.new("TextLabel")
 
-		self.version.BackgroundColor3 = self.Theme.versionBackgroundColor3
-		self.version.BackgroundTransparency = self.Theme.versionBackgroundTransparency
+		self:AddThemeObject(self.version, "BackgroundColor3", "versionBackgroundColor3")
+		self:AddThemeObject(self.version, "BackgroundTransparency", "versionBackgroundTransparency")
 		self.version.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		self.version.BorderSizePixel = 0
 		self.version.Position = UDim2.new(0, trueposition + subtitlesize - 2, 0.20, 0)
@@ -420,19 +424,10 @@ function Library.CreateWindow(title,subtitle,size,version)
 		self.versionTextLabel.Size = UDim2.new(0, 45, 0, 18)
 		self.versionTextLabel.Font = Enum.Font.FredokaOne
 		self.versionTextLabel.Text = version
-		self.versionTextLabel.TextColor3 = self.Theme.versionTextColor
+		self:AddThemeObject(self.versionTextLabel, "TextColor3", "versionTextColor")
 		self.versionTextLabel.TextSize = 14.000
 		self.versionTextLabel.Parent = self.version
 	end
-
-	self.Frame = Instance.new("Frame")
-	self.Frame.BackgroundColor3 = self.Theme.headerlinecolor
-	self.Frame.BackgroundTransparency = 0.95
-	self.Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	self.Frame.BorderSizePixel = 0
-	self.Frame.Position = UDim2.new(0, -1, 1, 0)
-	self.Frame.Size = UDim2.new(0, 197, 0, 2)
-	self.Frame.Parent = self.Header
 
 	self.close = Instance.new("ImageLabel")
 	self.close.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -442,6 +437,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.close.Position = UDim2.new(0.945, 0, 0.2, 0)
 	self.close.Size = UDim2.new(0, 24, 0, 24)
 	self.close.Image = "rbxassetid://115483385285173"
+	self:AddThemeObject(self.close, "ImageColor3", "TabsIconColor")
 	self.close.Parent = self.Header
 
 	local btnclose = Instance.new("TextButton")
@@ -463,6 +459,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.ImageButton.Position = UDim2.new(0.897, 0, 0.35, 0)
 	self.ImageButton.Size = UDim2.new(0, 16, 0, 12)
 	self.ImageButton.Image = "rbxassetid://89738650787294"
+	self:AddThemeObject(self.ImageButton, "ImageColor3", "TabsIconColor")
 	self.ImageButton.Parent = self.Header
 
 	local btnclose2 = Instance.new("TextButton")
@@ -484,6 +481,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.ImageButton_2.Size = UDim2.new(0, 18, 0, 18)
 	self.ImageButton_2.Image = "rbxassetid://122178947900744"
 	self.ImageButton_2.BackgroundTransparency = 1.000
+	self:AddThemeObject(self.ImageButton_2, "ImageColor3", "TabsIconColor")
 	self.ImageButton_2.Parent = self.Header
 
 	local btnclose3 = Instance.new("TextButton")
@@ -511,7 +509,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 
 	local TabPadding = Instance.new("UIPadding")
 	TabPadding.Parent = self.ScrollingFrame
-	TabPadding.PaddingTop = UDim.new(0, 5)
+	TabPadding.PaddingTop = UDim.new(0, 10)
 
 	TabListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
 		local correctHeight = TabListLayout.AbsoluteContentSize.Y / self.ScaleFactor
@@ -533,12 +531,12 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.wTextLabel = Instance.new("TextLabel")
 	self.wTextLabel_2 = Instance.new("TextLabel")
 
-	self.WindowUser.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self:AddThemeObject(self.WindowUser, "BackgroundColor3", "versionBackgroundColor3")
 	self.WindowUser.BackgroundTransparency = 0.95
 	self.WindowUser.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.WindowUser.BorderSizePixel = 0
 	self.WindowUser.Position = UDim2.new(0, 0, 0.97, 0)
-	self.WindowUser.Size = UDim2.new(0, 175, 0, 45)
+	self.WindowUser.Size = UDim2.new(0, 180, 0, 45)
 	self.WindowUser.Parent = self.Tabs
 
 	UICorner_User.CornerRadius = UDim.new(0.3, 0)
@@ -589,11 +587,8 @@ function Library.CreateWindow(title,subtitle,size,version)
 	local toggled = false
 
 	self.WindowUser.InputBegan:Connect(function(input)
-
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
-
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 			toggled = not toggled
-
 			if toggled then
 				ImageLabelRef.Image = ""
 				self.wTextLabel.Text = "Roblox"
@@ -603,23 +598,6 @@ function Library.CreateWindow(title,subtitle,size,version)
 				self.wTextLabel.Text = realDisplay
 				self.wTextLabel_2.Text = "@" .. realName
 			end
-
-		end
-
-		if input.UserInputType == Enum.UserInputType.Touch then
-
-			toggled = not toggled
-
-			if toggled then
-				ImageLabelRef.Image = ""
-				self.wTextLabel.Text = "Roblox"
-				self.wTextLabel_2.Text = "@Roblox"
-			else
-				ImageLabelRef.Image = userimg
-				self.wTextLabel.Text = realDisplay
-				self.wTextLabel_2.Text = "@" .. realName
-			end
-
 		end
 	end)
 
@@ -630,7 +608,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.wTextLabel.Position = UDim2.new(0.27, 0, 0, 7)
 	self.wTextLabel.Size = UDim2.new(0, 131, 0, 15)
 	self.wTextLabel.Font = Enum.Font.FredokaOne
-	self.wTextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	self:AddThemeObject(self.wTextLabel, "TextColor3", "TextColor")
 	self.wTextLabel.TextSize = 14.000
 	self.wTextLabel.Text = realDisplay
 	self.wTextLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -643,19 +621,11 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.wTextLabel_2.Position = UDim2.new(0.27, 0, 0, 21)
 	self.wTextLabel_2.Size = UDim2.new(0, 131, 0, 15)
 	self.wTextLabel_2.Font = Enum.Font.FredokaOne
-	self.wTextLabel_2.TextColor3 = Color3.fromRGB(171, 171, 171)
+	self:AddThemeObject(self.wTextLabel_2, "TextColor3", "SubTtitleTextColor")
 	self.wTextLabel_2.TextSize = 14.000
 	self.wTextLabel_2.Text = "@" .. realName
 	self.wTextLabel_2.TextXAlignment = Enum.TextXAlignment.Left
 	self.wTextLabel_2.Parent = self.WindowUser
-
-	self.Frame_2.BackgroundColor3 = Color3.fromRGB(165, 165, 165)
-	self.Frame_2.BackgroundTransparency = 0.95
-	self.Frame_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	self.Frame_2.BorderSizePixel = 0
-	self.Frame_2.Position = UDim2.new(1, 0, 0, 0)
-	self.Frame_2.Size = UDim2.new(0, 2, 0, 413)
-	self.Frame_2.Parent = self.Tabs
 
 	self.ScrollingFrame.Active = true
 	self.ScrollingFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -665,7 +635,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.ScrollingFrame.Position = UDim2.new(0, 0, 0, 0)
 	self.ScrollingFrame.Size = UDim2.new(0, 187, 0, 358)
 	self.ScrollingFrame.ScrollBarThickness = 2
-	self.ScrollingFrame.ScrollBarImageColor3 = self.Theme.TabsScrollingBarFrameColor
+	self:AddThemeObject(self.ScrollingFrame, "ScrollBarImageColor3", "TabsScrollingBarFrameColor")
 	self.ScrollingFrame.Parent = self.Tabs
 
 	self.Sections = Instance.new("Frame")
@@ -673,8 +643,8 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.Sections.BackgroundTransparency = 1
 	self.Sections.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.Sections.BorderSizePixel = 0
-	self.Sections.Position = UDim2.new(0.35, 0, 0.11, 0)
-	self.Sections.Size = UDim2.new(0, 380, 0, 414)
+	self.Sections.Position = UDim2.new(0.34, 0, 0.11, 0)
+	self.Sections.Size = UDim2.new(0, 390, 0, 414)
 	self.Sections.Parent = self.ImageLabel
 
 	self.TextLabel_5 = Instance.new("TextLabel")
@@ -686,7 +656,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.TextLabel_5.Size = UDim2.new(0, 192, 0, 29)
 	self.TextLabel_5.Font = Enum.Font.FredokaOne
 	self.TextLabel_5.Text = ''
-	self.TextLabel_5.TextColor3 = self.Theme.TextColor
+	self:AddThemeObject(self.TextLabel_5, "TextColor3", "TextColor")
 	self.TextLabel_5.TextSize = 24.000
 	self.TextLabel_5.TextWrapped = true
 	self.TextLabel_5.TextXAlignment = Enum.TextXAlignment.Left
@@ -872,14 +842,12 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.close.Visible = false
 	self.ImageButton.Visible = false
 	self.ImageButton_2.Visible = false
-	self.Frame.Visible = false
 
 	self:Tween(self.ImageLabel,{Size = UDim2.new(0,size,0,480)},0.9)
 	task.wait(0.9)
 
 	self.Tabs.Visible = true
 	self.Sections.Visible = true
-	self.Frame.Visible = true
 	self.Search.Visible = true
 	self.TextLabel.Visible = true
 	self.TextLabel_2.Visible = true
@@ -897,7 +865,7 @@ local TAB_ICONS = {
 	["Player"]    = "rbxassetid://92793433656183", 
 	["Combat"]    = "rbxassetid://73787033062338", 
 	["Generator"] = "rbxassetid://88963434013027", 
-	["AutoFarm"]  = "rbxassetid://119088300179156", --rbxassetid://78576858777870
+	["AutoFarm"]  = "rbxassetid://119088300179156",
 	["Animation"] = "rbxassetid://126672101469278", 
 	["Items"]     = "rbxassetid://100873317961037", 
 	["Teleport"]  = "rbxassetid://93236186125909", 
@@ -923,29 +891,14 @@ local TAB_ICONS = {
 
 function Library:AddTab(name : string,icon : string)
 	local tab = {
-		Name = name,                          
+		Name = name,  
 		Elements = {},
 		Container = nil,
 		Button = nil,
 		Frame = nil,
 		Tab = {},
-		ElemBtn = {},
-		Texttitle = {},
-		Textsubtitle = {},
-		actionBakcColor = {},
-		BtnImg = {},
-		ArrowImg = {},
-		ListFrames = {},
-		DropImg = {},
-		DropDownArrowImg = {},
-		DropDownFrameColor = {},
-		InputTextColor = {},
-		SliderUnderLineColor = {},
-		Togglebtn = {},
-		Sliderball = {},
 		Connections = {},
 		KeybindConnections = {},
-		ColorPickerColor = {},
 		SearchData = {}
 	}
 
@@ -960,9 +913,10 @@ function Library:AddTab(name : string,icon : string)
 	Frame_3.BackgroundTransparency = 1.000
 	Frame_3.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Frame_3.BorderSizePixel = 0
-	Frame_3.Size = UDim2.new(0, 173, 0, 35)
+	Frame_3.Size = UDim2.new(0, 180, 0, 36)
 	Frame_3.Text = ''
 
+	self:AddThemeObject(Frame_3, "BackgroundColor3", "TabColor")
 	table.insert(tab.Tab, Frame_3)
 
 	Frame_3.MouseEnter:Connect(function()
@@ -1007,13 +961,13 @@ function Library:AddTab(name : string,icon : string)
 	TextLabel_3.Size = UDim2.new(0, 52, 0, 35)
 	TextLabel_3.Font = Enum.Font.FredokaOne
 	TextLabel_3.Text = name
-	TextLabel_3.TextColor3 = self.Theme.TabTextColor
+	self:AddThemeObject(TextLabel_3, "TextColor3", "TabTextColor")
 	table.insert(tab.Tab, TextLabel_3)
 	TextLabel_3.TextSize = 14.000
 	TextLabel_3.TextXAlignment = Enum.TextXAlignment.Left
 	TextLabel_3.Parent = Frame_3
 
-	Frame_4.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self:AddThemeObject(Frame_4, "BackgroundColor3", "TabTextColor")
 	Frame_4.BackgroundTransparency = 1.000
 	Frame_4.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Frame_4.BorderSizePixel = 0
@@ -1029,9 +983,10 @@ function Library:AddTab(name : string,icon : string)
 	ScrollingFrame_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	ScrollingFrame_2.BorderSizePixel = 0
 	ScrollingFrame_2.Position = UDim2.new(0, 0, 0.023, 0)
-	ScrollingFrame_2.Size = UDim2.new(0, 381, 0, 370)
+	ScrollingFrame_2.Size = UDim2.new(0, 385, 0, 370)
 	ScrollingFrame_2.CanvasSize = UDim2.new(0, 0, 0, 0)
 	ScrollingFrame_2.ScrollBarThickness = 2
+	self:AddThemeObject(ScrollingFrame_2, "ScrollBarImageColor3", "SectionsScrollingBarFrameColor")
 	ScrollingFrame_2.Visible = false
 	ScrollingFrame_2.Parent = self.Frame_7
 	table.insert(tab.Tab, 5,ScrollingFrame_2)
@@ -1060,6 +1015,7 @@ function Library:AddTab(name : string,icon : string)
 	ImageLabel.Position = UDim2.new(0, 8, 0, 6.5)
 	ImageLabel.Size = UDim2.new(0, 22, 0, 22)
 	ImageLabel.Image = icon
+	self:AddThemeObject(ImageLabel, "ImageColor3", "TabsIconColor")
 	ImageLabel.Parent = Frame_3
 	table.insert(tab.Tab,4,ImageLabel)
 
@@ -1073,13 +1029,9 @@ function Library:AddTab(name : string,icon : string)
 		self:SelectTab(tab, Frame_3)
 	end
 
-	function tab:CalcScroll()
+	function tab:CalcScroll() end
+	function tab:Reposelem() end
 
-	end
-
-	function tab:Reposelem()
-
-	end
 	function tab:AddList(config)
 		local Config = {
 			Name = config.Name,
@@ -1090,11 +1042,10 @@ function Library:AddTab(name : string,icon : string)
 		ListWrapper.BackgroundTransparency = 0.95
 		ListWrapper.Size = UDim2.new(0, 360, 0, 0)
 		ListWrapper.AutomaticSize = Enum.AutomaticSize.Y 
-		ListWrapper.BackgroundColor3 = self.Theme.ListFrameColor
+		self:AddThemeObject(ListWrapper, "BackgroundColor3", "ListFrameColor")
 		ListWrapper.Parent = self.Container
 
 		local BackCorner = Instance.new("UICorner")
-
 		BackCorner.CornerRadius = UDim.new(0, 10)
 		BackCorner.Parent = ListWrapper
 
@@ -1107,13 +1058,12 @@ function Library:AddTab(name : string,icon : string)
 		local name = Instance.new("TextLabel")
 		local ImageLabel = Instance.new("ImageLabel")
 
-		List.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
-		List.BackgroundTransparency = self.Theme.BackGroundElemTran
+		self:AddThemeObject(List, "BackgroundColor3", "BackGroundElemCol")
+		self:AddThemeObject(List, "BackgroundTransparency", "BackGroundElemTran")
 		List.Size = UDim2.new(0, 360, 0, 35)
 		List.Text = ""
 		List.LayoutOrder = 1
 		List.Parent = ListWrapper
-		table.insert(tab.ElemBtn, List)
 
 		UICorner.CornerRadius = UDim.new(0, 10)
 		UICorner.Parent = List
@@ -1123,28 +1073,24 @@ function Library:AddTab(name : string,icon : string)
 		name.Size = UDim2.new(0.7, 0, 1, 0)
 		name.Font = Enum.Font.FredokaOne
 		name.Text = Config.Name
-		name.TextColor3 = Color3.fromRGB(255, 255, 255)
+		self:AddThemeObject(name, "TextColor3", "TabTextColor")
 		name.TextSize = 16
 		name.TextXAlignment = Enum.TextXAlignment.Left
 		name.Parent = List
-		table.insert(tab.Texttitle, name)
 
 		ImageLabel.BackgroundTransparency = 1
 		ImageLabel.Position = UDim2.new(0.9, 0, 0.2, 0)
 		ImageLabel.Rotation = -180
 		ImageLabel.Size = UDim2.new(0, 20, 0, 20)
 		ImageLabel.Image = "rbxassetid://126982255108418"
-		ImageLabel.ImageColor3 = self.Theme.DropDownArrowImg
+		self:AddThemeObject(ImageLabel, "ImageColor3", "DropDownArrowImg")
 		ImageLabel.Parent = List
-		table.insert(tab.ArrowImg, ImageLabel)
 
 		local BackFrame = Instance.new("Frame")
-
 		local ItemsLayout = Instance.new("UIListLayout")
 		local Padding = Instance.new("UIPadding")
 
 		BackFrame.BackgroundTransparency = 1
-
 		BackFrame.ClipsDescendants = true 
 		BackFrame.Size = UDim2.new(0, 360, 0, 0)
 		BackFrame.Visible = false 
@@ -1166,22 +1112,17 @@ function Library:AddTab(name : string,icon : string)
 		end
 
 		local IsOpen = false
-
 		List.MouseButton1Click:Connect(function()
 			IsOpen = not IsOpen
-
 			self:Tween(ImageLabel, {Rotation = IsOpen and 0 or -180}, 0.3)
 
 			if IsOpen then
 				BackFrame.Visible = true
-
 				local correctContentHeight = ItemsLayout.AbsoluteContentSize.Y / (self.ScaleFactor or 1)
 				local targetHeight = correctContentHeight + Padding.PaddingTop.Offset + Padding.PaddingBottom.Offset
-
 				self:Tween(BackFrame, {Size = UDim2.new(0, 360, 0, targetHeight)}, 0.4)
 			else
 				local closeTween = self:Tween(BackFrame, {Size = UDim2.new(0, 360, 0, 0)}, 0.3)
-
 				task.delay(0.3, function()
 					if not IsOpen then
 						BackFrame.Visible = false
@@ -1194,12 +1135,11 @@ function Library:AddTab(name : string,icon : string)
 	function tab:AddDiscordInvite(config)
 		local inviteLink = config.Invite or ""
 		local fallbackIcon = config.Icon or "rbxassetid://14458925526"
-
 		local inviteCode = inviteLink:match("discord%.gg/([%w-]+)") or inviteLink:match("discord%.com/invite/([%w-]+)") or inviteLink
 
 		local DiscordWidget = Instance.new("Frame")
-		DiscordWidget.BackgroundColor3 = self.Theme.BackGroundElemCol 
-		DiscordWidget.BackgroundTransparency = self.Theme.BackGroundElemTran
+		self:AddThemeObject(DiscordWidget, "BackgroundColor3", "BackGroundElemCol")
+		self:AddThemeObject(DiscordWidget, "BackgroundTransparency", "BackGroundElemTran")
 		DiscordWidget.Size = UDim2.new(0, 360, 0, 110)
 		DiscordWidget.Parent = self.Container 
 
@@ -1224,7 +1164,7 @@ function Library:AddTab(name : string,icon : string)
 		ServerName.BackgroundTransparency = 1
 		ServerName.Font = Enum.Font.FredokaOne 
 		ServerName.Text = "Loading Discord..."
-		ServerName.TextColor3 = self.Theme.TabTextColor
+		self:AddThemeObject(ServerName, "TextColor3", "TabTextColor")
 		ServerName.TextSize = 16
 		ServerName.TextXAlignment = Enum.TextXAlignment.Left
 		ServerName.Parent = DiscordWidget
@@ -1235,12 +1175,12 @@ function Library:AddTab(name : string,icon : string)
 		StatusText.BackgroundTransparency = 1
 		StatusText.Font = Enum.Font.FredokaOne
 		StatusText.Text = "Connecting..."
-		StatusText.TextColor3 = self.Theme.TabSubTtitleTextColor
+		self:AddThemeObject(StatusText, "TextColor3", "TabSubTtitleTextColor")
 		StatusText.TextSize = 13
 		StatusText.TextXAlignment = Enum.TextXAlignment.Left
 		StatusText.RichText = true
 		StatusText.Parent = DiscordWidget
-		
+
 		local JoinBtn = Instance.new("TextButton")
 		JoinBtn.Size = UDim2.new(1, -24, 0, 30)
 		JoinBtn.Position = UDim2.new(0, 12, 0, 70)
@@ -1282,7 +1222,6 @@ function Library:AddTab(name : string,icon : string)
 			end
 		end)
 
-		table.insert(tab.ElemBtn, DiscordWidget)
 		return DiscordWidget
 	end
 
@@ -1294,8 +1233,8 @@ function Library:AddTab(name : string,icon : string)
 		local TitleLabel = Instance.new("TextLabel")
 		local ContentLabel = Instance.new("TextLabel")
 
-		Paragraph.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
-		Paragraph.BackgroundTransparency = self.Theme.BackGroundElemTran
+		self:AddThemeObject(Paragraph, "BackgroundColor3", "BackGroundElemCol")
+		self:AddThemeObject(Paragraph, "BackgroundTransparency", "BackGroundElemTran")
 		Paragraph.BorderSizePixel = 0
 
 		UICorner.CornerRadius = UDim.new(0, 12)
@@ -1306,7 +1245,7 @@ function Library:AddTab(name : string,icon : string)
 		TitleLabel.Size = UDim2.new(0, 328, 0, 20)
 		TitleLabel.Font = Enum.Font.FredokaOne
 		TitleLabel.Text = title or ""
-		TitleLabel.TextColor3 = self.Theme.TabTextColor
+		self:AddThemeObject(TitleLabel, "TextColor3", "TabTextColor")
 		TitleLabel.TextSize = 16
 		TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 		TitleLabel.TextWrapped = false
@@ -1317,7 +1256,7 @@ function Library:AddTab(name : string,icon : string)
 		ContentLabel.Size = UDim2.new(0, 328, 0, 10)
 		ContentLabel.Font = Enum.Font.FredokaOne
 		ContentLabel.Text = subtitle or ""
-		ContentLabel.TextColor3 = self.Theme.TabSubTtitleTextColor
+		self:AddThemeObject(ContentLabel, "TextColor3", "TabSubTtitleTextColor")
 		ContentLabel.TextSize = 14
 		ContentLabel.TextWrapped = true
 		ContentLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -1325,10 +1264,6 @@ function Library:AddTab(name : string,icon : string)
 		ContentLabel.Parent = Paragraph
 
 		Paragraph.Parent = self.Container
-
-		table.insert(tab.ElemBtn, Paragraph)
-		table.insert(tab.Texttitle, TitleLabel)
-		table.insert(tab.Textsubtitle, ContentLabel)
 
 		local function recalcSizes()
 			local contentText = ContentLabel.Text
@@ -1399,7 +1334,6 @@ function Library:AddTab(name : string,icon : string)
 
 	function tab:AddSection(title)
 		local TextLabel = Instance.new("TextLabel")
-		table.insert(tab.Texttitle, TextLabel)
 
 		TextLabel.Parent = self.Container
 		TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -1409,7 +1343,7 @@ function Library:AddTab(name : string,icon : string)
 		TextLabel.Size = UDim2.new(0, 193, 0, 21)
 		TextLabel.Font = Enum.Font.FredokaOne
 		TextLabel.Text = title
-		TextLabel.TextColor3 = self.Theme.TabTextColor
+		self:AddThemeObject(TextLabel, "TextColor3", "TabTextColor")
 		TextLabel.TextSize = 18.000
 		TextLabel.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -1428,16 +1362,13 @@ function Library:AddTab(name : string,icon : string)
 		}
 
 		local Button = Instance.new("TextButton")
-		table.insert(tab.ElemBtn, Button)
 		local UICorner = Instance.new("UICorner")
 		local name = Instance.new("TextLabel")
-		table.insert(tab.Texttitle, name)
 		local subtext = Instance.new("TextLabel")
-		table.insert(tab.Textsubtitle, subtext)
 		local ImageLabel = Instance.new("ImageLabel")
 
-		Button.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
-		Button.BackgroundTransparency = self.Theme.BackGroundElemTran
+		self:AddThemeObject(Button, "BackgroundColor3", "BackGroundElemCol")
+		self:AddThemeObject(Button, "BackgroundTransparency", "BackGroundElemTran")
 		Button.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Button.BorderSizePixel = 0
 		Button.Size = UDim2.new(0, 360, 0, 45)
@@ -1446,9 +1377,7 @@ function Library:AddTab(name : string,icon : string)
 
 		Button.MouseButton1Click:Connect(function()
 			if button.Callback then
-				if button.Callback then
-					task.spawn(button.Callback)
-				end
+				task.spawn(button.Callback)
 			end
 		end)
 
@@ -1465,7 +1394,7 @@ function Library:AddTab(name : string,icon : string)
 		name.Size = UDim2.new(0, 77, 0, 20)
 		name.Font = Enum.Font.FredokaOne
 		name.Text = button.Name
-		name.TextColor3 = self.Theme.TabTextColor
+		self:AddThemeObject(name, "TextColor3", "TabTextColor")
 		name.TextSize = 16.000
 		name.TextXAlignment = Enum.TextXAlignment.Left
 		name.Parent = Button
@@ -1478,7 +1407,7 @@ function Library:AddTab(name : string,icon : string)
 		subtext.Size = UDim2.new(0, 193, 0, 14)
 		subtext.Font = Enum.Font.FredokaOne
 		subtext.Text = button.Description
-		subtext.TextColor3 = self.Theme.TabSubTtitleTextColor
+		self:AddThemeObject(subtext, "TextColor3", "TabSubTtitleTextColor")
 		subtext.TextSize = 14.000
 		subtext.TextXAlignment = Enum.TextXAlignment.Left
 		subtext.Parent = Button
@@ -1490,9 +1419,8 @@ function Library:AddTab(name : string,icon : string)
 		ImageLabel.Position = UDim2.new(0.841, 0, 0.244, 0)
 		ImageLabel.Size = UDim2.new(0, 25, 0, 23)
 		ImageLabel.Image = "rbxassetid://140083176080437"
-		ImageLabel.ImageColor3 = self.Theme.DropDownArrowImg
+		self:AddThemeObject(ImageLabel, "ImageColor3", "DropDownArrowImg")
 		ImageLabel.Parent = Button
-		table.insert(tab.BtnImg, ImageLabel)
 
 		self.SearchData[Button] = (tostring(config.Name or "") .. " " .. tostring(config.Description or "")):lower()
 
@@ -1512,21 +1440,18 @@ function Library:AddTab(name : string,icon : string)
 		}
 
 		local Toggle = Instance.new("TextButton")
-		table.insert(tab.ElemBtn, Toggle)
 		local UICorner = Instance.new("UICorner")
 		local name = Instance.new("TextLabel")
-		table.insert(tab.Texttitle, name)
 		local subtext = Instance.new("TextLabel")
-		table.insert(tab.Textsubtitle, subtext)
 
 		local sliderbutton = Instance.new("Frame")
 		local UICorner_2 = Instance.new("UICorner")
 		local Frame = Instance.new("Frame")
-		table.insert(tab.Togglebtn, Frame)
+		self:AddThemeObject(Frame, "BackgroundColor3", "Togglebtn")
 		local UICorner_3 = Instance.new("UICorner")
 
-		Toggle.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
-		Toggle.BackgroundTransparency = self.Theme.BackGroundElemTran
+		self:AddThemeObject(Toggle, "BackgroundColor3", "BackGroundElemCol")
+		self:AddThemeObject(Toggle, "BackgroundTransparency", "BackGroundElemTran")
 		Toggle.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Toggle.BorderSizePixel = 0
 		Toggle.Size = UDim2.new(0, 360, 0, 45)
@@ -1546,7 +1471,7 @@ function Library:AddTab(name : string,icon : string)
 		name.Size = UDim2.new(0, 77, 0, 20)
 		name.Font = Enum.Font.FredokaOne
 		name.Text = toggle.Name
-		name.TextColor3 = self.Theme.TabTextColor
+		self:AddThemeObject(name, "TextColor3", "TabTextColor")
 		name.TextSize = 15.000
 		name.TextXAlignment = Enum.TextXAlignment.Left
 		name.Parent = Toggle
@@ -1559,7 +1484,7 @@ function Library:AddTab(name : string,icon : string)
 		subtext.Size = UDim2.new(0, 193, 0, 14)
 		subtext.Font = Enum.Font.FredokaOne
 		subtext.Text = toggle.Description
-		subtext.TextColor3 = self.Theme.TabSubTtitleTextColor
+		self:AddThemeObject(subtext, "TextColor3", "TabSubTtitleTextColor")
 		subtext.TextSize = 14.000
 		subtext.TextXAlignment = Enum.TextXAlignment.Left
 		subtext.Parent = Toggle
@@ -1574,7 +1499,6 @@ function Library:AddTab(name : string,icon : string)
 
 		UICorner_2.Parent = sliderbutton
 
-		Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Frame.BorderSizePixel = 0
 		Frame.Position = UDim2.new(0, 3, 0.12, 0)
@@ -1650,14 +1574,8 @@ function Library:AddTab(name : string,icon : string)
 		local bindButton = Instance.new("TextButton")
 		local UICorner_2 = Instance.new("UICorner")
 
-		table.insert(tab.ElemBtn, container)
-		table.insert(tab.Texttitle, name)
-		table.insert(tab.Texttitle, bindButton)
-		table.insert(tab.Textsubtitle, subtext)
-		table.insert(tab.actionBakcColor, bindButton)
-
-		container.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
-		container.BackgroundTransparency = self.Theme.BackGroundElemTran
+		self:AddThemeObject(container, "BackgroundColor3", "BackGroundElemCol")
+		self:AddThemeObject(container, "BackgroundTransparency", "BackGroundElemTran")
 		container.BorderSizePixel = 0
 		container.Size = UDim2.new(0, 360, 0, 45)
 		container.Parent = self.Container
@@ -1672,7 +1590,7 @@ function Library:AddTab(name : string,icon : string)
 		name.Size = UDim2.new(0, 77, 0, 20)
 		name.Font = Enum.Font.FredokaOne
 		name.Text = Keybind.Name
-		name.TextColor3 = self.Theme.TabTextColor
+		self:AddThemeObject(name, "TextColor3", "TabTextColor")
 		name.TextSize = 16.000
 		name.TextXAlignment = Enum.TextXAlignment.Left
 		name.Parent = container
@@ -1682,17 +1600,17 @@ function Library:AddTab(name : string,icon : string)
 		subtext.Size = UDim2.new(0, 193, 0, 14)
 		subtext.Font = Enum.Font.FredokaOne
 		subtext.Text = Keybind.Description
-		subtext.TextColor3 = self.Theme.TabSubTtitleTextColor
+		self:AddThemeObject(subtext, "TextColor3", "TabSubTtitleTextColor")
 		subtext.TextSize = 14.000
 		subtext.TextXAlignment = Enum.TextXAlignment.Left
 		subtext.Parent = container
 
-		bindButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		bindButton.BackgroundTransparency = self.Theme.BackGroundButtonTran
+		self:AddThemeObject(bindButton, "BackgroundColor3", "BackGroundElemCol")
+		self:AddThemeObject(bindButton, "BackgroundTransparency", "BackGroundButtonTran")
 		bindButton.Position = UDim2.new(0.672, 0, 0.221, 0)
 		bindButton.Size = UDim2.new(0, 100, 0, 25)
 		bindButton.Font = Enum.Font.FredokaOne
-		bindButton.TextColor3 = self.Theme.TabTextColor
+		self:AddThemeObject(bindButton, "TextColor3", "TabTextColor")
 		bindButton.TextSize = 14.000
 		bindButton.Parent = container
 
@@ -1737,13 +1655,11 @@ function Library:AddTab(name : string,icon : string)
 		end)
 		table.insert(tab.Connections, selectConnection)
 
-		-- Создаем единственный глобальный слушатель в общей таблице AllElements
 		if not self.AllElements.GlobalKeybindConnection then
 			self.AllElements.GlobalKeybindConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
 				if gameProcessed then return end
 
 				if input.UserInputType == Enum.UserInputType.Keyboard then
-					-- Перебираем все сохраненные бинды
 					for _, kbObj in pairs(self.AllElements.Keybinds) do
 						local key = kbObj:GetState()
 						if key and input.KeyCode == key and kbObj.Callback then
@@ -1786,18 +1702,14 @@ function Library:AddTab(name : string,icon : string)
 		}
 
 		local input = Instance.new("Frame")
-		table.insert(tab.ElemBtn, input)
 		local UICorner = Instance.new("UICorner")
 		local name = Instance.new("TextLabel")
-		table.insert(tab.Texttitle, name)
 		local subtext = Instance.new("TextLabel")
-		table.insert(tab.Textsubtitle, subtext)
 		local TextBox = Instance.new("TextBox")
-		table.insert(tab.actionBakcColor, TextBox)
 		local UICorner_2 = Instance.new("UICorner")
 
-		input.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
-		input.BackgroundTransparency = self.Theme.BackGroundElemTran
+		self:AddThemeObject(input, "BackgroundColor3", "BackGroundElemCol")
+		self:AddThemeObject(input, "BackgroundTransparency", "BackGroundElemTran")
 		input.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		input.BorderSizePixel = 0
 		input.Size = UDim2.new(0, 360, 0, 45)
@@ -1816,7 +1728,7 @@ function Library:AddTab(name : string,icon : string)
 		name.Size = UDim2.new(0, 77, 0, 20)
 		name.Font = Enum.Font.FredokaOne
 		name.Text = Input.Name
-		name.TextColor3 = self.Theme.TabTextColor
+		self:AddThemeObject(name, "TextColor3", "TabTextColor")
 		name.TextSize = 16.000
 		name.TextXAlignment = Enum.TextXAlignment.Left
 		name.Parent = input
@@ -1829,37 +1741,34 @@ function Library:AddTab(name : string,icon : string)
 		subtext.Size = UDim2.new(0, 193, 0, 14)
 		subtext.Font = Enum.Font.FredokaOne
 		subtext.Text = Input.Description
-		subtext.TextColor3 = self.Theme.TabSubTtitleTextColor
+		self:AddThemeObject(subtext, "TextColor3", "TabSubTtitleTextColor")
 		subtext.TextSize = 14.000
 		subtext.TextXAlignment = Enum.TextXAlignment.Left
 		subtext.Parent = input
 
-		TextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		TextBox.BackgroundTransparency = self.Theme.BackGroundButtonTran
+		self:AddThemeObject(TextBox, "BackgroundColor3", "BackGroundElemCol")
+		self:AddThemeObject(TextBox, "BackgroundTransparency", "BackGroundButtonTran")
 		TextBox.BorderColor3 = Color3.fromRGB(255, 255, 255)
 		TextBox.BorderSizePixel = 0
 		TextBox.Position = UDim2.new(0.574999988, 0, 0.155555561, 0)
 		TextBox.Size = UDim2.new(0, 135, 0, 30)
 		TextBox.Font = Enum.Font.FredokaOne
 		TextBox.Text = Input.Default
-		TextBox.TextColor3 = self.Theme.InputTextColor
+		self:AddThemeObject(TextBox, "TextColor3", "InputTextColor")
 		TextBox.TextSize = 14.000
 		TextBox.Parent = input
-		table.insert(tab.InputTextColor, TextBox)
 
 		UICorner_2.CornerRadius = UDim.new(0, 5)
 		UICorner_2.Parent = TextBox
 
 		TextBox.FocusLost:Connect(function()
 			local currentText = TextBox.Text
-
 			if not Input.SaveUserText then
 				task.spawn(function()
 					task.wait()
 					TextBox.Text = Input.Default
 				end)
 			end
-
 			if config.Callback then
 				config.Callback(currentText)
 			end
@@ -1883,7 +1792,6 @@ function Library:AddTab(name : string,icon : string)
 			Callback = config.Callback
 		}
 		self.AllElements.Inputs[config.Name] = InputObj
-
 		self.SearchData[input] = (tostring(config.Name or "") .. " " .. tostring(config.Description or "")):lower()
 
 		return InputObj
@@ -1900,15 +1808,9 @@ function Library:AddTab(name : string,icon : string)
 		local value = config.Default or Slider.min
 
 		local slider = Instance.new("TextButton")
-		table.insert(tab.ElemBtn, slider)
-
 		local UICorner = Instance.new("UICorner")
 		local name = Instance.new("TextLabel")
-		table.insert(tab.Texttitle, name)
-
 		local subtext = Instance.new("TextLabel")
-		table.insert(tab.Textsubtitle, subtext)
-
 		local sliderbutton = Instance.new("Frame")
 		local sliderline = Instance.new("Frame")
 		local sliderball = Instance.new("Frame")
@@ -1916,11 +1818,8 @@ function Library:AddTab(name : string,icon : string)
 		local slideramount = Instance.new("TextLabel")
 		local underline = Instance.new("Frame")
 
-		table.insert(tab.SliderUnderLineColor, underline)
-		table.insert(tab.Sliderball, sliderball)
-
-		slider.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
-		slider.BackgroundTransparency = self.Theme.BackGroundElemTran
+		self:AddThemeObject(slider, "BackgroundColor3", "BackGroundElemCol")
+		self:AddThemeObject(slider, "BackgroundTransparency", "BackGroundElemTran")
 		slider.BorderSizePixel = 0
 		slider.Text = ""
 		slider.Size = UDim2.new(0, 360, 0, 45)
@@ -1936,7 +1835,7 @@ function Library:AddTab(name : string,icon : string)
 		name.Size = UDim2.new(0, 77, 0, 20)
 		name.Font = Enum.Font.FredokaOne
 		name.Text = Slider.Name
-		name.TextColor3 = self.Theme.TabTextColor
+		self:AddThemeObject(name, "TextColor3", "TabTextColor")
 		name.TextSize = 16.000
 		name.TextXAlignment = Enum.TextXAlignment.Left
 		name.Parent = slider
@@ -1946,7 +1845,7 @@ function Library:AddTab(name : string,icon : string)
 		subtext.Size = UDim2.new(0, 193, 0, 14)
 		subtext.Font = Enum.Font.FredokaOne
 		subtext.Text = Slider.Description
-		subtext.TextColor3 = self.Theme.TabSubTtitleTextColor
+		self:AddThemeObject(subtext, "TextColor3", "TabSubTtitleTextColor")
 		subtext.TextSize = 14.000
 		subtext.TextXAlignment = Enum.TextXAlignment.Left
 		subtext.Parent = slider
@@ -1962,7 +1861,7 @@ function Library:AddTab(name : string,icon : string)
 		sliderline.Size = UDim2.new(1, 0, 0, 2)
 		sliderline.Parent = sliderbutton
 
-		sliderball.BackgroundColor3 = self.Theme.Sliderball
+		self:AddThemeObject(sliderball, "BackgroundColor3", "Sliderball")
 		sliderball.BorderSizePixel = 0
 		sliderball.AnchorPoint = Vector2.new(0.5, 0.5)
 		sliderball.Position = UDim2.new(0, 0, 0.5, 0)
@@ -1977,12 +1876,11 @@ function Library:AddTab(name : string,icon : string)
 		slideramount.Position = UDim2.new(0, -35, 0.075, 0)
 		slideramount.Size = UDim2.new(0, 21, 0, 18)
 		slideramount.Font = Enum.Font.FredokaOne
-		slideramount.TextColor3 = self.Theme.TabTextColor
+		self:AddThemeObject(slideramount, "TextColor3", "TabTextColor")
 		slideramount.TextSize = 14.000
 		slideramount.Parent = sliderbutton
-		table.insert(tab.Texttitle, slideramount)
 
-		underline.BackgroundColor3 = self.Theme.SliderUnderLineColor
+		self:AddThemeObject(underline, "BackgroundColor3", "SliderUnderLineColor")
 		underline.BorderSizePixel = 0
 		underline.Position = UDim2.new(0, 0, 0.455, 0)
 		underline.Size = UDim2.new(0, 0, 0, 2)
@@ -1990,13 +1888,11 @@ function Library:AddTab(name : string,icon : string)
 
 		if not Library.SharedSliderState then
 			Library.SharedSliderState = { ActiveMoveFunc = nil }
-
 			UserInputService.InputChanged:Connect(function(input)
 				if Library.SharedSliderState.ActiveMoveFunc and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
 					Library.SharedSliderState.ActiveMoveFunc(input)
 				end
 			end)
-
 			UserInputService.InputEnded:Connect(function(input)
 				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 					Library.SharedSliderState.ActiveMoveFunc = nil
@@ -2006,9 +1902,7 @@ function Library:AddTab(name : string,icon : string)
 
 		local function updateValue(newValue)
 			value = math.clamp(newValue, Slider.min, Slider.max)
-
 			local percent = (value - Slider.min) / (Slider.max - Slider.min)
-
 			underline.Size = UDim2.new(percent, 0, 0, 2)
 			sliderball.Position = UDim2.new(percent, 0, 0.5, 0)
 
@@ -2043,7 +1937,6 @@ function Library:AddTab(name : string,icon : string)
 
 		self.AllElements.Sliders[config.Name] = sliderObj
 		self.SearchData[slider] = (tostring(config.Name or "") .. " " .. tostring(config.Description or "")):lower()
-
 		updateValue(value)
 
 		return sliderObj
@@ -2067,29 +1960,28 @@ function Library:AddTab(name : string,icon : string)
 
 		local ColorPick = create("Frame", {
 			Parent = self.Container,
-			BackgroundColor3 = Color3.fromRGB(225, 225, 225),
-			BackgroundTransparency = self.Theme.BackGroundElemTran,
 			BorderSizePixel = 0,
 			Size = UDim2.new(0, 360, 0, 45)
 		})
-		table.insert(tab.ElemBtn, ColorPick)
+		self:AddThemeObject(ColorPick, "BackgroundColor3", "BackGroundElemCol")
+		self:AddThemeObject(ColorPick, "BackgroundTransparency", "BackGroundElemTran")
 		create("UICorner", {CornerRadius = UDim.new(0, 12), Parent = ColorPick})
 
 		local name = create("TextLabel", {
 			Name = "name", Parent = ColorPick, BackgroundTransparency = 1,
 			Position = UDim2.new(0.029, 0, 0, namepos), Size = UDim2.new(0, 77, 0, 20),
 			Font = Enum.Font.FredokaOne, Text = colorPicker.Name,
-			TextColor3 = self.Theme.TabTextColor, TextSize = 16, TextXAlignment = Enum.TextXAlignment.Left
+			TextSize = 16, TextXAlignment = Enum.TextXAlignment.Left
 		})
-		table.insert(tab.Texttitle, name)
+		self:AddThemeObject(name, "TextColor3", "TabTextColor")
 
 		local subtext = create("TextLabel", {
 			Name = "subtext", Parent = ColorPick, BackgroundTransparency = 1,
 			Position = UDim2.new(0.029, 0, 0, 25), Size = UDim2.new(0, 193, 0, 14),
 			Font = Enum.Font.FredokaOne, Text = colorPicker.Description,
-			TextColor3 = self.Theme.TabSubTtitleTextColor, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left
+			TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left
 		})
-		table.insert(tab.Textsubtitle, subtext)
+		self:AddThemeObject(subtext, "TextColor3", "TabSubTtitleTextColor")
 
 		local colorButton = create("TextButton", {
 			Parent = ColorPick, BackgroundColor3 = colorPicker.Default, BorderSizePixel = 0,
@@ -2121,8 +2013,6 @@ function Library:AddTab(name : string,icon : string)
 			if colorPicker.Callback then colorPicker.Callback(color) end
 		end
 
-		--setColor(colorPicker.Default)
-
 		local function togglePalette()
 			if not self.SharedPaletteUI then
 				self.SharedPaletteUI = {}
@@ -2135,11 +2025,11 @@ function Library:AddTab(name : string,icon : string)
 				self.SharedPaletteUI.Modal = modalBackground
 
 				local colorPaletteFrame = create("Frame", {
-					Parent = self.ImageLabel, BackgroundColor3 = self.Theme.ColorPickerColoro,
+					Parent = self.ImageLabel,
 					BorderSizePixel = 0, ZIndex = 50, Visible = false, Size = UDim2.new(0, 0, 0, 0),
 					Position = UDim2.new(0.5, 0, 0.5, 0), AnchorPoint = Vector2.new(0.5, 0.5)
 				})
-				table.insert(tab.ColorPickerColor, colorPaletteFrame)
+				self:AddThemeObject(colorPaletteFrame, "BackgroundColor3", "ColorPickerColoro")
 				create("UICorner", {CornerRadius = UDim.new(0, 12), Parent = colorPaletteFrame})
 				create("UIStroke", {Color = Color3.fromRGB(60, 60, 70), Thickness = 2, Parent = colorPaletteFrame})
 				self.SharedPaletteUI.Frame = colorPaletteFrame
@@ -2147,9 +2037,9 @@ function Library:AddTab(name : string,icon : string)
 				local titleFrame = create("Frame", {Parent = colorPaletteFrame, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 40), ZIndex = 51})
 				local titleLabel = create("TextLabel", {
 					Parent = titleFrame, Text = "Choose a color", Font = Enum.Font.GothamSemibold, TextSize = 16,
-					TextColor3 = self.Theme.TabTextColor, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 1, 0), ZIndex = 52
+					BackgroundTransparency = 1, Size = UDim2.new(1, 0, 1, 0), ZIndex = 52
 				})
-				table.insert(tab.Texttitle, titleLabel)
+				self:AddThemeObject(titleLabel, "TextColor3", "TabTextColor")
 
 				local svGradient = create("Frame", {Parent = colorPaletteFrame, Size = UDim2.new(0, 200, 0, 200), Position = UDim2.new(0.435, -100, 0, 50), ZIndex = 51})
 				create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = svGradient})
@@ -2187,10 +2077,10 @@ function Library:AddTab(name : string,icon : string)
 
 				local hexInput = create("TextBox", {
 					Parent = inputFrame, Size = UDim2.new(0.7, 0, 1, 0), BackgroundColor3 = Color3.fromRGB(40, 40, 45),
-					BackgroundTransparency = 0.5, TextColor3 = self.Theme.TabTextColor, Font = Enum.Font.Gotham,
+					BackgroundTransparency = 0.5, Font = Enum.Font.Gotham,
 					TextSize = 14, TextXAlignment = Enum.TextXAlignment.Center, ZIndex = 52
 				})
-				table.insert(tab.Texttitle, hexInput)
+				self:AddThemeObject(hexInput, "TextColor3", "TabTextColor")
 				create("UICorner", {CornerRadius = UDim.new(0, 6), Parent = hexInput})
 				create("UIStroke", {Color = Color3.fromRGB(60, 60, 70), Thickness = 1, Parent = hexInput})
 				self.SharedPaletteUI.HexInput = hexInput
@@ -2219,7 +2109,8 @@ function Library:AddTab(name : string,icon : string)
 
 				hueFrame.InputBegan:Connect(function(input)
 					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-						draggingHue = true; processInput(input, hueFrame, true)
+						draggingHue = true;
+						processInput(input, hueFrame, true)
 					end
 				end)
 
@@ -2358,8 +2249,8 @@ function Library:AddTab(name : string,icon : string)
 
 			local SharedOptions = Instance.new("ScrollingFrame")
 			SharedOptions.Active = true
-			SharedOptions.BackgroundColor3 = self.Theme.DropDownColor
-			SharedOptions.BackgroundTransparency = self.Theme.DropDownTransparency
+			self:AddThemeObject(SharedOptions, "BackgroundColor3", "DropDownColor")
+			self:AddThemeObject(SharedOptions, "BackgroundTransparency", "DropDownTransparency")
 			SharedOptions.BorderSizePixel = 0
 			SharedOptions.Position = UDim2.new(0.0277, 0, 0.035, 0)
 			SharedOptions.Size = UDim2.new(0, 135, 0, 0)
@@ -2376,8 +2267,6 @@ function Library:AddTab(name : string,icon : string)
 			UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 			UIListLayout.Parent = SharedOptions
 
-			table.insert(tab.DropImg, SharedOptions)
-
 			Library.SharedDropdownState = {
 				Container = SharedContainer,
 				OptionsFrame = SharedOptions,
@@ -2390,20 +2279,16 @@ function Library:AddTab(name : string,icon : string)
 		local SharedOptions = Library.SharedDropdownState.OptionsFrame
 
 		local Dropdown = Instance.new("Frame")
-		table.insert(tab.ElemBtn, Dropdown)
 		local UICorner = Instance.new("UICorner")
 		local name = Instance.new("TextLabel")
-		table.insert(tab.Texttitle, name)
 		local subtext = Instance.new("TextLabel")
-		table.insert(tab.Textsubtitle, subtext)
 		local Select = Instance.new("TextButton")
-		table.insert(tab.actionBakcColor, Select)
 		local UICorner_2 = Instance.new("UICorner")
 		local TextLabel = Instance.new("TextLabel")
 		local ImageLabel = Instance.new("ImageLabel")
 
-		Dropdown.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
-		Dropdown.BackgroundTransparency = self.Theme.BackGroundElemTran
+		self:AddThemeObject(Dropdown, "BackgroundColor3", "BackGroundElemCol")
+		self:AddThemeObject(Dropdown, "BackgroundTransparency", "BackGroundElemTran")
 		Dropdown.BorderSizePixel = 0
 		Dropdown.Size = UDim2.new(0, 360, 0, 45)
 		Dropdown.Parent = self.Container
@@ -2419,7 +2304,7 @@ function Library:AddTab(name : string,icon : string)
 		name.Size = UDim2.new(0, 77, 0, 20)
 		name.Font = Enum.Font.FredokaOne
 		name.Text = dropdown.Name
-		name.TextColor3 = self.Theme.TabTextColor
+		self:AddThemeObject(name, "TextColor3", "TabTextColor")
 		name.TextSize = 16.000
 		name.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -2429,13 +2314,13 @@ function Library:AddTab(name : string,icon : string)
 		subtext.Size = UDim2.new(0, 193, 0, 14)
 		subtext.Font = Enum.Font.FredokaOne
 		subtext.Text = dropdown.Description
-		subtext.TextColor3 = self.Theme.TabSubTtitleTextColor
+		self:AddThemeObject(subtext, "TextColor3", "TabSubTtitleTextColor")
 		subtext.TextSize = 14.000
 		subtext.TextXAlignment = Enum.TextXAlignment.Left
 
 		Select.Parent = Dropdown
-		Select.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		Select.BackgroundTransparency = self.Theme.BackGroundButtonTran
+		self:AddThemeObject(Select, "BackgroundColor3", "BackGroundElemCol")
+		self:AddThemeObject(Select, "BackgroundTransparency", "BackGroundButtonTran")
 		Select.BorderSizePixel = 0
 		Select.Position = UDim2.new(0.576, 0, 0.155, 0)
 		Select.Size = UDim2.new(0, 135, 0, 30)
@@ -2450,8 +2335,7 @@ function Library:AddTab(name : string,icon : string)
 		TextLabel.Size = UDim2.new(0, 88, 0, 30)
 		TextLabel.Font = Enum.Font.FredokaOne
 		TextLabel.Text = "Select..."
-		table.insert(tab.Texttitle, TextLabel)
-		TextLabel.TextColor3 = self.Theme.TabTextColor
+		self:AddThemeObject(TextLabel, "TextColor3", "TabTextColor")
 		TextLabel.TextSize = 14.000
 		TextLabel.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -2460,8 +2344,7 @@ function Library:AddTab(name : string,icon : string)
 		ImageLabel.Position = UDim2.new(0.816, 0, 0.166, 0)
 		ImageLabel.Size = UDim2.new(0, 20, 0, 20)
 		ImageLabel.Image = "rbxassetid://126982255108418"
-		ImageLabel.ImageColor3 = self.Theme.DropDownArrowImg
-		table.insert(tab.DropDownArrowImg, ImageLabel)
+		self:AddThemeObject(ImageLabel, "ImageColor3", "DropDownArrowImg")
 
 		local optionElements = {}
 
@@ -2573,12 +2456,12 @@ function Library:AddTab(name : string,icon : string)
 			OptionTextLabel.Size = UDim2.new(0, 124, 0, 30)
 			OptionTextLabel.Font = Enum.Font.FredokaOne
 			OptionTextLabel.Text = formatTextWrap(optionText, 18, 38)
-			OptionTextLabel.TextColor3 = self.Theme.TabTextColor
+			self:AddThemeObject(OptionTextLabel, "TextColor3", "TabTextColor")
 			OptionTextLabel.TextSize = 14
 			OptionTextLabel.TextXAlignment = Enum.TextXAlignment.Left
 			OptionTextLabel.Parent = Option
 
-			Frame.BackgroundColor3 = self.Theme.DropDownFrameColor
+			self:AddThemeObject(Frame, "BackgroundColor3", "DropDownFrameColor")
 			Frame.BorderSizePixel = 0
 			Frame.Position = UDim2.new(0.01, 0, 0, 4)
 			Frame.Size = UDim2.new(0, 2, 0, 0)
@@ -2708,12 +2591,10 @@ function Library:AddTab(name : string,icon : string)
 
 	function Library:AddLine()
 		local Line = Instance.new("Frame")
-		Line.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
-		Line.BackgroundTransparency = self.Theme.BackGroundElemTran
+		self:AddThemeObject(Line, "BackgroundColor3", "BackGroundElemCol")
+		self:AddThemeObject(Line, "BackgroundTransparency", "BackGroundElemTran")
 		Line.Size = UDim2.new(0, 360, 0, 3)
 		Line.Parent = self.Container
-
-		table.insert(tab.ElemBtn, Line)
 
 		local obj = {
 			Elem = Line,
@@ -2788,7 +2669,6 @@ function Library:Minimaze()
 			gui.AnchorPoint = newAnchor
 			gui.Position = gui.Position + UDim2.new(0, xOffset, 0, yOffset)
 			if not UserInputService.TouchEnabled then
-				self.Frame.BackgroundTransparency = 1
 				self.Header.BackgroundTransparency = self.Theme.BackGroundTran
 				self.Tabs.Visible = false
 				self.Sections.Visible = false
@@ -2814,7 +2694,6 @@ function Library:Minimaze()
 
 				gui.AnchorPoint = newAnchor
 				gui.Position = gui.Position + UDim2.new(0, xOffset, 0, yOffset)
-				self.Frame.BackgroundTransparency = 1
 				self.Header.BackgroundTransparency = 1
 				self.Tabs.Visible = false
 				self.Sections.Visible = false
@@ -2844,7 +2723,6 @@ function Library:Minimaze()
 			end
 		else
 			if not UserInputService.TouchEnabled then
-				self.Frame.BackgroundTransparency = self.Theme.headerlinetrans
 				self.ImageLabel.ImageTransparency = self.Theme.BackGroundTran
 				self.Header.BackgroundTransparency = 1
 				if self.Sections.Size == UDim2.new(0, 375,0, 370) then
@@ -2874,7 +2752,6 @@ function Library:Minimaze()
 				local IsVisibleSearch = false
 				self.ImageButton_2.Visible = false
 
-				self.Frame.BackgroundTransparency = self.Theme.headerlinetrans
 				self.ImageLabel.ImageTransparency = self.Theme.BackGroundTran
 				self.Header.BackgroundTransparency = 1
 
@@ -2892,8 +2769,6 @@ function Library:Minimaze()
 				end
 
 				task.wait(1)
-
-				self.Frame.BackgroundTransparency = 0.95
 
 				local gui = self.ImageLabel
 				local targetAnchor = Vector2.new(0.5, 0.5)
@@ -2949,7 +2824,6 @@ function Library:ColumnWindow()
 			self:Tween(self.ImageButton, {Position = UDim2.new(0.854, 0,0.35, 0)}, 1)
 			self:Tween(self.ImageButton_2, {Position = UDim2.new(0.76, 0,0.29, 0)}, 1)
 			self:Tween(self.ImageLabel, {Size = UDim2.new(0, 405,0, 480)}, 1)
-			self:Tween(self.Frame, {Size = UDim2.new(0, 381,0, 1)}, 1)
 			self:Tween(self.Header, {Size = UDim2.new(0, 381,0, 40)}, 1)
 
 			self.Tabs.Visible = false
@@ -3029,7 +2903,6 @@ function Library:ColumnWindow()
 			self.Header.BackgroundTransparency = 1
 			self.ImageLabel.ImageTransparency = self.Theme.BackGroundTran
 			self:Tween(self.ImageLabel, {Size = UDim2.new(0, 620,0, 480)}, 1)
-			self:Tween(self.Frame, {Size = UDim2.new(0, 197,0, 1)}, 1)
 			self:Tween(self.Header, {Size = UDim2.new(0, 596,0, 40)}, 1)
 			self:Tween(self.close, {Position = UDim2.new(0.945, 0,0.2, 0)}, 1)
 			self:Tween(self.ImageButton, {Position = UDim2.new(0.897, 0,0.35, 0)}, 1)
@@ -3122,7 +2995,7 @@ end
 function Library:Destroy()
 	if self.AllElements and self.AllElements.GlobalKeybindConnection then
 		self.AllElements.GlobalKeybindConnection:Disconnect()
-		self.AllElements.GlobalKeybindConnection = nil -- Убираем ссылку
+		self.AllElements.GlobalKeybindConnection = nil 
 	end
 	for _, tab in ipairs(self.mainTabs) do
 		for _, connection in ipairs(tab.Connections) do
@@ -3140,6 +3013,8 @@ function Library:Destroy()
 	self:ClearSearchResults()
 	self.Destroy_gui.Visible = false
 	self.AllElements.Toggles = {}
+	self.ThemeObjects = {} -- Clear Registry
+
 	local tweenInfo = TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 	local tween = TweenService:Create(self.ImageLabel, tweenInfo, {ImageTransparency = 1})
 	tween:Play()
@@ -3753,7 +3628,6 @@ local Themes = {
 	}
 }
 
--- Вспомогательная функция для загрузки иконок (добавь в начало Library)
 function Library:GetAsset(url)
 	if not self.ImageCache then self.ImageCache = {} end
 	if self.ImageCache[url] then return self.ImageCache[url] end
@@ -3786,107 +3660,39 @@ function Library:SetTheme(themeName : string)
 	self.CurrentThemeName = themeName
 	self.Theme = theme
 
-	for i, v in pairs(self["ActiveNotifications"]) do
-		v["notification"].Image = theme.NotiImg
-		v["notification"].Title.TextColor3 = theme.TextColor
-		v["notification"].Description.TextColor3 = theme.SubTtitleTextColor
-		v["notification"].CloseButton.ImageColor3 = self.Theme.TabsIconColor
-		if v["notification"].Icon.Image == "rbxassetid://75930996983661" or v["notification"].Icon.Image == "rbxassetid://76158273611595" then
-			v["notification"].Icon.ImageColor3 = self.Theme.TabsIconColor
+	-- Централизованное обновление всех элементов (Автоматическая очистка мусора включена)
+	local aliveObjects = {}
+	if self.ThemeObjects then
+		for _, obj in ipairs(self.ThemeObjects) do
+			if obj.Instance and obj.Instance.Parent then
+				obj.Instance[obj.Property] = theme[obj.ThemeKey]
+				table.insert(aliveObjects, obj)
+			end
+		end
+		self.ThemeObjects = aliveObjects
+	end
+
+	-- Временные элементы (Нотификации)
+	for i, v in pairs(self.ActiveNotifications) do
+		v.notification.Image = theme.NotiImg
+		v.notification.Title.TextColor3 = theme.TextColor
+		v.notification.Description.TextColor3 = theme.SubTtitleTextColor
+		v.notification.CloseButton.ImageColor3 = theme.TabsIconColor
+		if v.notification.Icon.Image == "rbxassetid://75930996983661" or v.notification.Icon.Image == "rbxassetid://76158273611595" then
+			v.notification.Icon.ImageColor3 = theme.TabsIconColor
 		end
 	end
 
-	self.SearchImageLabel.ImageColor3 = theme.TabsIconColor
-
-	self.Frame_2.BackgroundColor3 = theme.TextColor
-	self.Frame.BackgroundColor3 = theme.TextColor
-	self.WindowUser.BackgroundColor3 = theme.versionBackgroundColor3
-	self.version.BackgroundColor3 = theme.versionBackgroundColor3
-	self.version.BackgroundTransparency = theme.versionBackgroundTransparency
-	self.versionTextLabel.TextColor3 = theme.versionTextColor
-	self.Search.BackgroundColor3 =  theme.dbtncolor
-	self.Search.BackgroundTransparency =  theme.dbtntran
-	self.SearchTextBox2.TextColor3 = theme.TextColor
-	self.ImageLabel.Image = theme.BackGroundIcon
-	self.TextLabel.TextColor3 = theme.TextColor
-	self.TextLabel_2.TextColor3 = theme.SubTtitleTextColor
-	self.TextLabel_5.TextColor3 = theme.TextColor
-	self.close.ImageColor3 = theme.TabsIconColor
-	self.ImageButton_2.ImageColor3 = theme.TabsIconColor
-	self.ImageButton.ImageColor3 = theme.TabsIconColor
-	self.Frame.BackgroundColor3 = theme.headerlinecolor
-	self.BackgroundTransparency = theme.headerlinetrans
-	self.ScrollingFrame.ScrollBarImageColor3 = theme.TabsScrollingBarFrameColor
-	self.Header.BackgroundColor3 = theme.HeaderColor
-	self.dFrame_2.BackgroundColor3 = theme.DestroyGFrame
-	self.dFrame_2.BackgroundTransparency = theme.DestroyGFrameTransparency
-	self.dTextLabel.TextColor3 = theme.TextColor
-	self.dTextButton_2.BackgroundColor3 = theme.dbtncolor
-	self.dTextLabel_2.TextColor3 = theme.SubTtitleTextColor
-	self.dTextButton_2.TextColor3 = theme.TextColor
-	self.wTextLabel.TextColor3 = theme.TextColor
-	self.wTextLabel_2.TextColor3 = theme.SubTtitleTextColor
-	self.CurrentTab["Tab"][1].BackgroundTransparency = theme.TabTransparancy
-
-	for i,v in pairs(self.mainTabs) do
-		v.Tab[1].BackgroundColor3 = theme.TabColor
-		v.Tab[2].TextColor3 = theme.TabTextColor
-		v.Tab[4].ImageColor3 = theme.TabsIconColor
-		v.Tab[3].BackgroundColor3 = theme.TabTextColor
-		v.Tab[5].ScrollBarImageColor3 = theme.SectionsScrollingBarFrameColor
-
-		local updateMap = {
-			{v.ElemBtn, "BackgroundColor3", theme.BackGroundElemCol},
-			{v.ElemBtn, "BackgroundTransparency", theme.BackGroundElemTran},
-			{v.Texttitle, "TextColor3", theme.TabTextColor},
-			{v.Textsubtitle, "TextColor3", theme.TabSubTtitleTextColor},
-			{v.actionBakcColor, "BackgroundColor3", theme.BackGroundElemCol},
-			{v.BtnImg, "ImageColor3", theme.DropDownArrowImg},
-			{v.ArrowImg, "ImageColor3", theme.DropDownArrowImg},
-			{v.DropImg, "BackgroundColor3", theme.DropDownColor},
-			{v.DropDownArrowImg, "ImageColor3", theme.DropDownArrowImg},
-			{v.DropImg, "BackgroundTransparency", theme.DropDownTransparency},
-			{v.InputTextColor, "TextColor3", theme.InputTextColor},
-			{v.SliderUnderLineColor, "BackgroundColor3", theme.SliderUnderLineColor},
-			{v.Togglebtn, "BackgroundColor3", theme.Togglebtn},
-			{v.Sliderball, "BackgroundColor3", theme.Sliderball},
-			{v.ColorPickerColor, "BackgroundColor3", theme.ColorPickerColoro},
-			{v.ListFrames, "BackgroundColor3", theme.ListFrameColor}
-		}
-
-		for _, data in ipairs(updateMap) do
-			local list, prop, val = data[1], data[2], data[3]
-			if list and val ~= nil then
-				for _, obj in ipairs(list) do
-					obj[prop] = val
-				end
-			end
-		end
-		if self.Categories then
-			for _, cat in pairs(self.Categories) do
-				if cat.Header then
-					cat.Header.TextColor3 = theme.TabTextColor
-				end
-				if cat.Arrow then
-					cat.Arrow.ImageColor3 = theme.DropDownArrowImg
-				end
-				if cat.Container then
-					cat.Container.BackgroundColor3 = theme.BackGroundElemCol
-				end
-			end
-		end
-
-		if theme.BackGroundElemTran then
-			for _, bg in ipairs(v.actionBakcColor) do
-				bg.BackgroundTransparency = theme.BackGroundElemTran
-			end
-		end
-	end  
-
+	-- Динамическое обновление тогглов
 	if self.AllElements and self.AllElements.Toggles then
 		for _, tgl in pairs(self.AllElements.Toggles) do
 			tgl:UpdateVisuals(tgl.Value, true)
 		end
+	end
+
+	-- Обновление задника выбранного таба
+	if self.CurrentTab and self.CurrentTab.Tab and self.CurrentTab.Tab[1] then
+		self.CurrentTab.Tab[1].BackgroundTransparency = theme.TabTransparancy
 	end
 end
 
@@ -3930,7 +3736,7 @@ function Library:AddCategory(name)
 	HeaderText.Size = UDim2.new(0.8, 0, 1, 0)
 	HeaderText.Font = Enum.Font.FredokaOne
 	HeaderText.Text = name:upper()
-	HeaderText.TextColor3 = Window.Theme.TabTextColor
+	self:AddThemeObject(HeaderText, "TextColor3", "TabTextColor")
 	HeaderText.TextSize = 11
 	HeaderText.TextXAlignment = Enum.TextXAlignment.Left
 	HeaderText.Parent = HeaderBtn
@@ -3941,13 +3747,13 @@ function Library:AddCategory(name)
 	Arrow.Position = UDim2.new(0.85, 0, 0.25, 0)
 	Arrow.Size = UDim2.new(0, 15, 0, 15)
 	Arrow.Image = "rbxassetid://126982255108418" 
-	Arrow.ImageColor3 = Window.Theme.DropDownArrowImg
+	self:AddThemeObject(Arrow, "ImageColor3", "DropDownArrowImg")
 	Arrow.Rotation = 0
 	Arrow.Parent = HeaderBtn
 	category.Arrow = Arrow
 
 	local TabsContainer = Instance.new("Frame")
-	TabsContainer.BackgroundColor3 = Window.Theme.BackGroundElemCol
+	self:AddThemeObject(TabsContainer, "BackgroundColor3", "BackGroundElemCol")
 	TabsContainer.BackgroundTransparency = 1
 	TabsContainer.ClipsDescendants = true
 	TabsContainer.Size = UDim2.new(0, 173, 0, 0)
