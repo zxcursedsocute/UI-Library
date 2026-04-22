@@ -24,7 +24,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.mainTabs = {}
 	self.CurrentTab = nil
 	self.Notipos = 0.9
-	self.ThemeObjects = {} -- Централизованный реестр элементов для тем
+	self.ThemeObjects = {}
 
 	self.Theme = {
 		BackGroundIcon = "rbxassetid://139069464889319",
@@ -507,10 +507,6 @@ function Library.CreateWindow(title,subtitle,size,version)
 	TabListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 	TabListLayout.Padding = UDim.new(0, 5)
 
-	local TabPadding = Instance.new("UIPadding")
-	TabPadding.Parent = self.ScrollingFrame
-	TabPadding.PaddingTop = UDim.new(0, 10)
-
 	TabListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
 		local correctHeight = TabListLayout.AbsoluteContentSize.Y / self.ScaleFactor
 		self.ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, correctHeight)
@@ -520,7 +516,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.Tabs.BackgroundTransparency = 1
 	self.Tabs.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.Tabs.BorderSizePixel = 0
-	self.Tabs.Position = UDim2.new(0.035, 0, 0.116, 0)
+	self.Tabs.Position = UDim2.new(0.035, 0, 0.13, 0)
 	self.Tabs.Size = UDim2.new(0, 185, 0, 372)
 	self.Tabs.Parent = self.ImageLabel
 
@@ -535,7 +531,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.WindowUser.BackgroundTransparency = 0.95
 	self.WindowUser.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.WindowUser.BorderSizePixel = 0
-	self.WindowUser.Position = UDim2.new(0, 0, 0.97, 0)
+	self.WindowUser.Position = UDim2.new(0, 0, 0.96, 0)
 	self.WindowUser.Size = UDim2.new(0, 180, 0, 45)
 	self.WindowUser.Parent = self.Tabs
 
@@ -633,7 +629,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.ScrollingFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.ScrollingFrame.BorderSizePixel = 0
 	self.ScrollingFrame.Position = UDim2.new(0, 0, 0, 0)
-	self.ScrollingFrame.Size = UDim2.new(0, 187, 0, 358)
+	self.ScrollingFrame.Size = UDim2.new(0, 187, 0, 354)
 	self.ScrollingFrame.ScrollBarThickness = 2
 	self:AddThemeObject(self.ScrollingFrame, "ScrollBarImageColor3", "TabsScrollingBarFrameColor")
 	self.ScrollingFrame.Parent = self.Tabs
@@ -834,27 +830,14 @@ function Library.CreateWindow(title,subtitle,size,version)
 
 	self.Tabs.Visible = false
 	self.Sections.Visible = false
-
-	self.Search.Visible = false
-	self.TextLabel.Visible = false
-	self.TextLabel_2.Visible = false
-	self.version.Visible = false
-	self.close.Visible = false
-	self.ImageButton.Visible = false
-	self.ImageButton_2.Visible = false
+	self.Header.Visible = false
 
 	self:Tween(self.ImageLabel,{Size = UDim2.new(0,size,0,480)},0.9)
 	task.wait(0.9)
 
 	self.Tabs.Visible = true
 	self.Sections.Visible = true
-	self.Search.Visible = true
-	self.TextLabel.Visible = true
-	self.TextLabel_2.Visible = true
-	self.version.Visible = true
-	self.close.Visible = true
-	self.ImageButton.Visible = true
-	self.ImageButton_2.Visible = true
+	self.Header.Visible = true
 
 	return self
 end
@@ -2674,7 +2657,7 @@ function Library:Minimaze()
 				self.Sections.Visible = false
 				if self.Sections.Size == UDim2.new(0, 375,0, 370) then
 					self:Tween(self.ImageLabel,{Size = UDim2.new(0, 395,0, 40)},1)
-					self:Tween(self.Header,{Size = UDim2.new(0, 380,0, 40)},0)
+					self:Tween(self.Header,{Size = UDim2.new(0, 390,0, 40)},0)
 				else
 					self:Tween(self.ImageLabel,{Size = UDim2.new(0, 620, 0, 40)},1)
 					self.Header.Size = UDim2.new(0, 620 - 24, 0, 40)
@@ -2911,8 +2894,8 @@ function Library:ColumnWindow()
 			self.Sections.Visible = false
 			self.Frame_2.Visible = true
 
-			self.Sections.Size = UDim2.new(0, 380,0, 414)
-			self.Sections.Position = UDim2.new(0.35, 0,0.11, 0)
+			self.Sections.Size = UDim2.new(0, 390,0, 414)
+			self.Sections.Position = UDim2.new(0.34, 0,0.11, 0)
 			self.Frame_7.Size = UDim2.new(0, 366,0, 379)
 			self.Frame_7.Position = UDim2.new(0, 0,0.085, 0)
 
@@ -2950,7 +2933,7 @@ function Library:ColumnWindow()
 
 			for i,v in pairs(self.mainTabs) do
 				v.Tab[5].Position = UDim2.new(0, 0,0.023, 0)
-				v.Tab[5].Size = UDim2.new(0, 379,0, 370)
+				v.Tab[5].Size = UDim2.new(0, 385,0, 370)
 
 				if v.Tab[5]:IsA("ScrollingFrame") then
 					v.Tab[5].AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -3013,7 +2996,7 @@ function Library:Destroy()
 	self:ClearSearchResults()
 	self.Destroy_gui.Visible = false
 	self.AllElements.Toggles = {}
-	self.ThemeObjects = {} -- Clear Registry
+	self.ThemeObjects = {}
 
 	local tweenInfo = TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 	local tween = TweenService:Create(self.ImageLabel, tweenInfo, {ImageTransparency = 1})
@@ -3064,12 +3047,12 @@ function Library:UserInfo()
 	if self.WindowUser.Visible then
 		self.userinfo = false
 		self.WindowUser.Visible = false
-		self.Tabs.Size = UDim2.new(0, 185,0, 416)
-		self.ScrollingFrame.Size = UDim2.new(0, 185,0, 416)
+		self.Tabs.Size = UDim2.new(0, 185,0, 405)
+		self.ScrollingFrame.Size = UDim2.new(0, 185,0, 405)
 	else
 		self.WindowUser.Visible = true
 		self.Tabs.Size = UDim2.new(0, 185,0, 372)
-		self.ScrollingFrame.Size = UDim2.new(0, 185,0, 358)
+		self.ScrollingFrame.Size = UDim2.new(0, 185,0, 354)
 		self.userinfo = true
 	end
 end
@@ -3660,7 +3643,6 @@ function Library:SetTheme(themeName : string)
 	self.CurrentThemeName = themeName
 	self.Theme = theme
 
-	-- Централизованное обновление всех элементов (Автоматическая очистка мусора включена)
 	local aliveObjects = {}
 	if self.ThemeObjects then
 		for _, obj in ipairs(self.ThemeObjects) do
@@ -3672,7 +3654,6 @@ function Library:SetTheme(themeName : string)
 		self.ThemeObjects = aliveObjects
 	end
 
-	-- Временные элементы (Нотификации)
 	for i, v in pairs(self.ActiveNotifications) do
 		v.notification.Image = theme.NotiImg
 		v.notification.Title.TextColor3 = theme.TextColor
@@ -3683,14 +3664,12 @@ function Library:SetTheme(themeName : string)
 		end
 	end
 
-	-- Динамическое обновление тогглов
 	if self.AllElements and self.AllElements.Toggles then
 		for _, tgl in pairs(self.AllElements.Toggles) do
 			tgl:UpdateVisuals(tgl.Value, true)
 		end
 	end
 
-	-- Обновление задника выбранного таба
 	if self.CurrentTab and self.CurrentTab.Tab and self.CurrentTab.Tab[1] then
 		self.CurrentTab.Tab[1].BackgroundTransparency = theme.TabTransparancy
 	end
