@@ -1,0 +1,4002 @@
+local cloneref = (cloneref or clonereference or function(instance) return instance end)
+
+local HttpService = cloneref(game:GetService("HttpService"))
+local TweenService = cloneref(game:GetService("TweenService"))
+local UserInputService = cloneref(game:GetService("UserInputService"))
+local RunService = cloneref(game:GetService("RunService"))
+local Players = cloneref(game:GetService("Players"))
+
+local Library = {}
+Library.__index = Library
+
+function Library.CreateWindow(title,subtitle,size,version)
+	local self = setmetatable({}, Library)
+
+	self.mainTabs = {}
+	self.CurrentTab = nil
+	self.Notipos = 0.9
+	self.Theme = {
+		BackGroundIcon = "rbxassetid://139069464889319",
+		TextColor = Color3.fromRGB(255, 255, 255),
+		SubTtitleTextColor = Color3.fromRGB(125, 125, 125),
+		Notisubtitlecolor = Color3.fromRGB(199, 199, 199),
+		HeaderColor = Color3.fromRGB(16, 17, 31),
+		headerlinecolor = Color3.fromRGB(255, 255, 255),
+		headerlinetrans = 1,
+		TabsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+		NotiImg = "rbxassetid://133419353491012",
+		NotiTitleColor = Color3.fromRGB(255, 255, 255),
+		BackGroundTran = 0.05,
+		DestroyGFrame = Color3.fromRGB(22, 23, 42),
+		DestroyGFrameTransparency = 0,
+		dbtntran = 0.95,
+		TabTransparancy = 0.95,
+		dbtncolor = Color3.fromRGB(255, 255, 255),
+		versionBackgroundColor3 = Color3.fromRGB(224, 206, 255),
+		versionBackgroundTransparency = 0,
+		versionTextColor = Color3.fromRGB(0, 0, 0),
+		IOSdraglineColor = Color3.fromRGB(63, 59, 126),
+		TabTextColor = Color3.fromRGB(255, 255, 255),
+		TabColor = Color3.fromRGB(255, 255, 255),
+		TabSubTtitleTextColor = Color3.fromRGB(199, 199, 199),
+		TogleActivColor = Color3.fromRGB(63, 59, 126),
+		DropDownArrowImg = Color3.fromRGB(69, 65, 140),
+		TabsIconColor = Color3.fromRGB(255, 255, 255),
+		InputTextColor = Color3.fromRGB(175, 175, 175),
+		BackGroundElemTran = 0.95,
+		BackGroundElemCol = Color3.fromRGB(255, 255, 255),
+		BackGroundButtonTran = 0.95,
+		ActionBackColor = Color3.fromRGB(255, 255, 255),
+		ToggleButton = Color3.fromRGB(255, 255, 255),
+		ToggleTran = 0.9,
+		SectionsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+		DropDownColor = Color3.fromRGB(16, 17, 31),
+		DropDownTransparency = 0,
+		DropDownFrameColor = Color3.fromRGB(63, 59, 126),
+		SliderUnderLineColor = Color3.fromRGB(63, 59, 126),
+		Togglebtn = Color3.fromRGB(255, 255, 255),
+		Sliderball = Color3.fromRGB(255, 255, 255),
+		ColorPickerColoro = Color3.fromRGB(16, 17, 31),
+		ListFrameColor = Color3.fromRGB(16, 17, 31)
+	}
+	self.CurrentThemeName = "Cursed"
+	self.AllElements = {
+		Toggles = {},
+		Keybinds = {},
+		Dropdowns = {},
+		Sliders = {},
+		ColorPickers = {},
+		Inputs = {}
+	}
+	self.Windowscd = false
+	self.userinfo = true
+	self.saveFolder = nil
+	self.saveFileName = nil
+	self.ActiveNotifications = {}
+	self.SearchData = {}
+
+	local function getTargetContainer()
+		if RunService:IsStudio() then
+			return Players.LocalPlayer:WaitForChild("PlayerGui")
+		end
+
+		if typeof(gethui) == "function" then
+			return gethui()
+		end
+
+		local success, coreGui = pcall(function()
+			return game:GetService("CoreGui")
+		end)
+
+		if success and coreGui then
+			return coreGui
+		end
+
+		return nil
+	end
+
+	self.UI = Instance.new("ScreenGui")
+	self.UI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	self.UI.Parent = getTargetContainer()
+
+	self.ImageLabel = Instance.new("ImageLabel")
+	self.ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.ImageLabel.BackgroundTransparency = 1
+	self.ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.ImageLabel.BorderSizePixel = 0
+	self.ImageLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+	self.ImageLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
+	self.ImageLabel.Size = UDim2.new(0,10,0,10)
+
+	self.ScaleFactor = 1
+
+	if UserInputService.touchEnabled then
+		local uiScale = Instance.new("UIScale")
+		uiScale.Scale = 0.75
+		uiScale.Parent = self.ImageLabel
+
+		self.ScaleFactor = 0.75
+	end
+
+	self.ImageLabel.Image = self.Theme.BackGroundIcon
+	self.ImageLabel.Active = true
+	self.ImageLabel.Selectable = true
+	self.ImageLabel.Draggable = true
+	self.ImageLabel.ImageTransparency = 0.05
+	self.ImageLabel.Parent = self.UI
+
+	self.Destroy_gui = Instance.new("Frame")
+	self.dFrame_2 = Instance.new("Frame")
+	self.dTextLabel = Instance.new("TextLabel")
+	local dUICorner = Instance.new("UICorner")
+	self.dTextLabel_2 = Instance.new("TextLabel")
+	self.dTextButton = Instance.new("TextButton")
+	local dUICorner_2 = Instance.new("UICorner")
+	self.dTextButton_2 = Instance.new("TextButton")
+	local dUICorner_3 = Instance.new("UICorner")
+	local dUICorner_4 = Instance.new("UICorner")
+
+	self.Destroy_gui.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	self.Destroy_gui.BackgroundTransparency = 0.4
+	self.Destroy_gui.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.Destroy_gui.BorderSizePixel = 0
+	self.Destroy_gui.Position = UDim2.new(0.017, 0, 0.02, 0)
+	self.Destroy_gui.Size = UDim2.new(0, 560, 0, 460)
+	self.Destroy_gui.Visible = false
+	self.Destroy_gui.ZIndex = 10
+	self.Destroy_gui.Parent = self.ImageLabel
+
+	dUICorner_4.CornerRadius = UDim.new(0, 24)
+	dUICorner_4.Parent = self.Destroy_gui
+
+	self.dFrame_2.BackgroundColor3 = self.Theme.DestroyGFrame
+	self.dFrame_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.dFrame_2.BorderSizePixel = 0
+	self.dFrame_2.Position = UDim2.new(0.306, 0, 0.328, 0)
+	self.dFrame_2.Size = UDim2.new(0, 250, 0, 150)
+	self.dFrame_2.Transparency = 1
+	self.dFrame_2.BackgroundTransparency = self.Theme.DestroyGFrameTransparency
+	self.dFrame_2.ZIndex = 10
+	self.dFrame_2.Parent = self.Destroy_gui
+
+	local UIPadding = Instance.new("UIPadding")
+	UIPadding.PaddingBottom = UDim.new(0, 5)
+	UIPadding.PaddingLeft = UDim.new(0, 5)
+	UIPadding.PaddingRight = UDim.new(0, 5)
+	UIPadding.PaddingTop = UDim.new(0, 5)
+	UIPadding.Parent = self.dFrame_2
+
+	self.dTextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.dTextLabel.BackgroundTransparency = 1.000
+	self.dTextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.dTextLabel.BorderSizePixel = 2
+	self.dTextLabel.Position = UDim2.new(0.029, 0, 0.035, 0)
+	self.dTextLabel.Size = UDim2.new(0, 200, 0, 36)
+	self.dTextLabel.Font = Enum.Font.FredokaOne
+	self.dTextLabel.Text = "Destroy Interface?"
+	self.dTextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	self.dTextLabel.TextSize = 23.000
+	self.dTextLabel.TextWrapped = true
+	self.dTextLabel.Visible = false
+	self.dTextLabel.TextXAlignment = Enum.TextXAlignment.Left
+	self.dTextLabel.Parent = self.dFrame_2
+
+	dUICorner.CornerRadius = UDim.new(0, 12)
+	dUICorner.Parent = self.dFrame_2
+
+	self.dTextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.dTextLabel_2.BackgroundTransparency = 1.000
+	self.dTextLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.dTextLabel_2.BorderSizePixel = 0
+	self.dTextLabel_2.Position = UDim2.new(0.03, 0, 0.25, 0)
+	self.dTextLabel_2.Size = UDim2.new(0, 219, 0, 40)
+	self.dTextLabel_2.Font = Enum.Font.FredokaOne
+	self.dTextLabel_2.TextWrapped = true
+	self.dTextLabel_2.Text = "This action will permamently close the GUI."
+	self.dTextLabel_2.TextColor3 = Color3.fromRGB(184, 184, 184)
+	self.dTextLabel_2.TextSize = 15
+	self.dTextLabel_2.Visible = false
+	self.dTextLabel_2.TextXAlignment = Enum.TextXAlignment.Left
+	self.dTextLabel_2.Parent = self.dFrame_2
+
+	self.dTextButton.BackgroundColor3 = Color3.fromRGB(207, 0, 0)
+	self.dTextButton.BackgroundTransparency = 0.4
+	self.dTextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.dTextButton.BorderSizePixel = 0
+	self.dTextButton.Position = UDim2.new(0.017, 0, 0.721, 0)
+	self.dTextButton.Size = UDim2.new(0, 112, 0, 36)
+	self.dTextButton.ZIndex = 10
+	self.dTextButton.Font = Enum.Font.FredokaOne
+	self.dTextButton.Text = "Destroy"
+	self.dTextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	self.dTextButton.Visible = false
+	self.dTextButton.TextSize = 14.000
+	self.dTextButton.Parent = self.dFrame_2
+
+	self.dTextButton.MouseButton1Click:Connect(function()
+		self:Destroy()
+	end)
+
+	dUICorner_2.CornerRadius = UDim.new(0, 10)
+	dUICorner_2.Parent = self.dTextButton
+
+	self.dTextButton_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.dTextButton_2.BackgroundTransparency = 0.950
+	self.dTextButton_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.dTextButton_2.BorderSizePixel = 0
+	self.dTextButton_2.Position = UDim2.new(0.517, 0, 0.721, 0)
+	self.dTextButton_2.Size = UDim2.new(0, 112, 0, 36)
+	self.dTextButton_2.ZIndex = 10
+	self.dTextButton_2.Font = Enum.Font.FredokaOne
+	self.dTextButton_2.Text = "Close"
+	self.dTextButton_2.TextColor3 = Color3.fromRGB(255, 255, 255)
+	self.dTextButton_2.Visible = false
+	self.dTextButton_2.TextSize = 14.000
+	self.dTextButton_2.Parent = self.dFrame_2
+
+	self.dTextButton_2.MouseButton1Click:Connect(function()
+		self:ShowDestroyQ()
+	end)
+
+	dUICorner_3.CornerRadius = UDim.new(0, 10)
+	dUICorner_3.Parent = self.dTextButton_2
+
+	function self:Blur()
+
+	end
+	function self:BlurOff()
+
+	end
+
+	self.Header = Instance.new("Frame")
+	self.Header.BackgroundColor3 = self.Theme.HeaderColor
+	self.Header.BackgroundTransparency = 1
+	self.Header.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.Header.BorderSizePixel = 0
+	self.Header.Position = UDim2.new(0.02, 0, 0.025, 0)
+	self.Header.Size = UDim2.new(0, size - 24, 0, 40)
+	self.Header.Parent = self.ImageLabel
+
+	local HeaderUICorner = Instance.new("UICorner")
+	HeaderUICorner.CornerRadius = UDim.new(0, 12)
+	HeaderUICorner.Parent = self.Header
+
+	self.Search = Instance.new("Frame")
+	local SearchUICorner = Instance.new("UICorner")
+	self.SearchImageLabel = Instance.new("ImageLabel")
+	self.SearchTextBox2 = Instance.new("TextBox")
+
+	self.SearchTextBox = self.SearchTextBox2
+
+	self.SearchTextBox.Focused:Connect(function()
+		if not self.OriginallyHidden then
+			self.OriginallyHidden = {}
+			for i, v in pairs(self.CurrentTab["Elements"]) do
+				if not v.Visible then
+					self.OriginallyHidden[i] = true
+				end
+			end
+		end
+
+		if self.SearchTextBox.Text == "Search..." then
+			self.SearchTextBox.Text = ""
+		end
+
+		for i, v in pairs(self.CurrentTab["Elements"]) do
+			if v.Visible then
+				v.Visible = false
+			end
+		end
+		self.SearchTextBox2.TextSize = 15.000
+	end)
+
+	self.SearchTextBox.FocusLost:Connect(function()
+		if self.SearchTextBox.Text == "" then
+			self.SearchTextBox2.TextSize = 14.000
+			self.SearchTextBox.Text = "Search..."
+
+			for i, v in pairs(self.CurrentTab["Elements"]) do
+				if not self.OriginallyHidden or not self.OriginallyHidden[i] then
+					v.Visible = true
+				end
+			end
+
+			self.OriginallyHidden = nil
+		end
+	end)
+
+	self.SearchTextBox:GetPropertyChangedSignal("Text"):Connect(function()
+		self:SearchAllTabs()
+	end)
+
+	self.Search.BackgroundColor3 =  self.Theme.dbtncolor
+	self.Search.BackgroundTransparency =  self.Theme.dbtntran
+	self.Search.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.Search.BorderSizePixel = 0
+	self.Search.Position = UDim2.new(0.570, 0, 0.19, 0)
+	self.Search.Size = UDim2.new(0, 140, 0, 26)
+	self.Search.Parent = self.Header
+
+	SearchUICorner.CornerRadius = UDim.new(0.22, 0)
+	SearchUICorner.Parent = self.Search
+
+	self.SearchImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.SearchImageLabel.BackgroundTransparency = 1.000
+	self.SearchImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.SearchImageLabel.BorderSizePixel = 0
+	self.SearchImageLabel.Position = UDim2.new(0.81, 0, 0.1, 0)
+	self.SearchImageLabel.Size = UDim2.new(0, 20, 0, 20)
+	self.SearchImageLabel.Image = "rbxassetid://136089190882362"
+	self.SearchImageLabel.Parent = self.Search
+
+	self.SearchTextBox2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.SearchTextBox2.BackgroundTransparency = 1.000
+	self.SearchTextBox2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.SearchTextBox2.BorderSizePixel = 0
+	self.SearchTextBox2.Position = UDim2.new(0.04, 0, 0.115000002, -0.9)
+	self.SearchTextBox2.Size = UDim2.new(0, 90, 0, 20)
+	self.SearchTextBox2.Font = Enum.Font.SourceSans
+	self.SearchTextBox2.Text = "Search..."
+	self.SearchTextBox2.Font = Enum.Font.FredokaOne
+	self.SearchTextBox2.TextColor3 = self.Theme.TextColor
+	self.SearchTextBox2.TextSize = 14.000
+	self.SearchTextBox2.TextXAlignment = Enum.TextXAlignment.Left
+	self.SearchTextBox2.Parent = self.Search
+
+	local function substr(str)
+		local strlen = string.len(str)
+		if(strlen > 50) then
+			return string.sub(str,1,20)
+		else
+			return str
+		end
+	end
+
+	local function labelsize(str)
+		return string.len(str) * 7
+	end
+
+	local title = substr(title)
+	local titlesize = labelsize(title)
+
+	local subtitle = substr(subtitle)
+	local subtitlesize = labelsize(subtitle)
+
+	self.TextLabel = Instance.new("TextLabel")
+	self.TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.TextLabel.BackgroundTransparency = 1.000
+	self.TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.TextLabel.BorderSizePixel = 0
+	self.TextLabel.Position = UDim2.new(0.02, 0, 0, -1)
+	self.TextLabel.Size = UDim2.new(0, titlesize, 0, 40)
+	self.TextLabel.Font = Enum.Font.FredokaOne
+	self.TextLabel.Text = title
+	self.TextLabel.TextColor3 = self.Theme.TextColor
+	self.TextLabel.TextSize = 16.000
+	self.TextLabel.TextWrapped = true
+	self.TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+	self.TextLabel.Parent = self.Header
+
+	local positionsubt = self.TextLabel.Position.X.Scale
+	local sizetitle = self.TextLabel.Size.X.Offset
+
+	local trueposition = sizetitle + 10 + 5
+
+	self.TextLabel_2 = Instance.new("TextLabel")
+	self.TextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.TextLabel_2.BackgroundTransparency = 1.000
+	self.TextLabel_2.BorderColor3 = Color3.fromRGB(59, 59, 59)
+	self.TextLabel_2.BorderSizePixel = 0
+	self.TextLabel_2.Position = UDim2.new(0, trueposition, 0.05, -1)
+	self.TextLabel_2.Size = UDim2.new(0, subtitlesize, 0, 40)
+	self.TextLabel_2.Font = Enum.Font.FredokaOne
+	self.TextLabel_2.Text = subtitle
+	self.TextLabel_2.TextColor3 = self.Theme.SubTtitleTextColor
+	self.TextLabel_2.TextSize = 12.000
+	self.TextLabel_2.TextXAlignment = Enum.TextXAlignment.Left
+	self.TextLabel_2.Parent = self.Header
+
+	if version then
+		self.version = Instance.new("Frame")
+		self.versionUICorner = Instance.new("UICorner")
+		self.versionTextLabel = Instance.new("TextLabel")
+
+		self.version.BackgroundColor3 = self.Theme.versionBackgroundColor3
+		self.version.BackgroundTransparency = self.Theme.versionBackgroundTransparency
+		self.version.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		self.version.BorderSizePixel = 0
+		self.version.Position = UDim2.new(0, trueposition + subtitlesize - 2, 0.20, 0)
+		self.version.Size = UDim2.new(0, 55, 0, 24)
+		self.version.Parent = self.Header
+
+		self.versionUICorner.CornerRadius = UDim.new(0, 11)
+		self.versionUICorner.Parent = self.version
+
+		self.versionTextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		self.versionTextLabel.BackgroundTransparency = 1.000
+		self.versionTextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		self.versionTextLabel.BorderSizePixel = 0
+		self.versionTextLabel.Position = UDim2.new(0.08, 0, 0.11, 0)
+		self.versionTextLabel.Size = UDim2.new(0, 45, 0, 18)
+		self.versionTextLabel.Font = Enum.Font.FredokaOne
+		self.versionTextLabel.Text = version
+		self.versionTextLabel.TextColor3 = self.Theme.versionTextColor
+		self.versionTextLabel.TextSize = 14.000
+		self.versionTextLabel.Parent = self.version
+	end
+
+	self.Frame = Instance.new("Frame")
+	self.Frame.BackgroundColor3 = self.Theme.headerlinecolor
+	self.Frame.BackgroundTransparency = 0.95
+	self.Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.Frame.BorderSizePixel = 0
+	self.Frame.Position = UDim2.new(0, -1, 1, 0)
+	self.Frame.Size = UDim2.new(0, 197, 0, 2)
+	self.Frame.Parent = self.Header
+
+	self.close = Instance.new("ImageLabel")
+	self.close.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.close.BackgroundTransparency = 1.000
+	self.close.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.close.BorderSizePixel = 0
+	self.close.Position = UDim2.new(0.945, 0, 0.2, 0)
+	self.close.Size = UDim2.new(0, 24, 0, 24)
+	self.close.Image = "rbxassetid://115483385285173"
+	self.close.Parent = self.Header
+
+	local btnclose = Instance.new("TextButton")
+	btnclose.Size = UDim2.new(0, 24, 0, 24)
+	btnclose.Text = ""
+	btnclose.Transparency = 1
+	btnclose.Position = UDim2.new(0, 0 , 0, 0)
+	btnclose.Parent = self.close
+
+	btnclose.MouseButton1Click:Connect(function()
+		self:ShowDestroyQ()
+	end)
+
+	self.ImageButton = Instance.new("ImageLabel")
+	self.ImageButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.ImageButton.BackgroundTransparency = 1.000
+	self.ImageButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.ImageButton.BorderSizePixel = 0
+	self.ImageButton.Position = UDim2.new(0.897, 0, 0.35, 0)
+	self.ImageButton.Size = UDim2.new(0, 16, 0, 12)
+	self.ImageButton.Image = "rbxassetid://89738650787294"
+	self.ImageButton.Parent = self.Header
+
+	local btnclose2 = Instance.new("TextButton")
+	btnclose2.Size = UDim2.new(0, 20, 0, 20)
+	btnclose2.Text = ""
+	btnclose2.Transparency = 1
+	btnclose2.Position = UDim2.new(0, -2.9 , 0, -4)
+	btnclose2.Parent = self.ImageButton
+
+	btnclose2.MouseButton1Click:Connect(function()
+		self:ColumnWindow()
+	end)
+
+	self.ImageButton_2 = Instance.new("ImageLabel")
+	self.ImageButton_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.ImageButton_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.ImageButton_2.BorderSizePixel = 0
+	self.ImageButton_2.Position = UDim2.new(0.835, 0, 0.29, 0)
+	self.ImageButton_2.Size = UDim2.new(0, 18, 0, 18)
+	self.ImageButton_2.Image = "rbxassetid://122178947900744"
+	self.ImageButton_2.BackgroundTransparency = 1.000
+	self.ImageButton_2.Parent = self.Header
+
+	local btnclose3 = Instance.new("TextButton")
+	btnclose3.Size = UDim2.new(0, 22, 0, 20)
+	btnclose3.Text = ""
+	btnclose3.Transparency = 1
+	btnclose3.Position = UDim2.new(0, -2 , 0, -2)
+	btnclose3.Parent = self.ImageButton_2
+
+	btnclose3.MouseButton1Click:Connect(function()
+		self:Minimaze()
+	end)
+
+	self.Tabs = Instance.new("Frame")
+	self.Frame_2 = Instance.new("Frame")
+	local ImageButton_3 = Instance.new("ImageButton")
+	local ImageButton_4 = Instance.new("ImageButton")
+	local ImageButton_5 = Instance.new("ImageButton")
+	self.ScrollingFrame = Instance.new("ScrollingFrame")
+
+	local TabListLayout = Instance.new("UIListLayout")
+	TabListLayout.Parent = self.ScrollingFrame
+	TabListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	TabListLayout.Padding = UDim.new(0, 5)
+
+	local TabPadding = Instance.new("UIPadding")
+	TabPadding.Parent = self.ScrollingFrame
+	TabPadding.PaddingTop = UDim.new(0, 5)
+
+	TabListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+		local correctHeight = TabListLayout.AbsoluteContentSize.Y / self.ScaleFactor
+		self.ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, correctHeight)
+	end)
+
+	self.Tabs.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.Tabs.BackgroundTransparency = 1
+	self.Tabs.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.Tabs.BorderSizePixel = 0
+	self.Tabs.Position = UDim2.new(0.035, 0, 0.116, 0)
+	self.Tabs.Size = UDim2.new(0, 185, 0, 372)
+	self.Tabs.Parent = self.ImageLabel
+
+	self.WindowUser = Instance.new("Frame")
+	local ImageLabel = Instance.new("ImageLabel")
+	local UICorner = Instance.new("UICorner")
+	local UICorner_User = Instance.new("UICorner")
+	self.wTextLabel = Instance.new("TextLabel")
+	self.wTextLabel_2 = Instance.new("TextLabel")
+
+	self.WindowUser.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.WindowUser.BackgroundTransparency = 0.95
+	self.WindowUser.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.WindowUser.BorderSizePixel = 0
+	self.WindowUser.Position = UDim2.new(0, 0, 0.97, 0)
+	self.WindowUser.Size = UDim2.new(0, 175, 0, 45)
+	self.WindowUser.Parent = self.Tabs
+
+	UICorner_User.CornerRadius = UDim.new(0.3, 0)
+	UICorner_User.Parent = self.WindowUser
+
+	ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	ImageLabel.BorderSizePixel = 0
+	ImageLabel.Position = UDim2.new(0.05, 0, 0, 8)
+	ImageLabel.Size = UDim2.new(0, 30, 0, 30)
+	ImageLabel.Image = "rbxasset://textures/ui/LuaChat/graphic/gr-profile-placeholder-70x70.png"
+	ImageLabel.Parent = self.WindowUser
+
+	local userimg = "rbxasset://textures/ui/LuaChat/graphic/gr-profile-placeholder-70x70.png"
+
+	task.spawn(function()
+		local userId = Players.LocalPlayer.UserId
+		local thumbnailType = Enum.ThumbnailType.HeadShot
+		local thumbnailSize = Enum.ThumbnailSize.Size150x150
+
+		local success, thumbnailUrl = pcall(function()
+			return Players:GetUserThumbnailAsync(userId, thumbnailType, thumbnailSize)
+		end)
+
+		if success and thumbnailUrl then
+			task.defer(function()
+				ImageLabel.Image = thumbnailUrl
+				userimg = thumbnailUrl
+			end)
+		end
+	end)
+
+	UICorner.CornerRadius = UDim.new(0, 100)
+	UICorner.Parent = ImageLabel
+
+	local function limit(str)
+		if #str > 14 then
+			return string.sub(str, 1, 14) .. "..."
+		else
+			return str
+		end
+	end
+
+	local realDisplay = limit(Players.LocalPlayer.DisplayName)
+	local realName = limit(Players.LocalPlayer.Name)
+
+	local ImageLabelRef = ImageLabel
+	local toggled = false
+
+	self.WindowUser.InputBegan:Connect(function(input)
+
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+
+			toggled = not toggled
+
+			if toggled then
+				ImageLabelRef.Image = ""
+				self.wTextLabel.Text = "Roblox"
+				self.wTextLabel_2.Text = "@Roblox"
+			else
+				ImageLabelRef.Image = userimg
+				self.wTextLabel.Text = realDisplay
+				self.wTextLabel_2.Text = "@" .. realName
+			end
+
+		end
+
+		if input.UserInputType == Enum.UserInputType.Touch then
+
+			toggled = not toggled
+
+			if toggled then
+				ImageLabelRef.Image = ""
+				self.wTextLabel.Text = "Roblox"
+				self.wTextLabel_2.Text = "@Roblox"
+			else
+				ImageLabelRef.Image = userimg
+				self.wTextLabel.Text = realDisplay
+				self.wTextLabel_2.Text = "@" .. realName
+			end
+
+		end
+	end)
+
+	self.wTextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.wTextLabel.BackgroundTransparency = 1.000
+	self.wTextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.wTextLabel.BorderSizePixel = 0
+	self.wTextLabel.Position = UDim2.new(0.27, 0, 0, 7)
+	self.wTextLabel.Size = UDim2.new(0, 131, 0, 15)
+	self.wTextLabel.Font = Enum.Font.FredokaOne
+	self.wTextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	self.wTextLabel.TextSize = 14.000
+	self.wTextLabel.Text = realDisplay
+	self.wTextLabel.TextXAlignment = Enum.TextXAlignment.Left
+	self.wTextLabel.Parent = self.WindowUser
+
+	self.wTextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.wTextLabel_2.BackgroundTransparency = 1.000
+	self.wTextLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.wTextLabel_2.BorderSizePixel = 0
+	self.wTextLabel_2.Position = UDim2.new(0.27, 0, 0, 21)
+	self.wTextLabel_2.Size = UDim2.new(0, 131, 0, 15)
+	self.wTextLabel_2.Font = Enum.Font.FredokaOne
+	self.wTextLabel_2.TextColor3 = Color3.fromRGB(171, 171, 171)
+	self.wTextLabel_2.TextSize = 14.000
+	self.wTextLabel_2.Text = "@" .. realName
+	self.wTextLabel_2.TextXAlignment = Enum.TextXAlignment.Left
+	self.wTextLabel_2.Parent = self.WindowUser
+
+	self.Frame_2.BackgroundColor3 = Color3.fromRGB(165, 165, 165)
+	self.Frame_2.BackgroundTransparency = 0.95
+	self.Frame_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.Frame_2.BorderSizePixel = 0
+	self.Frame_2.Position = UDim2.new(1, 0, 0, 0)
+	self.Frame_2.Size = UDim2.new(0, 2, 0, 413)
+	self.Frame_2.Parent = self.Tabs
+
+	self.ScrollingFrame.Active = true
+	self.ScrollingFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.ScrollingFrame.BackgroundTransparency = 1.000
+	self.ScrollingFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.ScrollingFrame.BorderSizePixel = 0
+	self.ScrollingFrame.Position = UDim2.new(0, 0, 0, 0)
+	self.ScrollingFrame.Size = UDim2.new(0, 187, 0, 358)
+	self.ScrollingFrame.ScrollBarThickness = 2
+	self.ScrollingFrame.ScrollBarImageColor3 = self.Theme.TabsScrollingBarFrameColor
+	self.ScrollingFrame.Parent = self.Tabs
+
+	self.Sections = Instance.new("Frame")
+	self.Sections.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.Sections.BackgroundTransparency = 1
+	self.Sections.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.Sections.BorderSizePixel = 0
+	self.Sections.Position = UDim2.new(0.35, 0, 0.11, 0)
+	self.Sections.Size = UDim2.new(0, 380, 0, 414)
+	self.Sections.Parent = self.ImageLabel
+
+	self.TextLabel_5 = Instance.new("TextLabel")
+	self.TextLabel_5.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.TextLabel_5.BackgroundTransparency = 1.000
+	self.TextLabel_5.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.TextLabel_5.BorderSizePixel = 0
+	self.TextLabel_5.Position = UDim2.new(0.0191, 0, 0.0144, 0)
+	self.TextLabel_5.Size = UDim2.new(0, 192, 0, 29)
+	self.TextLabel_5.Font = Enum.Font.FredokaOne
+	self.TextLabel_5.Text = ''
+	self.TextLabel_5.TextColor3 = self.Theme.TextColor
+	self.TextLabel_5.TextSize = 24.000
+	self.TextLabel_5.TextWrapped = true
+	self.TextLabel_5.TextXAlignment = Enum.TextXAlignment.Left
+	self.TextLabel_5.Parent = self.Sections
+
+	self.Frame_7 = Instance.new("Frame")
+	self.Frame_7.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.Frame_7.BackgroundTransparency = 1.000
+	self.Frame_7.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.Frame_7.BorderSizePixel = 0
+	self.Frame_7.Position = UDim2.new(0, 0, 0.084, 0)
+	self.Frame_7.Size = UDim2.new(0, 366, 0, 379)
+	self.Frame_7.Parent = self.Sections
+
+	local TypeIcons = {
+		Notification = "rbxassetid://75930996983661",
+		Warn = "rbxassetid://85045950898455",
+		Error = "rbxassetid://71852580046993"
+	}
+
+	function Library:Notification(config)
+		self.NotificationCounter = (self.NotificationCounter or 0) + 1
+		local notificationId = self.NotificationCounter
+		self.ActiveNotifications = self.ActiveNotifications or {}
+
+		local title = config.Name or "Notification"
+		local description = config.Description or ""
+		local duration = config.Duration or 5
+		local notiType = config.Type or "Notification"
+
+		local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled and not UserInputService.MouseEnabled
+		local targetX = isMobile and 0.55 or 0.8
+		local startY = isMobile and 0.75 or 0.9
+		local offsetMulti = isMobile and 0.2 or 0.08
+		local width = isMobile and 280 or 360
+
+		if not self.NotificationTemplate then
+			self:CreateNotificationTemplate()
+		end
+
+		local Notification = self.NotificationTemplate:Clone()
+
+		local img = TypeIcons[notiType]
+		if notiType == 'Notification' then
+			Notification.Icon.ImageColor3 = self.Theme.TabsIconColor
+		end
+
+		if not img then return end
+
+		Notification.Name = notiType
+		Notification.Parent = self.UI
+		Notification.Size = UDim2.new(0, width, 0, 75)
+		Notification.Position = UDim2.new(1.2, 0, startY, 0)
+		Notification.Visible = true
+		Notification.Image = self.Theme.NotiImg
+
+		Notification.Icon.Image = img
+		Notification.Title.Text = title
+		Notification.Description.Text = description
+		Notification.Title.TextColor3 = self.Theme.TextColor
+		Notification.Description.TextColor3 = self.Theme.Notisubtitlecolor
+		Notification.CloseButton.ImageColor3 = self.Theme.TabsIconColor
+
+		Notification.CloseButton.MouseButton1Click:Connect(function()
+			if self and self.CloseNotification then
+				self:CloseNotification(notificationId)
+			end
+		end)
+
+		self.ActiveNotifications[notificationId] = {
+			notification = Notification,
+			targetX = targetX,
+			targetY = startY,
+			multi = offsetMulti
+		}
+
+		local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+		TweenService:Create(Notification, tweenInfo, {Position = UDim2.new(targetX, 0, startY, 0)}):Play()
+
+		for id, notifData in pairs(self.ActiveNotifications) do
+			if id ~= notificationId then
+				local newY = notifData.notification.Position.Y.Scale - offsetMulti
+				notifData.targetY = newY
+				TweenService:Create(notifData.notification, tweenInfo, {Position = UDim2.new(targetX, 0, newY, 0)}):Play()
+			end
+		end
+
+		task.delay(duration, function()
+			self:CloseNotification(notificationId)
+		end)
+	end
+
+	function Library:CreateNotificationTemplate()
+		local template = Instance.new("ImageLabel")
+		template.BackgroundTransparency = 1.000
+		template.BorderSizePixel = 0
+		template.Size = UDim2.new(0, 360, 0, 75)
+		template.Visible = false
+
+		local UICorner = Instance.new("UICorner")
+		UICorner.CornerRadius = UDim.new(0, 6)
+		UICorner.Parent = template
+
+		local Icon = Instance.new("ImageLabel")
+		Icon.Name = "Icon"
+		Icon.BackgroundTransparency = 1.000
+		Icon.Position = UDim2.new(0.04, 0, 0.24, 0)
+		Icon.Size = UDim2.new(0, 18, 0, 18)
+		Icon.Parent = template
+
+		local Description = Instance.new("TextLabel")
+		Description.Name = "Description"
+		Description.BackgroundTransparency = 1.000
+		Description.Position = UDim2.new(0.04, 0, 0.47, 0)
+		Description.Size = UDim2.new(0, 321, 0, 23)
+		Description.Font = Enum.Font.FredokaOne
+		Description.TextSize = 14.000
+		Description.TextXAlignment = Enum.TextXAlignment.Left
+		Description.Parent = template
+
+		local Title = Instance.new("TextLabel")
+		Title.Name = "Title"
+		Title.BackgroundTransparency = 1.000
+		Title.Position = UDim2.new(0.11, 0, 0.19, 0)
+		Title.Size = UDim2.new(0, 200, 0, 24)
+		Title.Font = Enum.Font.FredokaOne
+		Title.TextSize = 18.000
+		Title.TextXAlignment = Enum.TextXAlignment.Left
+		Title.Parent = template
+
+		local CloseButton = Instance.new("ImageButton")
+		CloseButton.Name = "CloseButton"
+		CloseButton.BackgroundTransparency = 1.000
+		CloseButton.Position = UDim2.new(0.91, 0, 0.21, 0)
+		CloseButton.Size = UDim2.new(0, 14, 0, 14)
+		CloseButton.Image = "rbxassetid://134899599114088"
+		CloseButton.Parent = template
+
+		self.NotificationTemplate = template
+	end
+
+	function Library:CloseNotification(notificationId)
+		local data = self.ActiveNotifications[notificationId]
+		if not data then return end
+
+		local notification = data.notification
+		self.ActiveNotifications[notificationId] = nil
+
+		local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
+		local tweenOut = TweenService:Create(notification, tweenInfo, {Position = UDim2.new(1.2, 0, notification.Position.Y.Scale, 0)})
+		tweenOut:Play()
+
+		tweenOut.Completed:Connect(function()
+			notification:Destroy()
+		end)
+
+		local activeList = {}
+		for id, notifData in pairs(self.ActiveNotifications) do
+			table.insert(activeList, {id = id, data = notifData})
+		end
+
+		table.sort(activeList, function(a, b) return a.id < b.id end)
+
+		local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled and not UserInputService.MouseEnabled
+		local startY = isMobile and 0.75 or 0.9
+
+		local currentY = startY
+		for i = #activeList, 1, -1 do
+			local item = activeList[i]
+			TweenService:Create(item.data.notification, tweenInfo, {Position = UDim2.new(item.data.targetX, 0, currentY, 0)}):Play()
+			currentY = currentY - item.data.multi
+		end
+	end
+
+	self.Tabs.Visible = false
+	self.Sections.Visible = false
+
+	self.Search.Visible = false
+	self.TextLabel.Visible = false
+	self.TextLabel_2.Visible = false
+	self.version.Visible = false
+	self.close.Visible = false
+	self.ImageButton.Visible = false
+	self.ImageButton_2.Visible = false
+	self.Frame.Visible = false
+
+	self:Tween(self.ImageLabel,{Size = UDim2.new(0,size,0,480)},0.9)
+	task.wait(0.9)
+
+	self.Tabs.Visible = true
+	self.Sections.Visible = true
+	self.Frame.Visible = true
+	self.Search.Visible = true
+	self.TextLabel.Visible = true
+	self.TextLabel_2.Visible = true
+	self.version.Visible = true
+	self.close.Visible = true
+	self.ImageButton.Visible = true
+	self.ImageButton_2.Visible = true
+
+	return self
+end
+
+local TAB_ICONS = {
+	["Settings"]  = "rbxassetid://121074539743502",
+	["Visual"]    = "rbxassetid://92250291747112",
+	["Player"]    = "rbxassetid://92793433656183", 
+	["Combat"]    = "rbxassetid://73787033062338", 
+	["Generator"] = "rbxassetid://88963434013027", 
+	["AutoFarm"]  = "rbxassetid://119088300179156", --rbxassetid://78576858777870
+	["Animation"] = "rbxassetid://126672101469278", 
+	["Items"]     = "rbxassetid://100873317961037", 
+	["Teleport"]  = "rbxassetid://93236186125909", 
+	["Badge"]     = "rbxassetid://119734718512317",
+	["Quests"]    = "rbxassetid://88588775334975",
+	["Main"]      = "rbxassetid://103472623123751",
+	["Halloween"] = "rbxassetid://115053236948532",
+	["Misc"]      = "rbxassetid://137583062645541", 
+	["Block"]     = "rbxassetid://94027029642332",
+	["Aim"]       = "rbxassetid://130183131122604", 
+	["Fun"]       = "rbxassetid://137362629704355", 
+	["Fish"]      = "rbxassetid://105045060721724",
+	["WebHook"]   = "rbxassetid://120375090333993",
+	["Heart"]     = "rbxassetid://111088001331743",
+	["Shop"]      = "rbxassetid://82363507426406",
+	["Boat"]      = "rbxassetid://103950075513303",
+	["Trade"]     = "rbxassetid://128997687956087",
+	["Text"]      = "rbxassetid://140272486271785", 
+	["Music"]     = "rbxassetid://95074569695751",
+	["Skin"]      = "rbxassetid://77808065458415",
+	["Run"]       = "rbxassetid://94022434049447"
+}
+
+function Library:AddTab(name : string,icon : string)
+	local tab = {
+		Name = name,                          
+		Elements = {},
+		Container = nil,
+		Button = nil,
+		Frame = nil,
+		Tab = {},
+		ElemBtn = {},
+		Texttitle = {},
+		Textsubtitle = {},
+		actionBakcColor = {},
+		BtnImg = {},
+		ArrowImg = {},
+		ListFrames = {},
+		DropImg = {},
+		DropDownArrowImg = {},
+		DropDownFrameColor = {},
+		InputTextColor = {},
+		SliderUnderLineColor = {},
+		Togglebtn = {},
+		Sliderball = {},
+		Connections = {},
+		KeybindConnections = {},
+		ColorPickerColor = {},
+		SearchData = {}
+	}
+
+	setmetatable(tab, { __index = self })
+
+	local Frame_3 = Instance.new("TextButton")
+	local UICorner = Instance.new("UICorner")
+	local TextLabel_3 = Instance.new("TextLabel")
+	local Frame_4 = Instance.new("Frame")
+
+	Frame_3.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Frame_3.BackgroundTransparency = 1.000
+	Frame_3.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Frame_3.BorderSizePixel = 0
+	Frame_3.Size = UDim2.new(0, 173, 0, 35)
+	Frame_3.Text = ''
+
+	table.insert(tab.Tab, Frame_3)
+
+	Frame_3.MouseEnter:Connect(function()
+		self:Tween(Frame_3,{BackgroundTransparency = self.Theme.TabTransparancy},0.3)
+		self:Tween(Frame_4,{Size = UDim2.new(0, 2, 0, 23)},0.3)
+		self:Tween(Frame_4,{BackgroundTransparency = 0},0.3)
+	end)
+
+	Frame_3.MouseLeave:Connect(function()
+		if self.CurrentTab ~= tab then
+			self:Tween(Frame_3,{BackgroundTransparency = 1},0.3)
+			self:Tween(Frame_4,{BackgroundTransparency = 1},0.3)
+			self:Tween(Frame_4,{Size = UDim2.new(0, 2, 0, 0)},0.3)
+		end
+	end)
+
+	Frame_3.MouseButton1Click:Connect(function()
+		self:SelectTab(tab,Frame_3)
+	end)
+
+	Frame_3.Parent = self.ScrollingFrame
+
+	UICorner.CornerRadius = UDim.new(0, 12)
+	UICorner.Parent = Frame_3
+
+	local textpos2 = 0.05
+
+	if (icon ~= nil and icon ~= '') then
+		textpos2 = 0.21
+	else
+		textpos2 = 0.05
+		icon = 1
+	end
+
+	icon = TAB_ICONS[icon] or icon
+
+	TextLabel_3.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TextLabel_3.BackgroundTransparency = 1.000
+	TextLabel_3.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TextLabel_3.BorderSizePixel = 0
+	TextLabel_3.Position = UDim2.new(textpos2, 0, 0, -1)
+	TextLabel_3.Size = UDim2.new(0, 52, 0, 35)
+	TextLabel_3.Font = Enum.Font.FredokaOne
+	TextLabel_3.Text = name
+	TextLabel_3.TextColor3 = self.Theme.TabTextColor
+	table.insert(tab.Tab, TextLabel_3)
+	TextLabel_3.TextSize = 14.000
+	TextLabel_3.TextXAlignment = Enum.TextXAlignment.Left
+	TextLabel_3.Parent = Frame_3
+
+	Frame_4.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Frame_4.BackgroundTransparency = 1.000
+	Frame_4.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Frame_4.BorderSizePixel = 0
+	Frame_4.Position = UDim2.new(0, 1, 0.171428576, 0)
+	Frame_4.Size = UDim2.new(0, 2, 0, 0)
+	Frame_4.Parent = Frame_3
+	table.insert(tab.Tab, 3,Frame_4)
+
+	local ScrollingFrame_2 = Instance.new("ScrollingFrame")
+	ScrollingFrame_2.Active = true
+	ScrollingFrame_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	ScrollingFrame_2.BackgroundTransparency = 1.000
+	ScrollingFrame_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	ScrollingFrame_2.BorderSizePixel = 0
+	ScrollingFrame_2.Position = UDim2.new(0, 0, 0.023, 0)
+	ScrollingFrame_2.Size = UDim2.new(0, 381, 0, 370)
+	ScrollingFrame_2.CanvasSize = UDim2.new(0, 0, 0, 0)
+	ScrollingFrame_2.ScrollBarThickness = 2
+	ScrollingFrame_2.Visible = false
+	ScrollingFrame_2.Parent = self.Frame_7
+	table.insert(tab.Tab, 5,ScrollingFrame_2)
+
+	local UIListLayout = Instance.new("UIListLayout")
+	UIListLayout.Parent = ScrollingFrame_2
+	UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	UIListLayout.Padding = UDim.new(0, 5)
+
+	local UIPadding = Instance.new("UIPadding")
+	UIPadding.Parent = ScrollingFrame_2
+	UIPadding.PaddingTop = UDim.new(0, 0)
+	UIPadding.PaddingLeft = UDim.new(0, 10)
+
+	UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+		local correctHeight = UIListLayout.AbsoluteContentSize.Y / (self.ScaleFactor or 1)
+		ScrollingFrame_2.CanvasSize = UDim2.new(0, 0, 0, correctHeight + 5)
+	end)
+
+	local ImageLabel = Instance.new("ImageLabel")
+
+	ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	ImageLabel.BackgroundTransparency = 1.000
+	ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	ImageLabel.BorderSizePixel = 0
+	ImageLabel.Position = UDim2.new(0, 8, 0, 6.5)
+	ImageLabel.Size = UDim2.new(0, 22, 0, 22)
+	ImageLabel.Image = icon
+	ImageLabel.Parent = Frame_3
+	table.insert(tab.Tab,4,ImageLabel)
+
+	tab.Container = ScrollingFrame_2
+	tab.Button = Frame_3
+	tab.Frame = Frame_4
+
+	table.insert(self.mainTabs, tab)
+
+	if #self.mainTabs == 1 then
+		self:SelectTab(tab, Frame_3)
+	end
+
+	function tab:CalcScroll()
+
+	end
+
+	function tab:Reposelem()
+
+	end
+	function tab:AddList(config)
+		local Config = {
+			Name = config.Name,
+			Elems = config.Elems,
+		}
+
+		local ListWrapper = Instance.new("Frame")
+		ListWrapper.BackgroundTransparency = 0.95
+		ListWrapper.Size = UDim2.new(0, 360, 0, 0)
+		ListWrapper.AutomaticSize = Enum.AutomaticSize.Y 
+		ListWrapper.BackgroundColor3 = self.Theme.ListFrameColor
+		ListWrapper.Parent = self.Container
+
+		local BackCorner = Instance.new("UICorner")
+
+		BackCorner.CornerRadius = UDim.new(0, 10)
+		BackCorner.Parent = ListWrapper
+
+		local WrapperLayout = Instance.new("UIListLayout")
+		WrapperLayout.SortOrder = Enum.SortOrder.LayoutOrder
+		WrapperLayout.Parent = ListWrapper
+
+		local List = Instance.new("TextButton")
+		local UICorner = Instance.new("UICorner")
+		local name = Instance.new("TextLabel")
+		local ImageLabel = Instance.new("ImageLabel")
+
+		List.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
+		List.BackgroundTransparency = self.Theme.BackGroundElemTran
+		List.Size = UDim2.new(0, 360, 0, 35)
+		List.Text = ""
+		List.LayoutOrder = 1
+		List.Parent = ListWrapper
+		table.insert(tab.ElemBtn, List)
+
+		UICorner.CornerRadius = UDim.new(0, 10)
+		UICorner.Parent = List
+
+		name.BackgroundTransparency = 1
+		name.Position = UDim2.new(0.03, 0, 0, 0)
+		name.Size = UDim2.new(0.7, 0, 1, 0)
+		name.Font = Enum.Font.FredokaOne
+		name.Text = Config.Name
+		name.TextColor3 = Color3.fromRGB(255, 255, 255)
+		name.TextSize = 16
+		name.TextXAlignment = Enum.TextXAlignment.Left
+		name.Parent = List
+		table.insert(tab.Texttitle, name)
+
+		ImageLabel.BackgroundTransparency = 1
+		ImageLabel.Position = UDim2.new(0.9, 0, 0.2, 0)
+		ImageLabel.Rotation = -180
+		ImageLabel.Size = UDim2.new(0, 20, 0, 20)
+		ImageLabel.Image = "rbxassetid://126982255108418"
+		ImageLabel.ImageColor3 = self.Theme.DropDownArrowImg
+		ImageLabel.Parent = List
+		table.insert(tab.ArrowImg, ImageLabel)
+
+		local BackFrame = Instance.new("Frame")
+
+		local ItemsLayout = Instance.new("UIListLayout")
+		local Padding = Instance.new("UIPadding")
+
+		BackFrame.BackgroundTransparency = 1
+
+		BackFrame.ClipsDescendants = true 
+		BackFrame.Size = UDim2.new(0, 360, 0, 0)
+		BackFrame.Visible = false 
+		BackFrame.LayoutOrder = 2
+		BackFrame.Parent = ListWrapper
+
+		ItemsLayout.Parent = BackFrame
+		ItemsLayout.Padding = UDim.new(0, 5)
+		ItemsLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+		Padding.Parent = BackFrame
+		Padding.PaddingTop = UDim.new(0, 5)
+
+		for _, v in pairs(Config.Elems) do
+			if v.Elem then
+				v.Elem.Parent = BackFrame
+				v.Elem.Visible = true
+			end
+		end
+
+		local IsOpen = false
+
+		List.MouseButton1Click:Connect(function()
+			IsOpen = not IsOpen
+
+			self:Tween(ImageLabel, {Rotation = IsOpen and 0 or -180}, 0.3)
+
+			if IsOpen then
+				BackFrame.Visible = true
+
+				local correctContentHeight = ItemsLayout.AbsoluteContentSize.Y / (self.ScaleFactor or 1)
+				local targetHeight = correctContentHeight + Padding.PaddingTop.Offset + Padding.PaddingBottom.Offset
+
+				self:Tween(BackFrame, {Size = UDim2.new(0, 360, 0, targetHeight)}, 0.4)
+			else
+				local closeTween = self:Tween(BackFrame, {Size = UDim2.new(0, 360, 0, 0)}, 0.3)
+
+				task.delay(0.3, function()
+					if not IsOpen then
+						BackFrame.Visible = false
+					end
+				end)
+			end
+		end)
+	end
+	
+	function tab:AddDiscordInvite(config)
+		local inviteLink = config.Invite or ""
+		local fallbackIcon = config.Icon or "rbxassetid://14458925526"
+
+		-- Получаем код приглашения
+		local inviteCode = inviteLink:match("discord%.gg/([%w-]+)") or inviteLink:match("discord%.com/invite/([%w-]+)") or inviteLink
+
+		-- Создаем основной фрейм (адаптируем под стиль твоих элементов) 
+		local DiscordWidget = Instance.new("Frame")
+		DiscordWidget.Name = "DiscordInvite"
+		DiscordWidget.BackgroundColor3 = Color3.fromRGB(30, 31, 34) -- Темный стиль Discord
+		DiscordWidget.BackgroundTransparency = self.Theme.BackGroundElemTran -- Используем твою тему 
+		DiscordWidget.Size = UDim2.new(0, 360, 0, 100) -- Размер как у твоих кнопок, но выше 
+		DiscordWidget.Parent = self.Container -- Добавляем в скролл-фрейм таба 
+
+		local UICorner = Instance.new("UICorner")
+		UICorner.CornerRadius = UDim.new(0, 10)
+		UICorner.Parent = DiscordWidget
+
+		-- Иконка сервера
+		local ServerIcon = Instance.new("ImageLabel")
+		ServerIcon.Size = UDim2.new(0, 50, 0, 50)
+		ServerIcon.Position = UDim2.new(0, 12, 0, 12)
+		ServerIcon.BackgroundColor3 = Color3.fromRGB(43, 45, 49)
+		ServerIcon.Image = fallbackIcon
+		ServerIcon.Parent = DiscordWidget
+
+		local IconCorner = Instance.new("UICorner")
+		IconCorner.CornerRadius = UDim.new(0, 12)
+		IconCorner.Parent = ServerIcon
+
+		-- Название сервера
+		local ServerName = Instance.new("TextLabel")
+		ServerName.Position = UDim2.new(0, 75, 0, 15)
+		ServerName.Size = UDim2.new(0, 270, 0, 20)
+		ServerName.BackgroundTransparency = 1
+		ServerName.Font = Enum.Font.FredokaOne -- Твой основной шрифт 
+		ServerName.Text = "Loading Discord..."
+		ServerName.TextColor3 = self.Theme.TabTextColor
+		ServerName.TextSize = 16
+		ServerName.TextXAlignment = Enum.TextXAlignment.Left
+		ServerName.Parent = DiscordWidget
+
+		-- Статистика (Онлайн/Всего)
+		local StatusText = Instance.new("TextLabel")
+		StatusText.Position = UDim2.new(0, 75, 0, 38)
+		StatusText.Size = UDim2.new(0, 270, 0, 15)
+		StatusText.BackgroundTransparency = 1
+		StatusText.Font = Enum.Font.FredokaOne
+		StatusText.Text = "Connecting..."
+		StatusText.TextColor3 = self.Theme.TabSubTtitleTextColor
+		StatusText.TextSize = 13
+		StatusText.TextXAlignment = Enum.TextXAlignment.Left
+		StatusText.RichText = true
+		StatusText.Parent = DiscordWidget
+
+		-- Кнопка "Join" (копирование ссылки)
+		local JoinBtn = Instance.new("TextButton")
+		JoinBtn.Size = UDim2.new(1, -24, 0, 30)
+		JoinBtn.Position = UDim2.new(0, 12, 0, 70)
+		JoinBtn.BackgroundColor3 = Color3.fromRGB(36, 128, 70)
+		JoinBtn.Font = Enum.Font.FredokaOne
+		JoinBtn.Text = "Copy Invite Link"
+		JoinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+		JoinBtn.TextSize = 14
+		JoinBtn.Parent = DiscordWidget
+
+		local BtnCorner = Instance.new("UICorner")
+		BtnCorner.CornerRadius = UDim.new(0, 8)
+		BtnCorner.Parent = JoinBtn
+
+		-- Логика кнопки
+		JoinBtn.MouseButton1Click:Connect(function()
+			if setclipboard then
+				setclipboard("https://discord.gg/" .. inviteCode)
+				JoinBtn.Text = "Copied to Clipboard!"
+				task.wait(2)
+				JoinBtn.Text = "Copy Invite Link"
+			end
+		end)
+
+		-- API Запрос (через твой Library:GetAsset)
+		task.spawn(function()
+			local req = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+			if req then
+				local res = req({Url = "https://discord.com/api/v9/invites/" .. inviteCode .. "?with_counts=true", Method = "GET"})
+				if res.StatusCode == 200 then
+					local data = game:GetService("HttpService"):JSONDecode(res.Body)
+					ServerName.Text = data.guild.name
+					StatusText.Text = string.format("<font color='#23a559'>●</font> %s Online  <font color='#80848e'>●</font> %s Members", data.approximate_presence_count or 0, data.approximate_member_count or 0)
+
+					if data.guild.icon then
+						local iconUrl = "https://cdn.discordapp.com/icons/" .. data.guild.id .. "/" .. data.guild.icon .. ".png?size=128"
+						local asset = Library:GetAsset(iconUrl)
+						if asset then ServerIcon.Image = asset end
+					end
+				end
+			end
+		end)
+
+		table.insert(tab.ElemBtn, DiscordWidget) -- Чтобы элемент учитывался в поиске или репозиции 
+		return DiscordWidget
+	end
+
+	function tab:AddParagraph(title, subtitle)
+		local TextService = game:GetService("TextService")
+
+		local Paragraph = Instance.new("Frame")
+		local UICorner = Instance.new("UICorner")
+		local TitleLabel = Instance.new("TextLabel")
+		local ContentLabel = Instance.new("TextLabel")
+
+		Paragraph.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
+		Paragraph.BackgroundTransparency = self.Theme.BackGroundElemTran
+		Paragraph.BorderSizePixel = 0
+
+		UICorner.CornerRadius = UDim.new(0, 12)
+		UICorner.Parent = Paragraph
+
+		TitleLabel.BackgroundTransparency = 1
+		TitleLabel.Position = UDim2.new(0.027, 0, 0, 5)
+		TitleLabel.Size = UDim2.new(0, 328, 0, 20)
+		TitleLabel.Font = Enum.Font.FredokaOne
+		TitleLabel.Text = title or ""
+		TitleLabel.TextColor3 = self.Theme.TabTextColor
+		TitleLabel.TextSize = 16
+		TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+		TitleLabel.TextWrapped = false
+		TitleLabel.Parent = Paragraph
+
+		ContentLabel.BackgroundTransparency = 1
+		ContentLabel.Position = UDim2.new(0.027, 0, 0, 28)
+		ContentLabel.Size = UDim2.new(0, 328, 0, 10)
+		ContentLabel.Font = Enum.Font.FredokaOne
+		ContentLabel.Text = subtitle or ""
+		ContentLabel.TextColor3 = self.Theme.TabSubTtitleTextColor
+		ContentLabel.TextSize = 14
+		ContentLabel.TextWrapped = true
+		ContentLabel.TextXAlignment = Enum.TextXAlignment.Left
+		ContentLabel.TextYAlignment = Enum.TextYAlignment.Top
+		ContentLabel.Parent = Paragraph
+
+		Paragraph.Parent = self.Container
+
+		table.insert(tab.ElemBtn, Paragraph)
+		table.insert(tab.Texttitle, TitleLabel)
+		table.insert(tab.Textsubtitle, ContentLabel)
+
+		local function recalcSizes()
+			local contentText = ContentLabel.Text
+			local textSizeVec = TextService:GetTextSize(contentText, ContentLabel.TextSize, ContentLabel.Font, Vector2.new(328, 10000))
+			local contentHeight = math.max(16, math.ceil(textSizeVec.Y))
+
+			ContentLabel.Size = UDim2.new(0, 328, 0, contentHeight + 4)
+			Paragraph.Size = UDim2.new(0, 360, 0, 33 + contentHeight)
+		end
+
+		recalcSizes()
+
+		local paragraphObj = {
+			Element = Paragraph,
+			Elem = Paragraph,
+			Update = function(objSelf, newTitle, newSubtitle)
+				if not objSelf.Element then return end
+
+				if newTitle then TitleLabel.Text = newTitle end
+				if newSubtitle then ContentLabel.Text = newSubtitle end
+
+				recalcSizes()
+
+				tab.SearchData[objSelf.Element] = TitleLabel.Text .. " " .. ContentLabel.Text
+				tab:CalcScroll()
+			end,
+
+			SetVisible = function(objSelf, visible)
+				if objSelf.Element then
+					objSelf.Element.Visible = visible
+				end
+			end,
+
+			Destroy = function(objSelf)
+				if objSelf.Element then
+					objSelf.Element:Destroy()
+					objSelf.Element = nil
+				end
+			end
+		}
+
+		tab.SearchData[Paragraph] = (title or "") .. " " .. (subtitle or "")
+
+		return paragraphObj
+	end
+
+	function tab:AddImage(config)
+		local image = {
+			Image = config.Image or "",
+			Size = config.Size or UDim2.new(0, 80, 0, 80),
+			CornerRadius = config.CornerRadius or UDim.new(0, 12),
+		}
+
+		local ImageButton = Instance.new("ImageLabel")
+
+		ImageButton.Parent = self.Container
+		ImageButton.BackgroundTransparency = 1
+		ImageButton.BorderSizePixel = 0
+		ImageButton.Size = image.Size
+		ImageButton.Image = image.Image
+
+		if image.CornerRadius then
+			local UICorner = Instance.new("UICorner")
+			UICorner.CornerRadius = image.CornerRadius
+			UICorner.Parent = ImageButton
+		end
+	end
+
+	function tab:AddSection(title)
+		local TextLabel = Instance.new("TextLabel")
+		table.insert(tab.Texttitle, TextLabel)
+
+		TextLabel.Parent = self.Container
+		TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		TextLabel.BackgroundTransparency = 1.000
+		TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		TextLabel.BorderSizePixel = 0
+		TextLabel.Size = UDim2.new(0, 193, 0, 21)
+		TextLabel.Font = Enum.Font.FredokaOne
+		TextLabel.Text = title
+		TextLabel.TextColor3 = self.Theme.TabTextColor
+		TextLabel.TextSize = 18.000
+		TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+		local Section = {
+			Elem = TextLabel
+		}
+
+		return Section
+	end
+
+	function tab:AddButton(config)
+		local button = {
+			Name = config.Name,
+			Description = config.Description or '',
+			Callback = config.Callback
+		}
+
+		local Button = Instance.new("TextButton")
+		table.insert(tab.ElemBtn, Button)
+		local UICorner = Instance.new("UICorner")
+		local name = Instance.new("TextLabel")
+		table.insert(tab.Texttitle, name)
+		local subtext = Instance.new("TextLabel")
+		table.insert(tab.Textsubtitle, subtext)
+		local ImageLabel = Instance.new("ImageLabel")
+
+		Button.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
+		Button.BackgroundTransparency = self.Theme.BackGroundElemTran
+		Button.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Button.BorderSizePixel = 0
+		Button.Size = UDim2.new(0, 360, 0, 45)
+		Button.Text = ''
+		Button.Parent = self.Container
+
+		Button.MouseButton1Click:Connect(function()
+			if button.Callback then
+				if button.Callback then
+					task.spawn(button.Callback)
+				end
+			end
+		end)
+
+		UICorner.CornerRadius = UDim.new(0, 12)
+		UICorner.Parent = Button
+
+		local namepos = config.Description and config.Description ~= '' and 4 or 12.5
+
+		name.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		name.BackgroundTransparency = 1.000
+		name.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		name.BorderSizePixel = 0
+		name.Position = UDim2.new(0.029, 0, 0, namepos)
+		name.Size = UDim2.new(0, 77, 0, 20)
+		name.Font = Enum.Font.FredokaOne
+		name.Text = button.Name
+		name.TextColor3 = self.Theme.TabTextColor
+		name.TextSize = 16.000
+		name.TextXAlignment = Enum.TextXAlignment.Left
+		name.Parent = Button
+
+		subtext.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		subtext.BackgroundTransparency = 1.000
+		subtext.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		subtext.BorderSizePixel = 0
+		subtext.Position = UDim2.new(0.029, 0, 0, 25)
+		subtext.Size = UDim2.new(0, 193, 0, 14)
+		subtext.Font = Enum.Font.FredokaOne
+		subtext.Text = button.Description
+		subtext.TextColor3 = self.Theme.TabSubTtitleTextColor
+		subtext.TextSize = 14.000
+		subtext.TextXAlignment = Enum.TextXAlignment.Left
+		subtext.Parent = Button
+
+		ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		ImageLabel.BackgroundTransparency = 1.000
+		ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		ImageLabel.BorderSizePixel = 0
+		ImageLabel.Position = UDim2.new(0.841, 0, 0.244, 0)
+		ImageLabel.Size = UDim2.new(0, 25, 0, 23)
+		ImageLabel.Image = "rbxassetid://140083176080437"
+		ImageLabel.ImageColor3 = self.Theme.DropDownArrowImg
+		ImageLabel.Parent = Button
+		table.insert(tab.BtnImg, ImageLabel)
+
+		self.SearchData[Button] = (tostring(config.Name or "") .. " " .. tostring(config.Description or "")):lower()
+
+		local ButtonObj = {
+			Elem = Button
+		}
+
+		return ButtonObj
+	end
+
+	function tab:AddToggle(config)
+		local toggle = {
+			Name = config.Name,
+			Description = config.Description or '',
+			Default = config.Default or false,
+			Callback = config.Callback
+		}
+
+		local Toggle = Instance.new("TextButton")
+		table.insert(tab.ElemBtn, Toggle)
+		local UICorner = Instance.new("UICorner")
+		local name = Instance.new("TextLabel")
+		table.insert(tab.Texttitle, name)
+		local subtext = Instance.new("TextLabel")
+		table.insert(tab.Textsubtitle, subtext)
+
+		local sliderbutton = Instance.new("Frame")
+		local UICorner_2 = Instance.new("UICorner")
+		local Frame = Instance.new("Frame")
+		table.insert(tab.Togglebtn, Frame)
+		local UICorner_3 = Instance.new("UICorner")
+
+		Toggle.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
+		Toggle.BackgroundTransparency = self.Theme.BackGroundElemTran
+		Toggle.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Toggle.BorderSizePixel = 0
+		Toggle.Size = UDim2.new(0, 360, 0, 45)
+		Toggle.Text = ''
+		Toggle.Parent = self.Container
+
+		UICorner.CornerRadius = UDim.new(0, 12)
+		UICorner.Parent = Toggle
+
+		local namepos = config.Description and config.Description ~= '' and 4 or 12.5
+
+		name.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		name.BackgroundTransparency = 1.000
+		name.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		name.BorderSizePixel = 0
+		name.Position = UDim2.new(0.029, 0, 0, namepos)
+		name.Size = UDim2.new(0, 77, 0, 20)
+		name.Font = Enum.Font.FredokaOne
+		name.Text = toggle.Name
+		name.TextColor3 = self.Theme.TabTextColor
+		name.TextSize = 15.000
+		name.TextXAlignment = Enum.TextXAlignment.Left
+		name.Parent = Toggle
+
+		subtext.BackgroundColor3 = Color3.fromRGB(199, 199, 199)
+		subtext.BackgroundTransparency = 1.000
+		subtext.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		subtext.BorderSizePixel = 0
+		subtext.Position = UDim2.new(0.028, 0, 0, 25)
+		subtext.Size = UDim2.new(0, 193, 0, 14)
+		subtext.Font = Enum.Font.FredokaOne
+		subtext.Text = toggle.Description
+		subtext.TextColor3 = self.Theme.TabSubTtitleTextColor
+		subtext.TextSize = 14.000
+		subtext.TextXAlignment = Enum.TextXAlignment.Left
+		subtext.Parent = Toggle
+
+		sliderbutton.BackgroundColor3 = self.Theme.ToggleButton
+		sliderbutton.BackgroundTransparency = self.Theme.ToggleTran
+		sliderbutton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		sliderbutton.BorderSizePixel = 0
+		sliderbutton.Position = UDim2.new(0.8, 0, 0.206, 0)
+		sliderbutton.Size = UDim2.new(0, 54, 0, 25)
+		sliderbutton.Parent = Toggle
+
+		UICorner_2.Parent = sliderbutton
+
+		Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Frame.BorderSizePixel = 0
+		Frame.Position = UDim2.new(0, 3, 0.12, 0)
+		Frame.Size = UDim2.new(0, 19, 0, 19)
+		Frame.Parent = sliderbutton
+
+		UICorner_3.Parent = Frame
+
+		local toggleController = {
+			Elem = Toggle,
+			Value = toggle.Default,
+			UpdateVisuals = function(ctrl, state, instant)
+				local currentTheme = Library.Theme or self.Theme
+
+				local targetPos = state and UDim2.new(0, 32, 0.12, 0) or UDim2.new(0, 3, 0.12, 0)
+				local targetColor = state and currentTheme.TogleActivColor or currentTheme.ToggleButton
+				local targetTran = state and 0 or currentTheme.ToggleTran
+
+				if instant then
+					Frame.Position = targetPos
+					sliderbutton.BackgroundColor3 = targetColor
+					sliderbutton.BackgroundTransparency = targetTran
+				else
+					Library:Tween(Frame, {Position = targetPos}, 0.2)
+					Library:Tween(sliderbutton, {BackgroundColor3 = targetColor, BackgroundTransparency = targetTran}, 0.2)
+				end
+			end,
+			SetState = function(ctrl, state)
+				if state == ctrl.Value then return end
+				ctrl.Value = state
+				ctrl:UpdateVisuals(state, false)
+				if toggle.Callback then
+					task.spawn(function()
+						toggle.Callback(state)
+					end)
+				end
+			end,
+			GetState = function(ctrl)
+				return ctrl.Value
+			end,
+			Toggle = function(ctrl)
+				ctrl:SetState(not ctrl.Value)
+			end
+		}
+
+		Toggle.MouseButton1Click:Connect(function()
+			toggleController:Toggle()
+		end)
+
+		self.AllElements.Toggles[config.Name] = toggleController
+		self.SearchData[Toggle] = (tostring(config.Name or "") .. " " .. tostring(config.Description or "")):lower()
+
+		return toggleController
+	end
+
+	function tab:AddKeybind(config)
+		if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
+			return nil
+		end
+
+		local currentKey = (typeof(config.Default) == "EnumItem") and config.Default or nil
+
+		local Keybind = {
+			Name = config.Name or "Keybind",
+			Description = config.Description or "",
+			Callback = config.Callback
+		}
+
+		local container = Instance.new("Frame")
+		local UICorner = Instance.new("UICorner")
+		local name = Instance.new("TextLabel")
+		local subtext = Instance.new("TextLabel")
+		local bindButton = Instance.new("TextButton")
+		local UICorner_2 = Instance.new("UICorner")
+
+		table.insert(tab.ElemBtn, container)
+		table.insert(tab.Texttitle, name)
+		table.insert(tab.Texttitle, bindButton)
+		table.insert(tab.Textsubtitle, subtext)
+		table.insert(tab.actionBakcColor, bindButton)
+
+		container.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
+		container.BackgroundTransparency = self.Theme.BackGroundElemTran
+		container.BorderSizePixel = 0
+		container.Size = UDim2.new(0, 360, 0, 45)
+		container.Parent = self.Container
+
+		UICorner.CornerRadius = UDim.new(0, 12)
+		UICorner.Parent = container
+
+		local namepos = (Keybind.Description ~= '') and 4 or 12.5
+
+		name.BackgroundTransparency = 1.000
+		name.Position = UDim2.new(0.029, 0, 0, namepos)
+		name.Size = UDim2.new(0, 77, 0, 20)
+		name.Font = Enum.Font.FredokaOne
+		name.Text = Keybind.Name
+		name.TextColor3 = self.Theme.TabTextColor
+		name.TextSize = 16.000
+		name.TextXAlignment = Enum.TextXAlignment.Left
+		name.Parent = container
+
+		subtext.BackgroundTransparency = 1.000
+		subtext.Position = UDim2.new(0.0289, 0, 0, 25)
+		subtext.Size = UDim2.new(0, 193, 0, 14)
+		subtext.Font = Enum.Font.FredokaOne
+		subtext.Text = Keybind.Description
+		subtext.TextColor3 = self.Theme.TabSubTtitleTextColor
+		subtext.TextSize = 14.000
+		subtext.TextXAlignment = Enum.TextXAlignment.Left
+		subtext.Parent = container
+
+		bindButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		bindButton.BackgroundTransparency = self.Theme.BackGroundButtonTran
+		bindButton.Position = UDim2.new(0.672, 0, 0.221, 0)
+		bindButton.Size = UDim2.new(0, 100, 0, 25)
+		bindButton.Font = Enum.Font.FredokaOne
+		bindButton.TextColor3 = self.Theme.TabTextColor
+		bindButton.TextSize = 14.000
+		bindButton.Parent = container
+
+		UICorner_2.CornerRadius = UDim.new(0, 5)
+		UICorner_2.Parent = bindButton
+
+		local function setKey(newKey)
+			currentKey = newKey
+			bindButton.Text = (typeof(newKey) == "EnumItem" and newKey.Name) or "None"
+		end
+
+		setKey(currentKey)
+
+		local BlacklistedKeys = {
+			[Enum.KeyCode.Unknown] = true, [Enum.KeyCode.W] = true,
+			[Enum.KeyCode.A] = true, [Enum.KeyCode.S] = true,
+			[Enum.KeyCode.D] = true, [Enum.KeyCode.Escape] = true,
+			[Enum.KeyCode.Space] = true, [Enum.KeyCode.Backspace] = true
+		}
+
+		local selectConnection
+		selectConnection = bindButton.MouseButton1Click:Connect(function()
+			bindButton.Text = "..."
+			local connection
+
+			connection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+				task.wait()
+				if gameProcessed and input.UserInputType == Enum.UserInputType.Keyboard then return end
+
+				if input.UserInputType == Enum.UserInputType.Keyboard then
+					if not BlacklistedKeys[input.KeyCode] then
+						setKey(input.KeyCode)
+					else
+						setKey(nil)
+					end
+					connection:Disconnect()
+				elseif input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.MouseButton2 then
+					setKey(nil)
+					connection:Disconnect()
+				end
+			end)
+		end)
+		table.insert(tab.Connections, selectConnection)
+
+		-- Создаем единственный глобальный слушатель в общей таблице AllElements
+		if not self.AllElements.GlobalKeybindConnection then
+			self.AllElements.GlobalKeybindConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+				if gameProcessed then return end
+
+				if input.UserInputType == Enum.UserInputType.Keyboard then
+					-- Перебираем все сохраненные бинды
+					for _, kbObj in pairs(self.AllElements.Keybinds) do
+						local key = kbObj:GetState()
+						if key and input.KeyCode == key and kbObj.Callback then
+							task.spawn(kbObj.Callback)
+						end
+					end
+				end
+			end)
+		end
+
+		local keybindObj = {
+			Name = Keybind.Name,
+			Elem = container,
+			SetKey = setKey,
+			GetState = function()
+				return currentKey
+			end,
+			Callback = Keybind.Callback
+		}
+
+		if self.AllElements and self.AllElements.Keybinds then
+			self.AllElements.Keybinds[Keybind.Name] = keybindObj
+		end
+
+		if self.SearchData then
+			self.SearchData[container] = (tostring(Keybind.Name) .. " " .. tostring(Keybind.Description)):lower()
+		end
+
+		return keybindObj
+	end
+
+	function tab:AddInput(config)
+		local Input = {
+			Name = config.Name,
+			Description = config.Description or '',
+			SaveUserText = config.SaveUserText or false,
+			SaveConfig = config.SaveConfig or false,
+			Default = config.Default or "Default",
+			Callback = config.Callback
+		}
+
+		local input = Instance.new("Frame")
+		table.insert(tab.ElemBtn, input)
+		local UICorner = Instance.new("UICorner")
+		local name = Instance.new("TextLabel")
+		table.insert(tab.Texttitle, name)
+		local subtext = Instance.new("TextLabel")
+		table.insert(tab.Textsubtitle, subtext)
+		local TextBox = Instance.new("TextBox")
+		table.insert(tab.actionBakcColor, TextBox)
+		local UICorner_2 = Instance.new("UICorner")
+
+		input.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
+		input.BackgroundTransparency = self.Theme.BackGroundElemTran
+		input.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		input.BorderSizePixel = 0
+		input.Size = UDim2.new(0, 360, 0, 45)
+		input.Parent = self.Container
+
+		UICorner.CornerRadius = UDim.new(0, 12)
+		UICorner.Parent = input
+
+		local namepos = (config.Description and config.Description ~= '') and 4 or 12.5
+
+		name.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		name.BackgroundTransparency = 1.000
+		name.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		name.BorderSizePixel = 0
+		name.Position = UDim2.new(0.0290000141, 0, 0, namepos)
+		name.Size = UDim2.new(0, 77, 0, 20)
+		name.Font = Enum.Font.FredokaOne
+		name.Text = Input.Name
+		name.TextColor3 = self.Theme.TabTextColor
+		name.TextSize = 16.000
+		name.TextXAlignment = Enum.TextXAlignment.Left
+		name.Parent = input
+
+		subtext.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		subtext.BackgroundTransparency = 1.000
+		subtext.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		subtext.BorderSizePixel = 0
+		subtext.Position = UDim2.new(0.0289855078, 0, 0, 25)
+		subtext.Size = UDim2.new(0, 193, 0, 14)
+		subtext.Font = Enum.Font.FredokaOne
+		subtext.Text = Input.Description
+		subtext.TextColor3 = self.Theme.TabSubTtitleTextColor
+		subtext.TextSize = 14.000
+		subtext.TextXAlignment = Enum.TextXAlignment.Left
+		subtext.Parent = input
+
+		TextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		TextBox.BackgroundTransparency = self.Theme.BackGroundButtonTran
+		TextBox.BorderColor3 = Color3.fromRGB(255, 255, 255)
+		TextBox.BorderSizePixel = 0
+		TextBox.Position = UDim2.new(0.574999988, 0, 0.155555561, 0)
+		TextBox.Size = UDim2.new(0, 135, 0, 30)
+		TextBox.Font = Enum.Font.FredokaOne
+		TextBox.Text = Input.Default
+		TextBox.TextColor3 = self.Theme.InputTextColor
+		TextBox.TextSize = 14.000
+		TextBox.Parent = input
+		table.insert(tab.InputTextColor, TextBox)
+
+		UICorner_2.CornerRadius = UDim.new(0, 5)
+		UICorner_2.Parent = TextBox
+
+		TextBox.FocusLost:Connect(function()
+			local currentText = TextBox.Text
+
+			if not Input.SaveUserText then
+				task.spawn(function()
+					task.wait()
+					TextBox.Text = Input.Default
+				end)
+			end
+
+			if config.Callback then
+				config.Callback(currentText)
+			end
+		end)
+
+		local function SetInput(Text2)
+			TextBox.Text = Text2
+			if config.Callback then
+				config.Callback(Text2)
+			end
+		end
+
+		local InputObj = {
+			Name = config.Name,
+			Elem = input,
+			SetText = SetInput,
+			GetState = function(self)
+				return TextBox.Text
+			end,
+			SaveConfig = Input.SaveConfig,
+			Callback = config.Callback
+		}
+		self.AllElements.Inputs[config.Name] = InputObj
+
+		self.SearchData[input] = (tostring(config.Name or "") .. " " .. tostring(config.Description or "")):lower()
+
+		return InputObj
+	end
+
+	function tab:AddSlider(config)
+		local Slider = {
+			Name = config.Name,
+			Description = config.Description or '',
+			min = config.Min or 0,
+			max = config.Max or 100,
+			Callback = config.Callback,
+		}
+		local value = config.Default or Slider.min
+
+		local slider = Instance.new("TextButton")
+		table.insert(tab.ElemBtn, slider)
+
+		local UICorner = Instance.new("UICorner")
+		local name = Instance.new("TextLabel")
+		table.insert(tab.Texttitle, name)
+
+		local subtext = Instance.new("TextLabel")
+		table.insert(tab.Textsubtitle, subtext)
+
+		local sliderbutton = Instance.new("Frame")
+		local sliderline = Instance.new("Frame")
+		local sliderball = Instance.new("Frame")
+		local UICorner_2 = Instance.new("UICorner")
+		local slideramount = Instance.new("TextLabel")
+		local underline = Instance.new("Frame")
+
+		table.insert(tab.SliderUnderLineColor, underline)
+		table.insert(tab.Sliderball, sliderball)
+
+		slider.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
+		slider.BackgroundTransparency = self.Theme.BackGroundElemTran
+		slider.BorderSizePixel = 0
+		slider.Text = ""
+		slider.Size = UDim2.new(0, 360, 0, 45)
+		slider.Parent = self.Container
+
+		UICorner.CornerRadius = UDim.new(0, 12)
+		UICorner.Parent = slider
+
+		local namepos = (config.Description and config.Description ~= '') and 4 or 12.5
+
+		name.BackgroundTransparency = 1.000
+		name.Position = UDim2.new(0.029, 0, 0, namepos)
+		name.Size = UDim2.new(0, 77, 0, 20)
+		name.Font = Enum.Font.FredokaOne
+		name.Text = Slider.Name
+		name.TextColor3 = self.Theme.TabTextColor
+		name.TextSize = 16.000
+		name.TextXAlignment = Enum.TextXAlignment.Left
+		name.Parent = slider
+
+		subtext.BackgroundTransparency = 1.000
+		subtext.Position = UDim2.new(0.029, 0, 0, 25)
+		subtext.Size = UDim2.new(0, 193, 0, 14)
+		subtext.Font = Enum.Font.FredokaOne
+		subtext.Text = Slider.Description
+		subtext.TextColor3 = self.Theme.TabSubTtitleTextColor
+		subtext.TextSize = 14.000
+		subtext.TextXAlignment = Enum.TextXAlignment.Left
+		subtext.Parent = slider
+
+		sliderbutton.BackgroundTransparency = 1.000
+		sliderbutton.Position = UDim2.new(0.671, 0, 0.244, 0)
+		sliderbutton.Size = UDim2.new(0, 100, 0, 22)
+		sliderbutton.Parent = slider
+
+		sliderline.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		sliderline.BorderSizePixel = 0
+		sliderline.Position = UDim2.new(0, 0, 0.455, 0)
+		sliderline.Size = UDim2.new(1, 0, 0, 2)
+		sliderline.Parent = sliderbutton
+
+		sliderball.BackgroundColor3 = self.Theme.Sliderball
+		sliderball.BorderSizePixel = 0
+		sliderball.AnchorPoint = Vector2.new(0.5, 0.5)
+		sliderball.Position = UDim2.new(0, 0, 0.5, 0)
+		sliderball.Size = UDim2.new(0, 15, 0, 15)
+		sliderball.ZIndex = 2
+		sliderball.Parent = sliderbutton
+
+		UICorner_2.CornerRadius = UDim.new(1, 0)
+		UICorner_2.Parent = sliderball
+
+		slideramount.BackgroundTransparency = 1.000
+		slideramount.Position = UDim2.new(0, -35, 0.075, 0)
+		slideramount.Size = UDim2.new(0, 21, 0, 18)
+		slideramount.Font = Enum.Font.FredokaOne
+		slideramount.TextColor3 = self.Theme.TabTextColor
+		slideramount.TextSize = 14.000
+		slideramount.Parent = sliderbutton
+		table.insert(tab.Texttitle, slideramount)
+
+		underline.BackgroundColor3 = self.Theme.SliderUnderLineColor
+		underline.BorderSizePixel = 0
+		underline.Position = UDim2.new(0, 0, 0.455, 0)
+		underline.Size = UDim2.new(0, 0, 0, 2)
+		underline.Parent = sliderbutton
+
+		if not Library.SharedSliderState then
+			Library.SharedSliderState = { ActiveMoveFunc = nil }
+
+			UserInputService.InputChanged:Connect(function(input)
+				if Library.SharedSliderState.ActiveMoveFunc and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+					Library.SharedSliderState.ActiveMoveFunc(input)
+				end
+			end)
+
+			UserInputService.InputEnded:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+					Library.SharedSliderState.ActiveMoveFunc = nil
+				end
+			end)
+		end
+
+		local function updateValue(newValue)
+			value = math.clamp(newValue, Slider.min, Slider.max)
+
+			local percent = (value - Slider.min) / (Slider.max - Slider.min)
+
+			underline.Size = UDim2.new(percent, 0, 0, 2)
+			sliderball.Position = UDim2.new(percent, 0, 0.5, 0)
+
+			local displayValue = (Slider.max > 10) and math.floor(value + 0.5) or (math.floor(value * 10 + 0.5) / 10)
+			slideramount.Text = (Slider.max > 10) and tostring(displayValue) or string.format("%.1f", displayValue)
+
+			if config.Callback then
+				task.spawn(config.Callback, displayValue)
+			end
+		end
+
+		local function moveSlider(input)
+			local pos = input.Position.X - sliderbutton.AbsolutePosition.X
+			local percent = math.clamp(pos / sliderbutton.AbsoluteSize.X, 0, 1)
+			updateValue(Slider.min + percent * (Slider.max - Slider.min))
+		end
+
+		sliderbutton.InputBegan:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				Library.SharedSliderState.ActiveMoveFunc = moveSlider
+				moveSlider(input)
+			end
+		end)
+
+		local sliderObj = {
+			Elem = slider,
+			Name = config.Name,
+			Value = value,
+			GetState = function() return value end,
+			SetValue = updateValue
+		}
+
+		self.AllElements.Sliders[config.Name] = sliderObj
+		self.SearchData[slider] = (tostring(config.Name or "") .. " " .. tostring(config.Description or "")):lower()
+
+		updateValue(value)
+
+		return sliderObj
+	end
+
+	function tab:AddColorPicker(config)
+		local colorPicker = {
+			Name = config.Name,
+			Description = config.Description or "",
+			Default = config.Default or Color3.new(1, 1, 1),
+			Callback = config.Callback
+		}
+
+		local function create(className, props)
+			local inst = Instance.new(className)
+			for k, v in pairs(props) do inst[k] = v end
+			return inst
+		end
+
+		local namepos = config.Description and config.Description ~= '' and 4 or 12.5
+
+		local ColorPick = create("Frame", {
+			Parent = self.Container,
+			BackgroundColor3 = Color3.fromRGB(225, 225, 225),
+			BackgroundTransparency = self.Theme.BackGroundElemTran,
+			BorderSizePixel = 0,
+			Size = UDim2.new(0, 360, 0, 45)
+		})
+		table.insert(tab.ElemBtn, ColorPick)
+		create("UICorner", {CornerRadius = UDim.new(0, 12), Parent = ColorPick})
+
+		local name = create("TextLabel", {
+			Name = "name", Parent = ColorPick, BackgroundTransparency = 1,
+			Position = UDim2.new(0.029, 0, 0, namepos), Size = UDim2.new(0, 77, 0, 20),
+			Font = Enum.Font.FredokaOne, Text = colorPicker.Name,
+			TextColor3 = self.Theme.TabTextColor, TextSize = 16, TextXAlignment = Enum.TextXAlignment.Left
+		})
+		table.insert(tab.Texttitle, name)
+
+		local subtext = create("TextLabel", {
+			Name = "subtext", Parent = ColorPick, BackgroundTransparency = 1,
+			Position = UDim2.new(0.029, 0, 0, 25), Size = UDim2.new(0, 193, 0, 14),
+			Font = Enum.Font.FredokaOne, Text = colorPicker.Description,
+			TextColor3 = self.Theme.TabSubTtitleTextColor, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left
+		})
+		table.insert(tab.Textsubtitle, subtext)
+
+		local colorButton = create("TextButton", {
+			Parent = ColorPick, BackgroundColor3 = colorPicker.Default, BorderSizePixel = 0,
+			Position = UDim2.new(0.802, 0, 0.206, 0), Size = UDim2.new(0, 54, 0, 25), Text = "", ZIndex = 2
+		})
+		create("UICorner", {CornerRadius = UDim.new(0, 5), Parent = colorButton})
+
+		local currentColor = colorPicker.Default
+		local hue, saturation, value = currentColor:ToHSV()
+
+		local function setColor(color, newH, newS, newV)
+			if not color then return end
+			currentColor = color
+			colorButton.BackgroundColor3 = color
+
+			if newH and newS and newV then
+				hue, saturation, value = newH, newS, newV
+			else
+				local extH, extS, extV = color:ToHSV()
+				hue = (extS == 0 or extV == 0) and hue or extH 
+				saturation = extS
+				value = extV
+			end
+
+			if self.ActiveColorPicker == ColorPick and self.UpdateSharedPaletteVisuals then
+				self.UpdateSharedPaletteVisuals(currentColor, hue, saturation, value)
+			end
+
+			if colorPicker.Callback then colorPicker.Callback(color) end
+		end
+
+		--setColor(colorPicker.Default)
+
+		local function togglePalette()
+			if not self.SharedPaletteUI then
+				self.SharedPaletteUI = {}
+
+				local modalBackground = create("Frame", {
+					Parent = self.ImageLabel, BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+					BackgroundTransparency = 0.5, Size = UDim2.new(0.966, 0, 0.96, 0), Position = UDim2.new(0, 10, 0, 10), ZIndex = 40, Visible = false
+				})
+				create("UICorner", {CornerRadius = UDim.new(0, 24), Parent = modalBackground})
+				self.SharedPaletteUI.Modal = modalBackground
+
+				local colorPaletteFrame = create("Frame", {
+					Parent = self.ImageLabel, BackgroundColor3 = self.Theme.ColorPickerColoro,
+					BorderSizePixel = 0, ZIndex = 50, Visible = false, Size = UDim2.new(0, 0, 0, 0),
+					Position = UDim2.new(0.5, 0, 0.5, 0), AnchorPoint = Vector2.new(0.5, 0.5)
+				})
+				table.insert(tab.ColorPickerColor, colorPaletteFrame)
+				create("UICorner", {CornerRadius = UDim.new(0, 12), Parent = colorPaletteFrame})
+				create("UIStroke", {Color = Color3.fromRGB(60, 60, 70), Thickness = 2, Parent = colorPaletteFrame})
+				self.SharedPaletteUI.Frame = colorPaletteFrame
+
+				local titleFrame = create("Frame", {Parent = colorPaletteFrame, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 40), ZIndex = 51})
+				local titleLabel = create("TextLabel", {
+					Parent = titleFrame, Text = "Choose a color", Font = Enum.Font.GothamSemibold, TextSize = 16,
+					TextColor3 = self.Theme.TabTextColor, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 1, 0), ZIndex = 52
+				})
+				table.insert(tab.Texttitle, titleLabel)
+
+				local svGradient = create("Frame", {Parent = colorPaletteFrame, Size = UDim2.new(0, 200, 0, 200), Position = UDim2.new(0.435, -100, 0, 50), ZIndex = 51})
+				create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = svGradient})
+				self.SharedPaletteUI.SVGradient = svGradient
+
+				local whiteOverlay = create("Frame", {Parent = svGradient, Size = UDim2.new(1, 0, 1, 0), BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 51})
+				create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = whiteOverlay})
+				create("UIGradient", {Parent = whiteOverlay, Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(1, 1)})})
+
+				local blackOverlay = create("Frame", {Parent = svGradient, Size = UDim2.new(1, 0, 1, 0), BackgroundColor3 = Color3.new(0, 0, 0), ZIndex = 51})
+				create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = blackOverlay})
+				create("UIGradient", {Parent = blackOverlay, Rotation = 90, Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(1, 0)})})
+
+				local svSelector = create("Frame", {Parent = svGradient, Size = UDim2.new(0, 14, 0, 14), AnchorPoint = Vector2.new(0.5, 0.5), BackgroundTransparency = 1, BorderSizePixel = 2, BorderColor3 = Color3.new(1, 1, 1), ZIndex = 52})
+				create("UICorner", {CornerRadius = UDim.new(1, 0), Parent = svSelector})
+				self.SharedPaletteUI.SVSelector = svSelector
+
+				local innerCircle = create("Frame", {Parent = svSelector, Size = UDim2.new(0, 6, 0, 6), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, 0.5, 0), ZIndex = 53})
+				create("UICorner", {CornerRadius = UDim.new(1, 0), Parent = innerCircle})
+				self.SharedPaletteUI.InnerCircle = innerCircle
+
+				local hueFrame = create("Frame", {Parent = colorPaletteFrame, Size = UDim2.new(0, 20, 0, 200), Position = UDim2.new(0.82, 0, 0, 50), BackgroundTransparency = 1, ZIndex = 51})
+				local hueGradientFrame = create("Frame", {Parent = hueFrame, Size = UDim2.new(1, 0, 1, 0), ZIndex = 51})
+				create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = hueGradientFrame})
+
+				local hueColors = {}
+				for i = 0, 6 do table.insert(hueColors, ColorSequenceKeypoint.new(i/6, Color3.fromHSV(i/6, 1, 1))) end
+				create("UIGradient", {Parent = hueGradientFrame, Rotation = 90, Color = ColorSequence.new(hueColors)})
+
+				local hueSlider = create("Frame", {Parent = hueFrame, Size = UDim2.new(1, 0, 0, 4), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 52})
+				create("UICorner", {CornerRadius = UDim.new(0, 2), Parent = hueSlider})
+				self.SharedPaletteUI.HueSlider = hueSlider
+
+				local inputFrame = create("Frame", {Parent = colorPaletteFrame, BackgroundTransparency = 1, Size = UDim2.new(1, -40, 0, 40), Position = UDim2.new(0, 30, 0, 260), ZIndex = 51})
+
+				local hexInput = create("TextBox", {
+					Parent = inputFrame, Size = UDim2.new(0.7, 0, 1, 0), BackgroundColor3 = Color3.fromRGB(40, 40, 45),
+					BackgroundTransparency = 0.5, TextColor3 = self.Theme.TabTextColor, Font = Enum.Font.Gotham,
+					TextSize = 14, TextXAlignment = Enum.TextXAlignment.Center, ZIndex = 52
+				})
+				table.insert(tab.Texttitle, hexInput)
+				create("UICorner", {CornerRadius = UDim.new(0, 6), Parent = hexInput})
+				create("UIStroke", {Color = Color3.fromRGB(60, 60, 70), Thickness = 1, Parent = hexInput})
+				self.SharedPaletteUI.HexInput = hexInput
+
+				local previewFrame = create("Frame", {Parent = colorPaletteFrame, Size = UDim2.new(0, 40, 0, 40), Position = UDim2.new(0.76, 0, 0, 260), ZIndex = 51})
+				create("UICorner", {CornerRadius = UDim.new(0, 8), Parent = previewFrame})
+				create("UIStroke", {Color = Color3.fromRGB(60, 60, 70), Thickness = 2, Parent = previewFrame})
+				self.SharedPaletteUI.PreviewFrame = previewFrame
+
+				local function processInput(input, frame, isHueMode)
+					if not self.ActiveColorPickerData then return end
+					local h, s, v = self.ActiveColorPickerData.GetHSV()
+
+					local y = math.clamp((input.Position.Y - frame.AbsolutePosition.Y) / frame.AbsoluteSize.Y, 0, 1)
+					if isHueMode then
+						h = y
+					else
+						local x = math.clamp((input.Position.X - frame.AbsolutePosition.X) / frame.AbsoluteSize.X, 0, 1)
+						s, v = x, 1 - y
+					end
+
+					self.ActiveColorPickerData.SetColor(Color3.fromHSV(h, s, v), h, s, v)
+				end
+
+				local draggingHue, draggingSV = false, false
+
+				hueFrame.InputBegan:Connect(function(input)
+					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+						draggingHue = true; processInput(input, hueFrame, true)
+					end
+				end)
+
+				svGradient.InputBegan:Connect(function(input)
+					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+						draggingSV = true; processInput(input, svGradient, false)
+					end
+				end)
+
+				UserInputService.InputEnded:Connect(function(input)
+					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+						draggingHue, draggingSV = false, false
+					end
+				end)
+
+				UserInputService.InputChanged:Connect(function(input)
+					if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+						if draggingHue then processInput(input, hueFrame, true)
+						elseif draggingSV then processInput(input, svGradient, false) end
+					end
+				end)
+
+				hexInput.FocusLost:Connect(function(enterPressed)
+					if enterPressed and self.ActiveColorPickerData then
+						local hex = hexInput.Text:gsub("#", "")
+						if #hex == 6 then
+							local r, g, b = tonumber(hex:sub(1, 2), 16), tonumber(hex:sub(3, 4), 16), tonumber(hex:sub(5, 6), 16)
+							if r and g and b then 
+								local c = Color3.fromRGB(r, g, b)
+								local h, s, v = c:ToHSV()
+								self.ActiveColorPickerData.SetColor(c, h, s, v) 
+							end
+						else
+							local d = self.ActiveColorPickerData
+							local h, s, v = d.GetHSV()
+							self.UpdateSharedPaletteVisuals(d.GetCurrentColor(), h, s, v)
+						end
+					end
+				end)
+
+				self.TogglePaletteOff = function()
+					if colorPaletteFrame.Visible then
+						local tween = TweenService:Create(colorPaletteFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+							Size = UDim2.new(0, 0, 0, 0)
+						})
+						tween:Play()
+						tween.Completed:Once(function()
+							colorPaletteFrame.Visible = false
+							modalBackground.Visible = false
+							self.ActiveColorPicker = nil
+							self.ActiveColorPickerData = nil
+						end)
+					end
+				end
+
+				modalBackground.InputBegan:Connect(function(input)
+					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+						local pos, absPos, absSize = input.Position, colorPaletteFrame.AbsolutePosition, colorPaletteFrame.AbsoluteSize
+						if pos.X < absPos.X or pos.X > absPos.X + absSize.X or pos.Y < absPos.Y or pos.Y > absPos.Y + absSize.Y then
+							self.TogglePaletteOff()
+						end
+					end
+				end)
+
+				self.UpdateSharedPaletteVisuals = function(cColor, cHue, cSat, cVal)
+					self.SharedPaletteUI.SVGradient.BackgroundColor3 = Color3.fromHSV(cHue, 1, 1)
+					self.SharedPaletteUI.HueSlider.Position = UDim2.new(0, 0, cHue, -2)
+					self.SharedPaletteUI.SVSelector.Position = UDim2.new(cSat, 0, 1 - cVal, 0)
+					self.SharedPaletteUI.InnerCircle.BackgroundColor3 = cColor
+					self.SharedPaletteUI.PreviewFrame.BackgroundColor3 = cColor
+
+					local r, g, b = math.floor(cColor.R * 255), math.floor(cColor.G * 255), math.floor(cColor.B * 255)
+					self.SharedPaletteUI.HexInput.Text = string.format("#%02X%02X%02X", r, g, b)
+				end
+			end
+
+			if self.SharedPaletteUI.Frame.Visible and self.ActiveColorPicker == ColorPick then
+				self.TogglePaletteOff()
+				return
+			end
+
+			self.ActiveColorPicker = ColorPick
+			self.ActiveColorPickerData = {
+				GetHSV = function() return hue, saturation, value end,
+				GetCurrentColor = function() return currentColor end,
+				SetColor = setColor
+			}
+
+			self.UpdateSharedPaletteVisuals(currentColor, hue, saturation, value)
+
+			self.SharedPaletteUI.Modal.Visible = true
+			self.SharedPaletteUI.Frame.Visible = true
+			TweenService:Create(self.SharedPaletteUI.Frame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+				Size = UDim2.new(0, 300, 0, 310)
+			}):Play()
+		end
+
+		colorButton.MouseButton1Click:Connect(togglePalette)
+
+		local colorPickerObj = { Elem = ColorPick }
+		function colorPickerObj:SetColor(color) setColor(color) end
+		function colorPickerObj:GetColor() return currentColor end
+
+		self.AllElements.ColorPickers[config.Name] = colorPickerObj
+		self.SearchData[ColorPick] = (tostring(config.Name or "") .. " " .. tostring(config.Description or "")):lower()
+
+		return colorPickerObj
+	end
+
+	function tab:AddDropdown(config)
+		local dropdown = {
+			Name = config.Name,
+			Description = config.Description or '',
+			Options = config.Options or {},
+			Default = config.Default or "",
+			Multi = config.Multi or false,
+			Callback = config.Callback,
+			Selected = config.Multi and {} or nil
+		}
+
+		local guiRoot = self.Container.Parent.Parent
+
+		if not guiRoot:FindFirstChildOfClass("ImageLabel") then
+			local SharedContainer = Instance.new("ImageLabel")
+			SharedContainer.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
+			SharedContainer.BackgroundTransparency = 1
+			SharedContainer.BorderColor3 = Color3.fromRGB(0, 0, 0)
+			SharedContainer.BorderSizePixel = 0
+			SharedContainer.Size = UDim2.new(0, 135, 0, 0)
+			SharedContainer.Visible = false
+			SharedContainer.ZIndex = 50
+			SharedContainer.Image = "ImageLabel_2"
+			SharedContainer.ImageTransparency = 0.9
+			SharedContainer.ClipsDescendants = true
+			SharedContainer.Parent = guiRoot
+
+			local SharedOptions = Instance.new("ScrollingFrame")
+			SharedOptions.Active = true
+			SharedOptions.BackgroundColor3 = self.Theme.DropDownColor
+			SharedOptions.BackgroundTransparency = self.Theme.DropDownTransparency
+			SharedOptions.BorderSizePixel = 0
+			SharedOptions.Position = UDim2.new(0.0277, 0, 0.035, 0)
+			SharedOptions.Size = UDim2.new(0, 135, 0, 0)
+			SharedOptions.ZIndex = 50
+			SharedOptions.ScrollBarThickness = 2
+			SharedOptions.ClipsDescendants = true
+			SharedOptions.Parent = SharedContainer
+
+			local UICorner_3 = Instance.new("UICorner")
+			UICorner_3.CornerRadius = UDim.new(0, 5)
+			UICorner_3.Parent = SharedOptions
+
+			local UIListLayout = Instance.new("UIListLayout")
+			UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+			UIListLayout.Parent = SharedOptions
+
+			table.insert(tab.DropImg, SharedOptions)
+
+			Library.SharedDropdownState = {
+				Container = SharedContainer,
+				OptionsFrame = SharedOptions,
+				ActiveCloseFunc = nil,
+				ClickConnection = nil
+			}
+		end
+
+		local SharedContainer = Library.SharedDropdownState.Container
+		local SharedOptions = Library.SharedDropdownState.OptionsFrame
+
+		local Dropdown = Instance.new("Frame")
+		table.insert(tab.ElemBtn, Dropdown)
+		local UICorner = Instance.new("UICorner")
+		local name = Instance.new("TextLabel")
+		table.insert(tab.Texttitle, name)
+		local subtext = Instance.new("TextLabel")
+		table.insert(tab.Textsubtitle, subtext)
+		local Select = Instance.new("TextButton")
+		table.insert(tab.actionBakcColor, Select)
+		local UICorner_2 = Instance.new("UICorner")
+		local TextLabel = Instance.new("TextLabel")
+		local ImageLabel = Instance.new("ImageLabel")
+
+		Dropdown.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
+		Dropdown.BackgroundTransparency = self.Theme.BackGroundElemTran
+		Dropdown.BorderSizePixel = 0
+		Dropdown.Size = UDim2.new(0, 360, 0, 45)
+		Dropdown.Parent = self.Container
+
+		UICorner.CornerRadius = UDim.new(0, 12)
+		UICorner.Parent = Dropdown
+
+		local namepos = config.Description and config.Description ~= '' and 4 or 12.5
+
+		name.Parent = Dropdown
+		name.BackgroundTransparency = 1.000
+		name.Position = UDim2.new(0.029, 0, 0, namepos)
+		name.Size = UDim2.new(0, 77, 0, 20)
+		name.Font = Enum.Font.FredokaOne
+		name.Text = dropdown.Name
+		name.TextColor3 = self.Theme.TabTextColor
+		name.TextSize = 16.000
+		name.TextXAlignment = Enum.TextXAlignment.Left
+
+		subtext.Parent = Dropdown
+		subtext.BackgroundTransparency = 1.000
+		subtext.Position = UDim2.new(0.0289, 0, 0, 25)
+		subtext.Size = UDim2.new(0, 193, 0, 14)
+		subtext.Font = Enum.Font.FredokaOne
+		subtext.Text = dropdown.Description
+		subtext.TextColor3 = self.Theme.TabSubTtitleTextColor
+		subtext.TextSize = 14.000
+		subtext.TextXAlignment = Enum.TextXAlignment.Left
+
+		Select.Parent = Dropdown
+		Select.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		Select.BackgroundTransparency = self.Theme.BackGroundButtonTran
+		Select.BorderSizePixel = 0
+		Select.Position = UDim2.new(0.576, 0, 0.155, 0)
+		Select.Size = UDim2.new(0, 135, 0, 30)
+		Select.Text = ''
+
+		UICorner_2.CornerRadius = UDim.new(0, 5)
+		UICorner_2.Parent = Select
+
+		TextLabel.Parent = Select
+		TextLabel.BackgroundTransparency = 1.000
+		TextLabel.Position = UDim2.new(0.038, 0, -0.02, 0)
+		TextLabel.Size = UDim2.new(0, 88, 0, 30)
+		TextLabel.Font = Enum.Font.FredokaOne
+		TextLabel.Text = "Select..."
+		table.insert(tab.Texttitle, TextLabel)
+		TextLabel.TextColor3 = self.Theme.TabTextColor
+		TextLabel.TextSize = 14.000
+		TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+		ImageLabel.Parent = Select
+		ImageLabel.BackgroundTransparency = 1.000
+		ImageLabel.Position = UDim2.new(0.816, 0, 0.166, 0)
+		ImageLabel.Size = UDim2.new(0, 20, 0, 20)
+		ImageLabel.Image = "rbxassetid://126982255108418"
+		ImageLabel.ImageColor3 = self.Theme.DropDownArrowImg
+		table.insert(tab.DropDownArrowImg, ImageLabel)
+
+		local optionElements = {}
+
+		local function formatTextWrap(str, wrapLimit, maxLimit)
+			if not str or str == "" then return "Select..." end
+			local visible_count = 0
+			for i = 1, #str do
+				local c = str:sub(i, i)
+				if c ~= " " and c ~= "," then visible_count = visible_count + 1 end
+				if visible_count >= wrapLimit then
+					local break_pos = i
+					for j = i + 1, #str do
+						local next_char = str:sub(j, j)
+						if next_char ~= " " and next_char ~= "," then break end
+						break_pos = j
+					end
+					local result = str
+					if #result >= maxLimit then result = result:sub(1, maxLimit) .. "..." end
+					return result:sub(1, break_pos) .. "\n" .. result:sub(break_pos + 1)
+				end
+			end
+			if #str >= maxLimit then return str:sub(1, maxLimit) .. "..." end
+			return str
+		end
+
+		local function refreshVisuals()
+			for optText, frameInd in pairs(optionElements) do
+				local isSelected = dropdown.Multi and dropdown.Selected[optText] or (dropdown.Selected == optText)
+				if isSelected then
+					Library:Tween(frameInd, {Size = UDim2.new(0, 2, 0, 22), BackgroundTransparency = 0}, 0.2)
+				else
+					Library:Tween(frameInd, {Size = UDim2.new(0, 2, 0, 0), BackgroundTransparency = 1}, 0.2)
+				end
+			end
+		end
+
+		local function closeDropdown()
+			if not SharedContainer.Visible then return end
+			Library:Tween(SharedContainer, {Size = UDim2.new(0, 140, 0, 0)}, 0.2)
+			Library:Tween(SharedOptions, {Size = UDim2.new(0, 135, 0, 0)}, 0.2)
+
+			if Library.SharedDropdownState.ClickConnection then 
+				Library.SharedDropdownState.ClickConnection:Disconnect() 
+				Library.SharedDropdownState.ClickConnection = nil 
+			end
+
+			task.delay(0.2, function()
+				if Library.SharedDropdownState.ActiveCloseFunc == closeDropdown then
+					SharedContainer.Visible = false
+					table.clear(optionElements)
+				end
+			end)
+		end
+
+		local function handleOptionClick(option)
+			if dropdown.Multi then
+				dropdown.Selected[option] = not dropdown.Selected[option]
+
+				local selectedText = ""
+				for opt, sel in pairs(dropdown.Selected) do
+					if sel then selectedText = selectedText .. (selectedText == "" and opt or "," .. opt) end
+				end
+				TextLabel.Text = formatTextWrap(selectedText, 14, 28)
+				refreshVisuals()
+			else
+				TextLabel.Text = formatTextWrap(option, 14, 28)
+				dropdown.Selected = option
+				refreshVisuals()
+				closeDropdown()
+			end
+
+			if type(dropdown.Callback) == "function" then
+				task.spawn(function()
+					local success, err = pcall(dropdown.Callback, dropdown.Multi and dropdown.Selected or option)
+				end)
+			end
+		end
+
+		local function createOption(optionText)
+			local Option = Instance.new("TextButton")
+			local OptionTextLabel = Instance.new("TextLabel")
+			local Frame = Instance.new("Frame")
+
+			Option.BackgroundTransparency = 1
+			Option.Size = UDim2.new(0, 135, 0, 30)
+			Option.Text = ''
+			Option.Parent = SharedOptions
+
+			optionElements[optionText] = Frame
+
+			Option.MouseEnter:Connect(function()
+				Library:Tween(Option, {BackgroundTransparency = 0.95}, 0.3)
+				local isSelected = dropdown.Multi and dropdown.Selected[optionText] or (dropdown.Selected == optionText)
+				if not isSelected then
+					Library:Tween(Frame, {Size = UDim2.new(0, 2, 0, 22), BackgroundTransparency = 0.5}, 0.3)
+				end
+			end)
+
+			Option.MouseLeave:Connect(function()
+				Library:Tween(Option, {BackgroundTransparency = 1}, 0.3)
+				local isSelected = dropdown.Multi and dropdown.Selected[optionText] or (dropdown.Selected == optionText)
+				if not isSelected then
+					Library:Tween(Frame, {BackgroundTransparency = 1, Size = UDim2.new(0, 2, 0, 0)}, 0.3)
+				end
+			end)
+
+			OptionTextLabel.BackgroundTransparency = 1
+			OptionTextLabel.Position = UDim2.new(0.047, 0, 0, 0)
+			OptionTextLabel.Size = UDim2.new(0, 124, 0, 30)
+			OptionTextLabel.Font = Enum.Font.FredokaOne
+			OptionTextLabel.Text = formatTextWrap(optionText, 18, 38)
+			OptionTextLabel.TextColor3 = self.Theme.TabTextColor
+			OptionTextLabel.TextSize = 14
+			OptionTextLabel.TextXAlignment = Enum.TextXAlignment.Left
+			OptionTextLabel.Parent = Option
+
+			Frame.BackgroundColor3 = self.Theme.DropDownFrameColor
+			Frame.BorderSizePixel = 0
+			Frame.Position = UDim2.new(0.01, 0, 0, 4)
+			Frame.Size = UDim2.new(0, 2, 0, 0)
+			Frame.Transparency = 1
+			Frame.Parent = Option
+
+			Option.MouseButton1Click:Connect(function() handleOptionClick(optionText) end)
+		end
+
+		local function updateDropdownPosition()
+			if not SharedContainer.Visible then return end
+			local absolutePos = Select.AbsolutePosition
+			local containerPos = guiRoot.AbsolutePosition
+
+			local currentScale = 1
+			local ancestor = guiRoot
+			while ancestor and not ancestor:IsA("ScreenGui") do
+				local uiScale = ancestor:FindFirstChildWhichIsA("UIScale")
+				if uiScale then currentScale *= uiScale.Scale end
+				ancestor = ancestor.Parent
+			end
+
+			local x = (absolutePos.X - containerPos.X) / currentScale - 4
+			local y = (absolutePos.Y - containerPos.Y + Select.AbsoluteSize.Y) / currentScale
+			SharedContainer.Position = UDim2.new(0, x, 0, y)
+		end
+
+		local function openDropdown()
+			if Library.SharedDropdownState.ActiveCloseFunc and Library.SharedDropdownState.ActiveCloseFunc ~= closeDropdown then
+				Library.SharedDropdownState.ActiveCloseFunc()
+			end
+
+			Library.SharedDropdownState.ActiveCloseFunc = closeDropdown
+
+			for _, child in pairs(SharedOptions:GetChildren()) do
+				if child:IsA("TextButton") then child:Destroy() end
+			end
+			table.clear(optionElements)
+
+			for _, option in ipairs(dropdown.Options) do createOption(option) end
+			SharedOptions.CanvasSize = UDim2.new(0, 0, 0, #dropdown.Options * 30)
+
+			updateDropdownPosition()
+			SharedContainer.Visible = true
+			local height = math.min(150, #dropdown.Options * 30)
+			Library:Tween(SharedContainer, {Size = UDim2.new(0, 140, 0, height + 10)}, 0.2)
+			Library:Tween(SharedOptions, {Size = UDim2.new(0, 135, 0, height)}, 0.2)
+			refreshVisuals()
+
+			task.spawn(function()
+				while SharedContainer.Visible and Library.SharedDropdownState.ActiveCloseFunc == closeDropdown do
+					updateDropdownPosition()
+					task.wait()
+				end
+			end)
+
+			if Library.SharedDropdownState.ClickConnection then Library.SharedDropdownState.ClickConnection:Disconnect() end
+			Library.SharedDropdownState.ClickConnection = UserInputService.InputBegan:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+					local pos = input.Position
+					local inSelect = pos.X >= Select.AbsolutePosition.X and pos.X <= Select.AbsolutePosition.X + Select.AbsoluteSize.X and pos.Y >= Select.AbsolutePosition.Y and pos.Y <= Select.AbsolutePosition.Y + Select.AbsoluteSize.Y
+					local inOptions = pos.X >= SharedContainer.AbsolutePosition.X and pos.X <= SharedContainer.AbsolutePosition.X + SharedContainer.AbsoluteSize.X and pos.Y >= SharedContainer.AbsolutePosition.Y and pos.Y <= SharedContainer.AbsolutePosition.Y + SharedContainer.AbsoluteSize.Y
+
+					if not inSelect and not inOptions then closeDropdown() end
+				end
+			end)
+		end
+
+		Select.MouseButton1Click:Connect(function()
+			if SharedContainer.Visible and Library.SharedDropdownState.ActiveCloseFunc == closeDropdown then 
+				closeDropdown() 
+			else 
+				openDropdown() 
+			end
+		end)
+
+		local dropdownObj = {
+			Name = config.Name,
+			Elem = Dropdown,
+			Value = config.Default,
+			Options = config.Options,
+			Multi = config.Multi,
+			GetValue = function() return dropdown.Selected end,
+			SetValue = function(self, value)
+				if self.Multi then
+					table.clear(dropdown.Selected)
+					if type(value) == "table" then
+						for option, selected in pairs(value) do
+							if selected and table.find(self.Options, option) then dropdown.Selected[option] = true end
+						end
+					end
+					local selectedText = ""
+					for opt, sel in pairs(dropdown.Selected) do
+						if sel then selectedText = selectedText .. (selectedText == "" and opt or "," .. opt) end
+					end
+					TextLabel.Text = formatTextWrap(selectedText, 14, 28)
+				else
+					if table.find(self.Options, value) then
+						dropdown.Selected = value
+						TextLabel.Text = formatTextWrap(value, 14, 28)
+					end
+				end
+				if Library.SharedDropdownState.ActiveCloseFunc == closeDropdown then refreshVisuals() end
+				if config.Callback then config.Callback(dropdown.Selected) end
+			end,
+			UpdateOptions = function(self, newOptions, newDefault)
+				self.Options = newOptions
+				dropdown.Options = newOptions
+				if SharedContainer.Visible and Library.SharedDropdownState.ActiveCloseFunc == closeDropdown then
+					openDropdown()
+				end
+				self:SetValue(newDefault or (dropdown.Multi and {} or nil))
+			end,
+			SetVisible = function(self, visible) Dropdown.Visible = visible end,
+			Destroy = function(self)
+				if Library.SharedDropdownState.ActiveCloseFunc == closeDropdown then closeDropdown() end
+				Dropdown:Destroy()
+			end
+		}
+
+		if config.Default then dropdownObj:SetValue(config.Default) end
+		self.AllElements.Dropdowns[config.Name] = dropdownObj
+		self.SearchData[Dropdown] = (tostring(config.Name or "") .. " " .. tostring(config.Description or "")):lower()
+
+		return dropdownObj
+	end
+
+	function Library:AddLine()
+		local Line = Instance.new("Frame")
+		Line.BackgroundColor3 = Color3.fromRGB(225, 225, 225)
+		Line.BackgroundTransparency = self.Theme.BackGroundElemTran
+		Line.Size = UDim2.new(0, 360, 0, 3)
+		Line.Parent = self.Container
+
+		table.insert(tab.ElemBtn, Line)
+
+		local obj = {
+			Elem = Line,
+		}
+		return obj
+	end
+
+	return tab
+end
+
+function Library:SelectTab(tab, button)
+	for _, t in ipairs(self.mainTabs) do
+		if t.Container then
+			t.Container.Visible = false
+		end
+		if t.Button then
+			self:Tween(t.Button, {BackgroundTransparency = 1}, 0.2)
+		end
+		if t.Frame then
+			self:Tween(t.Frame, {BackgroundTransparency = 1}, 0.2)
+			self:Tween(t.Frame, {Size = UDim2.new(0, 2, 0, 0)}, 0.2)
+		end
+	end
+
+	if tab.Container then
+		tab.Container.Visible = true
+	end
+
+	if button then
+		self:Tween(button, {BackgroundTransparency = self.Theme.TabTransparancy}, 0.2)
+		self:Tween(tab.Frame, {BackgroundTransparency = 0}, 0.2)
+		self:Tween(tab.Frame, {Size = UDim2.new(0, 2, 0, 23)}, 0.2)
+	end
+
+	self.CurrentTab = tab
+	self.TextLabel_5.Text = tab.Name
+end
+
+local TweenCache = {}
+function Library:Tween(instance, properties, duration)
+	if not TweenCache[duration] then
+		TweenCache[duration] = TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	end
+	local tween = TweenService:Create(instance, TweenCache[duration], properties)
+	tween:Play()
+	return tween
+end
+
+function Library:ChangeBackgroundTransparance()
+	if self.ImageLabel.ImageTransparency <= 0.05  then
+		self.ImageLabel.ImageTransparency = 0.05
+		self.Theme.BackGroundTran = 0.05
+	else
+		self.ImageLabel.ImageTransparency = 0
+		self.Theme.BackGroundTran = 0
+	end
+end
+
+function Library:Minimaze()
+	if self.Windowscd == false then
+		self.Windowscd = true
+		if(self.ImageLabel.ImageTransparency ~= 1) then
+			local gui = self.ImageLabel
+			local newAnchor = Vector2.new(0.5, 0)
+
+			local deltaX = newAnchor.X - gui.AnchorPoint.X
+			local deltaY = newAnchor.Y - gui.AnchorPoint.Y
+
+			local xOffset = deltaX * gui.AbsoluteSize.X
+			local yOffset = deltaY * gui.AbsoluteSize.Y
+
+			gui.AnchorPoint = newAnchor
+			gui.Position = gui.Position + UDim2.new(0, xOffset, 0, yOffset)
+			if not UserInputService.TouchEnabled then
+				self.Frame.BackgroundTransparency = 1
+				self.Header.BackgroundTransparency = self.Theme.BackGroundTran
+				self.Tabs.Visible = false
+				self.Sections.Visible = false
+				if self.Sections.Size == UDim2.new(0, 375,0, 370) then
+					self:Tween(self.ImageLabel,{Size = UDim2.new(0, 395,0, 40)},1)
+					self:Tween(self.Header,{Size = UDim2.new(0, 380,0, 40)},0)
+				else
+					self:Tween(self.ImageLabel,{Size = UDim2.new(0, 620, 0, 40)},1)
+					self.Header.Size = UDim2.new(0, 620 - 24, 0, 40)
+				end
+				task.wait(1)
+				self.ImageLabel.ImageTransparency = 1
+				self.Windowscd = false
+			else
+				local gui = self.ImageLabel
+				local newAnchor = Vector2.new(0.5, 0)
+
+				local deltaX = newAnchor.X - gui.AnchorPoint.X
+				local deltaY = newAnchor.Y - gui.AnchorPoint.Y
+
+				local xOffset = deltaX * gui.AbsoluteSize.X
+				local yOffset = deltaY * gui.AbsoluteSize.Y
+
+				gui.AnchorPoint = newAnchor
+				gui.Position = gui.Position + UDim2.new(0, xOffset, 0, yOffset)
+				self.Frame.BackgroundTransparency = 1
+				self.Header.BackgroundTransparency = 1
+				self.Tabs.Visible = false
+				self.Sections.Visible = false
+
+				self.Search.Visible = false
+				self.TextLabel.Visible = false
+				self.TextLabel_2.Visible = false
+				self.version.Visible = false
+				self.close.Visible = false
+				self.ImageButton.Visible = false
+				self.ImageButton_2.Visible = false
+
+				if self.Sections.Size == UDim2.new(0, 375,0, 370) then
+					self:Tween(self.ImageLabel,{Size = UDim2.new(0, 55,0, 40)},1)
+					self:Tween(self.Header,{Size = UDim2.new(0, 40,0, 40)},0)
+					self.ImageButton_2.Position = UDim2.new(0.28, 0,0.25, 0)
+				else
+					self:Tween(self.ImageLabel,{Size = UDim2.new(0, 40, 0, 40)},1)
+					self.Header.Size = UDim2.new(0, 64 - 24, 0, 40)
+					self.ImageButton_2.Position = UDim2.new(0.28, 0,0.25, 0)
+				end
+				task.wait(1)
+				self.ImageButton_2.Visible = true
+				self.ImageLabel.ImageTransparency = 1
+				self.Header.BackgroundTransparency = self.Theme.BackGroundTran
+				self.Windowscd = false
+			end
+		else
+			if not UserInputService.TouchEnabled then
+				self.Frame.BackgroundTransparency = self.Theme.headerlinetrans
+				self.ImageLabel.ImageTransparency = self.Theme.BackGroundTran
+				self.Header.BackgroundTransparency = 1
+				if self.Sections.Size == UDim2.new(0, 375,0, 370) then
+					self:Tween(self.ImageLabel,{Size = UDim2.new(0, 395,0, 480)},1)
+					self:Tween(self.Header,{Size = UDim2.new(0, 380,0, 40)},1)
+				else
+					self:Tween(self.ImageLabel,{Size = UDim2.new(0, 620, 0, 480)},1)
+					self:Tween(self.Header,{Size = UDim2.new(0, 620 - 24, 0, 40)},1)
+				end
+
+				task.wait(1)
+
+				local gui = self.ImageLabel
+				local targetAnchor = Vector2.new(0.5, 0.5)
+
+				local delta = targetAnchor - gui.AnchorPoint
+
+				local xOffset = delta.X * gui.AbsoluteSize.X
+				local yOffset = delta.Y * gui.AbsoluteSize.Y
+
+				gui.AnchorPoint = targetAnchor
+				gui.Position = gui.Position + UDim2.new(0, xOffset, 0, yOffset)
+				self.Tabs.Visible = true
+				self.Sections.Visible = true
+				self.Windowscd = false
+			else
+				local IsVisibleSearch = false
+				self.ImageButton_2.Visible = false
+
+				self.Frame.BackgroundTransparency = self.Theme.headerlinetrans
+				self.ImageLabel.ImageTransparency = self.Theme.BackGroundTran
+				self.Header.BackgroundTransparency = 1
+
+
+				if self.Sections.Size == UDim2.new(0, 375,0, 370) then
+					self:Tween(self.ImageLabel,{Size = UDim2.new(0, 395,0, 480)},1)
+					self:Tween(self.Header,{Size = UDim2.new(0, 380,0, 40)},1)
+					self.ImageButton_2.Position = UDim2.new(0.76, 0,0.29, 0)
+				else
+					self:Tween(self.ImageLabel,{Size = UDim2.new(0, 620, 0, 480)},1)
+					IsVisibleSearch = true
+
+					self.ImageButton_2.Position = UDim2.new(0.825, 0,0.29, 0)
+					self:Tween(self.Header,{Size = UDim2.new(0, 620 - 24, 0, 40)},1)
+				end
+
+				task.wait(1)
+
+				self.Frame.BackgroundTransparency = 0.95
+
+				local gui = self.ImageLabel
+				local targetAnchor = Vector2.new(0.5, 0.5)
+
+				local delta = targetAnchor - gui.AnchorPoint
+
+				local xOffset = delta.X * gui.AbsoluteSize.X
+				local yOffset = delta.Y * gui.AbsoluteSize.Y
+
+				gui.AnchorPoint = targetAnchor
+				gui.Position = gui.Position + UDim2.new(0, xOffset, 0, yOffset)
+
+				if IsVisibleSearch then
+					self.Search.Visible = true
+				end
+				self.TextLabel.Visible = true
+				self.TextLabel_2.Visible = true
+				self.version.Visible = true
+				self.close.Visible = true
+				self.ImageButton.Visible = true
+				self.ImageButton_2.Visible = true
+
+
+				self.Tabs.Visible = true
+				self.Sections.Visible = true
+				self.Windowscd = false
+			end
+		end
+	end
+end
+
+local SearchVis = false
+
+function Library:ColumnWindow()
+	if self.Windowscd == false then
+		self.Windowscd = true
+
+		local TabListLayout = self.ScrollingFrame:FindFirstChildOfClass("UIListLayout")
+		local TabPadding = self.ScrollingFrame:FindFirstChildOfClass("UIPadding")
+
+		if self.Sections.Size ~= UDim2.new(0, 375,0, 370) then
+			SearchVis = false
+			if self.Search.Visible == true then
+				self:ShowSearch()
+				SearchVis = true
+			end
+
+			self.Header.BackgroundTransparency = 1
+			self.ImageLabel.ImageTransparency = self.Theme.BackGroundTran
+			self.Frame_2.Visible = false
+
+			self:Tween(self.close, {Position = UDim2.new(0.92, 0,0.2, 0)}, 1)
+			self:Tween(self.ImageButton, {Position = UDim2.new(0.854, 0,0.35, 0)}, 1)
+			self:Tween(self.ImageButton_2, {Position = UDim2.new(0.76, 0,0.29, 0)}, 1)
+			self:Tween(self.ImageLabel, {Size = UDim2.new(0, 405,0, 480)}, 1)
+			self:Tween(self.Frame, {Size = UDim2.new(0, 381,0, 1)}, 1)
+			self:Tween(self.Header, {Size = UDim2.new(0, 381,0, 40)}, 1)
+
+			self.Tabs.Visible = false
+			self.Sections.Visible = false
+			self.WindowUser.Visible = false
+
+			self.Sections.Size = UDim2.new(0, 375,0, 370)
+			self.Sections.Position = UDim2.new(0.02, 0,0.201, 0)
+			self.Frame_7.Size = UDim2.new(0, 375,0, 370)
+			self.Frame_7.Position = UDim2.new(0, 2,0, 5)
+
+			self.Tabs.Size = UDim2.new(0, 375,0, 45)
+			self.Tabs.Position = UDim2.new(0.02,0,0.12, 0)
+			self.ScrollingFrame.Size = UDim2.new(0, 375,0, 45)
+			self.ScrollingFrame.Position = UDim2.new(0,0,0,0)
+			self.TextLabel_5.Visible = false
+
+			self.ScrollingFrame.ScrollingDirection = Enum.ScrollingDirection.X
+			self.ScrollingFrame.AutomaticCanvasSize = Enum.AutomaticSize.X
+			self.ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+
+			if TabListLayout then
+				TabListLayout.FillDirection = Enum.FillDirection.Horizontal
+				TabListLayout.Padding = UDim.new(0, 8)
+				TabListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+			end
+			if TabPadding then
+				TabPadding.PaddingLeft = UDim.new(0, 10)
+			end
+
+			if self.Categories then
+				for _, category in pairs(self.Categories) do
+					if category.Wrapper then category.Wrapper.Visible = false end
+					for _, tab in pairs(category.Tabs) do
+						local btn = tab.Button or (tab.Tab and tab.Tab[1])
+						if btn then
+							btn.Parent = self.ScrollingFrame
+						end
+					end
+				end
+			end
+
+			for i,v in pairs(self.mainTabs) do
+				v.Tab[5].Position = UDim2.new(0,0,0,0)
+				v.Tab[5].Size = UDim2.new(0, 380,0, 365)
+
+				if v.Tab[5]:IsA("ScrollingFrame") then
+					v.Tab[5].AutomaticCanvasSize = Enum.AutomaticSize.Y
+					v.Tab[5].CanvasSize = UDim2.new(0, 0, 0, 0)
+				end
+
+				local elemPadding = v.Tab[5]:FindFirstChildOfClass("UIPadding")
+				if elemPadding then
+					elemPadding.PaddingLeft = UDim.new(0, 10)
+					elemPadding.PaddingRight = UDim.new(0, 10)
+					elemPadding.PaddingTop = UDim.new(0, 10)
+					elemPadding.PaddingBottom = UDim.new(0, 10) 
+				end
+
+				v.Tab[1].Parent = self.ScrollingFrame
+				v.Tab[1].Size = UDim2.new(0, 130,0, 35)
+				v.Tab[1].LayoutOrder = i
+
+				if v.Tab[4].Image ~= "1" then
+					v.Tab[2].Position = UDim2.new(0.28, 0,0, -1)
+				end
+			end
+
+			self.ScrollingFrame.ScrollBarImageTransparency = 1
+
+			task.wait(1)
+			self.Tabs.Visible = true
+			self.Sections.Visible = true
+			self.Windowscd = false
+
+		else
+			self.Header.BackgroundTransparency = 1
+			self.ImageLabel.ImageTransparency = self.Theme.BackGroundTran
+			self:Tween(self.ImageLabel, {Size = UDim2.new(0, 620,0, 480)}, 1)
+			self:Tween(self.Frame, {Size = UDim2.new(0, 197,0, 1)}, 1)
+			self:Tween(self.Header, {Size = UDim2.new(0, 596,0, 40)}, 1)
+			self:Tween(self.close, {Position = UDim2.new(0.945, 0,0.2, 0)}, 1)
+			self:Tween(self.ImageButton, {Position = UDim2.new(0.897, 0,0.35, 0)}, 1)
+			self:Tween(self.ImageButton_2, {Position = UDim2.new(0.835, 0,0.29, 0)}, 1)
+			self.Tabs.Visible = false
+			self.Sections.Visible = false
+			self.Frame_2.Visible = true
+
+			self.Sections.Size = UDim2.new(0, 380,0, 414)
+			self.Sections.Position = UDim2.new(0.35, 0,0.11, 0)
+			self.Frame_7.Size = UDim2.new(0, 366,0, 379)
+			self.Frame_7.Position = UDim2.new(0, 0,0.085, 0)
+
+			self.Tabs.Size = UDim2.new(0, 185,0, 414)
+			self.Tabs.Position = UDim2.new(0.035, 0,0.116, 0)
+			self.ScrollingFrame.Size = UDim2.new(0, 185,0, 415)
+			self.ScrollingFrame.Position = UDim2.new(0, 0,0, 0)
+			self.TextLabel_5.Visible = true
+
+			self.ScrollingFrame.ScrollingDirection = Enum.ScrollingDirection.Y
+			self.ScrollingFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+			self.ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+
+			if TabListLayout then
+				TabListLayout.FillDirection = Enum.FillDirection.Vertical
+				TabListLayout.Padding = UDim.new(0, 5)
+			end
+			if TabPadding then
+				TabPadding.PaddingLeft = UDim.new(0, 5)
+				TabPadding.PaddingRight = UDim.new(0, 5)
+			end
+
+			if self.Categories then
+				for _, category in pairs(self.Categories) do
+					if category.Wrapper then category.Wrapper.Visible = true end
+					for _, tab in pairs(category.Tabs) do
+						local btn = tab.Button or (tab.Tab and tab.Tab[1])
+						if btn then
+							btn.Parent = category.Container
+							btn.Size = UDim2.new(0, 173, 0, 35)
+						end
+					end
+				end
+			end
+
+			for i,v in pairs(self.mainTabs) do
+				v.Tab[5].Position = UDim2.new(0, 0,0.023, 0)
+				v.Tab[5].Size = UDim2.new(0, 379,0, 370)
+
+				if v.Tab[5]:IsA("ScrollingFrame") then
+					v.Tab[5].AutomaticCanvasSize = Enum.AutomaticSize.Y
+					v.Tab[5].CanvasSize = UDim2.new(0, 0, 0, 0)
+				end
+
+				local elemPadding = v.Tab[5]:FindFirstChildOfClass("UIPadding")
+				if elemPadding then
+					elemPadding.PaddingLeft = UDim.new(0, 10)
+					elemPadding.PaddingRight = UDim.new(0, 10)
+					elemPadding.PaddingTop = UDim.new(0, 10)
+					elemPadding.PaddingBottom = UDim.new(0, 10) 
+				end
+
+				if not v.Button or v.Tab[1].Parent == self.ScrollingFrame then
+					v.Tab[1].Size = UDim2.new(0, 171,0, 35)
+				end
+
+				if v.Tab[4].Image ~= "1" then
+					v.Tab[2].Position = UDim2.new(0.21, 0,0, -1)
+				end
+			end
+
+			self.ScrollingFrame.ScrollBarImageTransparency = 0
+
+			task.wait(1)
+			self.Tabs.Visible = true
+			self.Sections.Visible = true
+			if self.userinfo then
+				self.WindowUser.Visible = true
+				self.Tabs.Size = UDim2.new(0, 185,0, 372)
+				self.ScrollingFrame.Size = UDim2.new(0, 185,0, 358)
+			end
+			if SearchVis == true then
+				self:ShowSearch()
+			end
+		end
+		self.Windowscd = false
+	end
+end
+
+function Library:Destroy()
+	if self.AllElements and self.AllElements.GlobalKeybindConnection then
+		self.AllElements.GlobalKeybindConnection:Disconnect()
+		self.AllElements.GlobalKeybindConnection = nil -- Убираем ссылку
+	end
+	for _, tab in ipairs(self.mainTabs) do
+		for _, connection in ipairs(tab.Connections) do
+			connection:Disconnect()
+		end
+		for _, connection in ipairs(tab.KeybindConnections) do
+			connection:Disconnect()
+		end
+	end
+	for name, controller in pairs(self.AllElements.Toggles) do
+		if controller.Value == true then
+			controller:SetState(false) 
+		end
+	end
+	self:ClearSearchResults()
+	self.Destroy_gui.Visible = false
+	self.AllElements.Toggles = {}
+	local tweenInfo = TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	local tween = TweenService:Create(self.ImageLabel, tweenInfo, {ImageTransparency = 1})
+	tween:Play()
+	self.Tabs.Visible = false
+	self.Sections.Visible = false
+	self.Header.Visible = false
+	task.wait(0.5)
+	self.UI:Destroy()
+	setmetatable(self, nil)
+	table.clear(self)
+	table.remove(self)
+end
+
+function Library:ShowDestroyQ()
+	if self.Destroy_gui.Visible then
+		self.dTextLabel.Visible = false
+		self.dTextButton.Visible = false
+		self.dTextLabel_2.Visible = false
+		self.dTextButton_2.Visible = false
+		self:Tween(self.dFrame_2,{Transparency = 1},0.15)
+		task.wait(0.15)
+		self.Destroy_gui.Visible = false
+	else
+		local newX
+		local newY = UDim.new(0, self.ImageLabel.Size.Y.Offset - 18)
+
+		if self.ImageLabel.Size ~= UDim2.new(0, 620, 0, 40) and self.ImageLabel.Size ~= UDim2.new(0, 620, 0, 480)  then
+			newX = UDim.new(0, self.ImageLabel.Size.X.Offset - 14)
+			self.dFrame_2.Position = UDim2.new(0.18, 0,0.329, 0)
+		else
+			newX = UDim.new(0, self.ImageLabel.Size.X.Offset - 20)
+			self.dFrame_2.Position = UDim2.new(0.307, 0,0.329, 0)
+		end
+		self.Destroy_gui.Size = UDim2.new(newX, newY)
+		self.Destroy_gui.Visible = true
+		self:Tween(self.ImageLabel,{Position = UDim2.new(0.5, 0, 0.5, 0)},0.25)
+		self:Tween(self.dFrame_2,{Transparency = self.Theme.DestroyGFrameTransparency},0.15)
+		task.wait(0.15)
+		self.dTextLabel.Visible = true
+		self.dTextButton.Visible = true
+		self.dTextLabel_2.Visible = true
+		self.dTextButton_2.Visible = true
+	end
+end
+
+function Library:UserInfo()
+	if self.WindowUser.Visible then
+		self.userinfo = false
+		self.WindowUser.Visible = false
+		self.Tabs.Size = UDim2.new(0, 185,0, 416)
+		self.ScrollingFrame.Size = UDim2.new(0, 185,0, 416)
+	else
+		self.WindowUser.Visible = true
+		self.Tabs.Size = UDim2.new(0, 185,0, 372)
+		self.ScrollingFrame.Size = UDim2.new(0, 185,0, 358)
+		self.userinfo = true
+	end
+end
+
+function Library:Close()
+	local size = self.ImageLabel.Size
+	if self.ImageLabel.Visible then
+		self:Tween(self.ImageLabel,{Size = UDim2.new(0, 40, 0, 0)},0)
+		self.ImageLabel.Visible = false
+	else
+		if self.Sections.Visible == false then
+			self:Tween(self.ImageLabel,{Size = UDim2.new(0, 620, 0, 40)},0)
+		elseif self.Sections.Size == UDim2.new(0, 375,0, 370) then
+			self:Tween(self.ImageLabel,{Size = UDim2.new(0, 395,0, 480)},0)
+		else
+			self:Tween(self.ImageLabel,{Size = UDim2.new(0, 620, 0, 480)},0)
+		end
+		self.ImageLabel.Visible = true
+	end
+end
+
+function Library:TurnOffAllFunctions(WhiteList, CallBack)
+	local ignoredNames = {
+		["Auto Load Config"] = true,
+		["Auto Save Config"] = true,
+		["Transparency"] = true,
+		["User info"] = true,
+		["Search"] = true,
+		["Turn off all functions if staff detected"] = true
+	}
+
+	for name, controller in pairs(self.AllElements.Toggles) do
+		if not ignoredNames[name] then
+			local check = false
+
+			if WhiteList ~= nil then
+				for i, v in pairs(WhiteList) do
+					if v == controller then
+						check = true
+						break
+					end
+				end
+			end
+
+			if not check then
+				if controller.Value == true then
+					controller:SetState(false)
+				end
+			end
+		end
+	end
+
+	if CallBack then
+		CallBack()
+	end
+end
+
+function Library:GetConfig(filename)
+	if not isfile(filename) then
+		self:Notification({
+			Name = "Error",
+			Description = "Config not found",
+			Duration = 10,
+			Type = "Error"
+		})
+	else
+		setclipboard(readfile(filename))
+		self:Notification({
+			Name = "Config",
+			Description = "The config has been successfully copied to the clipboard",
+			Duration = 10,
+			Type = "Notification"
+		})
+	end
+end
+
+function Library:InputConfig(filename,Config)
+	writefile(filename,Config)
+end
+
+function Library:SaveConfig(foldername,filename)
+	local config = {
+		Toggles = {}, Keybinds = {}, Dropdowns = {},
+		Sliders = {}, ColorPickers = {}, Inputs = {}
+	}
+
+	for name, obj in pairs(self.AllElements.Toggles) do
+		config.Toggles[name] = obj:GetState()
+	end
+
+	for name, obj in pairs(self.AllElements.Keybinds) do
+		config.Keybinds[name] = tostring(obj:GetState())
+	end
+
+	for name, obj in pairs(self.AllElements.Sliders) do
+		config.Sliders[name] = obj:GetState()
+	end
+
+	for name, obj in pairs(self.AllElements.Dropdowns) do
+		config.Dropdowns[name] = obj.GetValue()
+	end
+
+	for name, obj in pairs(self.AllElements.Inputs) do
+		config.Inputs[name] = obj:GetState()
+	end
+
+	for name, obj in pairs(self.AllElements.ColorPickers) do
+		local color = obj:GetColor()
+		config.ColorPickers[name] = {R = color.R, G = color.G, B = color.B}
+	end
+
+	if not isfolder(foldername) then makefolder(foldername) end
+	writefile(foldername .. "/" .. filename, HttpService:JSONEncode(config))
+end
+
+function Library:IsLoadConfig(filename)
+	if not isfile(filename) then 
+		return false 
+	end
+
+	local success, data = pcall(function()
+		return game:GetService("HttpService"):JSONDecode(readfile(filename))
+	end)
+
+	if not success or not data or not data.Toggles then 
+		return false 
+	end
+
+	local toggles = self.AllElements.Toggles
+	local savedToggles = data.Toggles
+
+	local configKeys = {"Load Config", "Auto Load Config"}
+
+	for _, key in ipairs(configKeys) do
+		local toggleElement = toggles[key]
+		local savedState = savedToggles[key]
+
+		if toggleElement and savedState == true then
+			toggleElement:SetState(true)
+			return true
+		end
+	end
+
+	return false
+end
+
+function Library:LoadConfig(filename)
+	if not isfile(filename) then return false end
+
+	local success, data = pcall(function()
+		return HttpService:JSONDecode(readfile(filename))
+	end)
+	if not success then return false end
+
+	if data.Inputs then
+		for name, value in pairs(data.Inputs) do
+			local obj = self.AllElements.Inputs[name]
+			if obj then
+				if obj.SaveConfig ~= true then
+					obj.SetText(value)
+				end
+			end
+		end
+	end
+
+	if data.Keybinds then
+		for name, keyStr in pairs(data.Keybinds) do
+			local obj = self.AllElements.Keybinds[name]
+			if obj and keyStr ~= "None" then
+				local successKey, keyCode = pcall(function() return Enum.KeyCode[keyStr] end)
+				if successKey then obj.SetKey(keyCode) end
+			end
+		end
+	end
+
+	if data.Sliders then
+		for name, value in pairs(data.Sliders) do
+			local obj = self.AllElements.Sliders[name]
+			if obj then obj.SetValue(value) end
+		end
+	end
+
+	if data.Dropdowns then
+		for name, value in pairs(data.Dropdowns) do
+			local obj = self.AllElements.Dropdowns[name]
+			if obj and obj.SetValue then
+				if obj.Multi and type(value) == "table" then
+					local fixed = {}
+					for k, v in pairs(value) do
+						if type(k) == "string" then fixed[k] = v else fixed[v] = true end
+					end
+					obj:SetValue(fixed)
+				else
+					obj:SetValue(value)
+				end
+			end
+		end
+	end
+
+	if data.ColorPickers then
+		for name, c in pairs(data.ColorPickers) do
+			local obj = self.AllElements.ColorPickers[name]
+			if obj then obj:SetColor(Color3.new(c.R, c.G, c.B)) end
+		end
+	end
+
+	if data.Toggles then
+		for name, state in pairs(data.Toggles) do
+			local obj = self.AllElements.Toggles[name]
+			if obj then
+				if name ~= "Load Config" and name ~= "Auto Load Config" then
+					obj:SetState(state)
+				end
+			end
+		end
+	end
+
+	return true
+end
+
+function Library:SetSavePath(folder, filename)
+	self.saveFolder = folder
+	self.saveFileName = filename
+end
+
+function Library:GetConfigsList()
+	local folder = self.saveFolder or "zxcursedsocute"
+	if not isfolder(folder) then makefolder(folder) end
+
+	local files = listfiles(folder)
+	local configs = {}
+	for _, path in ipairs(files) do
+		local name = path:gsub(folder .. "/", "")
+		if name:find(".json") then
+			table.insert(configs, name)
+		end
+	end
+	return configs
+end
+
+function Library:UpdateConfigSelection(name)
+	local validName = name:find(".json") and name or name .. ".json"
+	self.saveFileName = validName
+
+	writefile(self.saveFolder .. "/last_config.txt", validName)
+end
+
+function Library:DeleteConfig(folder, filename)
+	local path = folder .. "/" .. filename
+	if isfile(path) then
+		delfile(path)
+		return true
+	end
+	return false
+end
+
+function Library:SearchAllTabs()
+	local searchText = self.SearchTextBox.Text:lower()
+
+	if searchText == "" or searchText == "search..." then
+		self:ClearSearchResults()
+		return
+	end
+
+	local currentTab = self.CurrentTab
+	if not currentTab then return end
+
+	for element, searchData in pairs(currentTab.SearchData) do
+		local isMatch = string.find(searchData, searchText, 1, true) ~= nil
+
+		element.Visible = isMatch
+	end
+end
+
+function Library:ClearSearchResults()
+	local currentTab = self.CurrentTab
+	if not currentTab then return end
+
+	for element, _ in pairs(currentTab.SearchData) do
+		element.Visible = true
+	end
+end
+
+function Library:ShowSearch()
+	if self.Search.Visible then
+		self.Search.Visible = false
+	else
+		self.Search.Visible = true
+	end	
+end
+
+local Themes = {
+	["Dark"] = {
+		BackGroundIcon = "rbxassetid://124703424830654",
+		TextColor = Color3.fromRGB(255, 255, 255),
+		SubTtitleTextColor = Color3.fromRGB(125, 125, 125),
+		Notisubtitlecolor = Color3.fromRGB(199, 199, 199),
+		HeaderColor = Color3.fromRGB(26, 26, 26),
+		headerlinecolor = Color3.fromRGB(255, 255, 255),
+		headerlinetrans = 1,
+		TabsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+		NotiImg = "rbxassetid://101518186301089",
+		NotiTitleColor = Color3.fromRGB(255, 255, 255),
+		BackGroundTran = 0.05,
+		DestroyGFrame = Color3.fromRGB(22, 22, 22),
+		DestroyGFrameTransparency = 0,
+		dbtntran = 0.95,
+		TabTransparancy = 0.95,
+		dbtncolor = Color3.fromRGB(255, 255, 255),
+		versionBackgroundColor3 = Color3.fromRGB(255, 255, 255),
+		versionBackgroundTransparency = 0,
+		versionTextColor = Color3.fromRGB(0, 0, 0),
+		IOSdraglineColor = Color3.fromRGB(255, 255, 255),
+		TabTextColor = Color3.fromRGB(255, 255, 255),
+		TabColor = Color3.fromRGB(255, 255, 255),
+		TabSubTtitleTextColor = Color3.fromRGB(199, 199, 199),
+		TogleActivColor = Color3.fromRGB(28, 96, 255),
+		DropDownArrowImg = Color3.fromRGB(255, 255, 255),
+		TabsIconColor = Color3.fromRGB(255, 255, 255),
+		InputTextColor = Color3.fromRGB(175, 175, 175),
+		BackGroundElemTran = 0.95,
+		BackGroundElemCol = Color3.fromRGB(255, 255, 255),
+		BackGroundButtonTran = 0.95,
+		ActionBackColor = Color3.fromRGB(255, 255, 255),
+		ToggleButton = Color3.fromRGB(255, 255, 255),
+		ToggleTran = 0.9,
+		SectionsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+		DropDownColor = Color3.fromRGB(47, 47, 47),
+		DropDownTransparency = 0,
+		DropDownFrameColor = Color3.fromRGB(255, 255, 255),
+		SliderUnderLineColor = Color3.fromRGB(28, 96, 255),
+		Togglebtn = Color3.fromRGB(255, 255, 255),
+		Sliderball = Color3.fromRGB(255, 255, 255),
+		ColorPickerColoro = Color3.fromRGB(47, 47, 47),
+		ListFrameColor = Color3.fromRGB(40, 40, 40)
+	},
+	["Two Time Femboy (Mary)"] = {
+		BackGroundIcon = "rbxassetid://94836966125792",
+		TextColor = Color3.fromRGB(255, 255, 255),
+		SubTtitleTextColor = Color3.fromRGB(125, 125, 125),
+		Notisubtitlecolor = Color3.fromRGB(199, 199, 199),
+		HeaderColor = Color3.fromRGB(61, 63, 65),
+		headerlinecolor = Color3.fromRGB(255, 255, 255),
+		headerlinetrans = 1,
+		TabsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+		NotiImg = "rbxassetid://98241085507817",
+		NotiTitleColor = Color3.fromRGB(255, 255, 255),
+		BackGroundTran = 0.05,
+		DestroyGFrame = Color3.fromRGB(10, 11, 11),
+		DestroyGFrameTransparency = 0,
+		dbtntran = 0.95,
+		TabTransparancy = 0.95,
+		dbtncolor = Color3.fromRGB(255, 255, 255),
+		versionBackgroundColor3 = Color3.fromRGB(255, 255, 255),
+		versionBackgroundTransparency = 0,
+		versionTextColor = Color3.fromRGB(0, 0, 0),
+		IOSdraglineColor = Color3.fromRGB(255, 255, 255),
+		TabTextColor = Color3.fromRGB(255, 255, 255),
+		TabColor = Color3.fromRGB(255, 255, 255),
+		TabSubTtitleTextColor = Color3.fromRGB(199, 199, 199),
+		TogleActivColor = Color3.fromRGB(28, 96, 255),
+		DropDownArrowImg = Color3.fromRGB(255, 255, 255),
+		TabsIconColor = Color3.fromRGB(255, 255, 255),
+		InputTextColor = Color3.fromRGB(175, 175, 175),
+		BackGroundElemTran = 0.95,
+		BackGroundElemCol = Color3.fromRGB(255, 255, 255),
+		BackGroundButtonTran = 0.95,
+		ActionBackColor = Color3.fromRGB(255, 255, 255),
+		ToggleButton = Color3.fromRGB(255, 255, 255),
+		ToggleTran = 0.9,
+		SectionsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+		DropDownColor = Color3.fromRGB(11, 11, 11),
+		DropDownTransparency = 0,
+		DropDownFrameColor = Color3.fromRGB(255, 255, 255),
+		SliderUnderLineColor = Color3.fromRGB(28, 96, 255),
+		Togglebtn = Color3.fromRGB(255, 255, 255),
+		Sliderball = Color3.fromRGB(255, 255, 255),
+		ColorPickerColoro = Color3.fromRGB(61, 63, 65),
+		ListFrameColor = Color3.fromRGB(66, 66, 66)
+	},
+	["White"] = {
+		BackGroundIcon = "rbxassetid://85154344778026",
+		TextColor = Color3.fromRGB(0, 0, 0),
+		SubTtitleTextColor = Color3.fromRGB(49, 49, 49),
+		Notisubtitlecolor = Color3.fromRGB(67, 67, 67),
+		HeaderColor = Color3.fromRGB(255, 255, 255),
+		headerlinecolor = Color3.fromRGB(165, 165, 165),
+		headerlinetrans = 1,
+		TabsScrollingBarFrameColor = Color3.fromRGB(0, 0, 0),
+		NotiImg = "rbxassetid://103895576341932",
+		NotiTitleColor = Color3.fromRGB(0, 0, 0),
+		BackGroundTran = 0.05,
+		DestroyGFrame = Color3.fromRGB(255, 255, 255),
+		DestroyGFrameTransparency = 0,
+		dbtntran = 0.8,
+		TabTransparancy = 0.95,
+		dbtncolor = Color3.fromRGB(0, 0, 0),
+		versionBackgroundColor3 = Color3.fromRGB(0, 0, 0),
+		versionBackgroundTransparency = 0,
+		versionTextColor = Color3.fromRGB(255, 255, 255),
+		IOSdraglineColor = Color3.fromRGB(0, 0, 0),
+		TabTextColor = Color3.fromRGB(0, 0, 0),
+		TabColor = Color3.fromRGB(0, 0, 0),
+		TabSubTtitleTextColor = Color3.fromRGB(67, 67, 67),
+		TogleActivColor = Color3.fromRGB(103, 103, 103),
+		DropDownArrowImg = Color3.fromRGB(0, 0, 0),
+		TabsIconColor = Color3.fromRGB(0, 0, 0),
+		InputTextColor = Color3.fromRGB(67, 67, 67),
+		BackGroundElemTran = 0.9,
+		BackGroundElemCol = Color3.fromRGB(0, 0, 0),
+		ActionBackColor = Color3.fromRGB(33, 33, 33),
+		ToggleButton = Color3.fromRGB(0, 0, 0),
+		ToggleTran = 0.9,
+		BackGroundButtonTran = 0.9,
+		SectionsScrollingBarFrameColor = Color3.fromRGB(0, 0, 0),
+		DropDownColor = Color3.fromRGB(202, 202, 202),
+		DropDownTransparency = 0,
+		DropDownFrameColor = Color3.fromRGB(0, 0, 0),
+		SliderUnderLineColor = Color3.fromRGB(0, 0, 0),
+		Togglebtn = Color3.fromRGB(0, 0, 0),
+		Sliderball = Color3.fromRGB(0, 0, 0),
+		ColorPickerColoro = Color3.fromRGB(255, 255, 255),
+		ListFrameColor = Color3.fromRGB(220, 220, 220)
+	},
+	["Darkness"] = {
+		BackGroundIcon = "rbxassetid://71126967316056",
+		TextColor = Color3.fromRGB(255, 255, 255),
+		SubTtitleTextColor = Color3.fromRGB(125, 125, 125),
+		Notisubtitlecolor = Color3.fromRGB(199, 199, 199),
+		HeaderColor = Color3.fromRGB(61, 63, 65),
+		headerlinecolor = Color3.fromRGB(255, 255, 255),
+		headerlinetrans = 1,
+		TabsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+		NotiImg = "rbxassetid://116797594577574",
+		NotiTitleColor = Color3.fromRGB(255, 255, 255),
+		BackGroundTran = 0.05,
+		DestroyGFrame = Color3.fromRGB(61, 63, 65),
+		DestroyGFrameTransparency = 0,
+		dbtntran = 0.95,
+		TabTransparancy = 0.95,
+		dbtncolor = Color3.fromRGB(255, 255, 255),
+		versionBackgroundColor3 = Color3.fromRGB(255, 255, 255),
+		versionBackgroundTransparency = 0,
+		versionTextColor = Color3.fromRGB(0, 0, 0),
+		IOSdraglineColor = Color3.fromRGB(255, 255, 255),
+		TabTextColor = Color3.fromRGB(255, 255, 255),
+		TabColor = Color3.fromRGB(255, 255, 255),
+		TabSubTtitleTextColor = Color3.fromRGB(199, 199, 199),
+		TogleActivColor = Color3.fromRGB(28, 96, 255),
+		DropDownArrowImg = Color3.fromRGB(255, 255, 255),
+		TabsIconColor = Color3.fromRGB(255, 255, 255),
+		InputTextColor = Color3.fromRGB(175, 175, 175),
+		BackGroundElemTran = 0.95,
+		BackGroundElemCol = Color3.fromRGB(255, 255, 255),
+		BackGroundButtonTran = 0.95,
+		ActionBackColor = Color3.fromRGB(255, 255, 255),
+		ToggleButton = Color3.fromRGB(255, 255, 255),
+		ToggleTran = 0.9,
+		SectionsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+		DropDownColor = Color3.fromRGB(61, 63, 65),
+		DropDownTransparency = 0,
+		DropDownFrameColor = Color3.fromRGB(255, 255, 255),
+		SliderUnderLineColor = Color3.fromRGB(28, 96, 255),
+		Togglebtn = Color3.fromRGB(255, 255, 255),
+		Sliderball = Color3.fromRGB(255, 255, 255),
+		ColorPickerColoro = Color3.fromRGB(61, 63, 65),
+		ListFrameColor = Color3.fromRGB(66, 66, 66)
+	},
+	["Black"] = {
+		BackGroundIcon = "rbxassetid://135546341015171",
+		TextColor = Color3.fromRGB(255, 255, 255),
+		SubTtitleTextColor = Color3.fromRGB(199, 199, 199),
+		Notisubtitlecolor = Color3.fromRGB(199, 199, 199),
+		HeaderColor = Color3.fromRGB(0, 0, 0),
+		headerlinecolor = Color3.fromRGB(165, 165, 165),
+		headerlinetrans = 1,
+		TabsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+		NotiImg = "rbxassetid://121010433723211",
+		NotiTitleColor = Color3.fromRGB(255, 255, 255),
+		BackGroundTran = 0.05,
+		DestroyGFrame = Color3.fromRGB(0, 0, 0),
+		DestroyGFrameTransparency = 0,
+		dbtntran = 0.9,
+		TabTransparancy = 0.95,
+		dbtncolor = Color3.fromRGB(255, 255, 255),
+		versionBackgroundColor3 = Color3.fromRGB(255, 255, 255),
+		versionBackgroundTransparency = 0,
+		versionTextColor = Color3.fromRGB(0, 0, 0),
+		IOSdraglineColor = Color3.fromRGB(255, 255, 255),
+		TabTextColor = Color3.fromRGB(255, 255, 255),
+		TabColor = Color3.fromRGB(255, 255, 255),
+		TabSubTtitleTextColor = Color3.fromRGB(203, 203, 203),
+		TogleActivColor = Color3.fromRGB(0, 0, 0),
+		DropDownArrowImg = Color3.fromRGB(255, 255, 255),
+		TabsIconColor = Color3.fromRGB(255, 255, 255),
+		InputTextColor = Color3.fromRGB(255, 255, 255),
+		BackGroundElemTran = 0.95,
+		BackGroundElemCol = Color3.fromRGB(255, 255, 255),
+		ActionBackColor = Color3.fromRGB(255, 255, 255),
+		ToggleButton = Color3.fromRGB(255, 255, 255),
+		ToggleTran = 0.9,
+		BackGroundButtonTran = 0.9,
+		SectionsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+		DropDownColor = Color3.fromRGB(0, 0, 0),
+		DropDownTransparency = 0,
+		DropDownFrameColor = Color3.fromRGB(255, 255, 255),
+		SliderUnderLineColor = Color3.fromRGB(0, 0, 0),
+		Togglebtn = Color3.fromRGB(255, 255, 255),
+		Sliderball = Color3.fromRGB(255, 255, 255),
+		ColorPickerColoro = Color3.fromRGB(0, 0, 0),
+		ListFrameColor = Color3.fromRGB(18, 18, 18)
+	},
+	["Cursed"] = {
+		BackGroundIcon = "rbxassetid://139069464889319",
+		TextColor = Color3.fromRGB(255, 255, 255),
+		SubTtitleTextColor = Color3.fromRGB(125, 125, 125),
+		Notisubtitlecolor = Color3.fromRGB(199, 199, 199),
+		HeaderColor = Color3.fromRGB(16, 17, 31),
+		headerlinecolor = Color3.fromRGB(255, 255, 255),
+		headerlinetrans = 1,
+		TabsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+		NotiImg = "rbxassetid://133419353491012",
+		NotiTitleColor = Color3.fromRGB(255, 255, 255),
+		BackGroundTran = 0.05,
+		DestroyGFrame = Color3.fromRGB(22, 23, 42),
+		DestroyGFrameTransparency = 0,
+		dbtntran = 0.95,
+		TabTransparancy = 0.95,
+		dbtncolor = Color3.fromRGB(255, 255, 255),
+		versionBackgroundColor3 = Color3.fromRGB(224, 206, 255),
+		versionBackgroundTransparency = 0,
+		versionTextColor = Color3.fromRGB(0, 0, 0),
+		IOSdraglineColor = Color3.fromRGB(63, 59, 126),
+		TabTextColor = Color3.fromRGB(255, 255, 255),
+		TabColor = Color3.fromRGB(255, 255, 255),
+		TabSubTtitleTextColor = Color3.fromRGB(199, 199, 199),
+		TogleActivColor = Color3.fromRGB(63, 59, 126),
+		DropDownArrowImg = Color3.fromRGB(69, 65, 140),
+		TabsIconColor = Color3.fromRGB(255, 255, 255),
+		InputTextColor = Color3.fromRGB(175, 175, 175),
+		BackGroundElemTran = 0.95,
+		BackGroundElemCol = Color3.fromRGB(255, 255, 255),
+		BackGroundButtonTran = 0.95,
+		ActionBackColor = Color3.fromRGB(255, 255, 255),
+		ToggleButton = Color3.fromRGB(255, 255, 255),
+		ToggleTran = 0.9,
+		SectionsScrollingBarFrameColor = Color3.fromRGB(255, 255, 255),
+		DropDownColor = Color3.fromRGB(16, 17, 31),
+		DropDownTransparency = 0,
+		DropDownFrameColor = Color3.fromRGB(63, 59, 126),
+		SliderUnderLineColor = Color3.fromRGB(63, 59, 126),
+		Togglebtn = Color3.fromRGB(255, 255, 255),
+		Sliderball = Color3.fromRGB(255, 255, 255),
+		ColorPickerColoro = Color3.fromRGB(16, 17, 31),
+		ListFrameColor = Color3.fromRGB(16, 17, 31)
+	}
+}
+
+-- Вспомогательная функция для загрузки иконок (добавь в начало Library)
+function Library:GetAsset(url)
+	if not self.ImageCache then self.ImageCache = {} end
+	if self.ImageCache[url] then return self.ImageCache[url] end
+
+	local req = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+	local getcustomasset = getcustomasset or getsynasset
+
+	if not req or not writefile or not getcustomasset then return nil end
+
+	local success, response = pcall(function()
+		return req({Url = url, Method = "GET"})
+	end)
+
+	if success and response.StatusCode == 200 then
+		local fileName = "discord_cache_" .. tick() .. ".png"
+		writefile(fileName, response.Body)
+		local asset = getcustomasset(fileName)
+		self.ImageCache[url] = asset
+		return asset
+	end
+	return nil
+end
+
+function Library:SetTheme(themeName : string)
+	if self.CurrentThemeName == themeName then return end
+
+	local theme = Themes[themeName]
+	if not theme then return end
+
+	self.CurrentThemeName = themeName
+	self.Theme = theme
+
+	for i, v in pairs(self["ActiveNotifications"]) do
+		v["notification"].Image = theme.NotiImg
+		v["notification"].Title.TextColor3 = theme.TextColor
+		v["notification"].Description.TextColor3 = theme.SubTtitleTextColor
+		v["notification"].CloseButton.ImageColor3 = self.Theme.TabsIconColor
+		if v["notification"].Icon.Image == "rbxassetid://75930996983661" or v["notification"].Icon.Image == "rbxassetid://76158273611595" then
+			v["notification"].Icon.ImageColor3 = self.Theme.TabsIconColor
+		end
+	end
+
+	self.SearchImageLabel.ImageColor3 = theme.TabsIconColor
+
+	self.Frame_2.BackgroundColor3 = theme.TextColor
+	self.Frame.BackgroundColor3 = theme.TextColor
+	self.WindowUser.BackgroundColor3 = theme.versionBackgroundColor3
+	self.version.BackgroundColor3 = theme.versionBackgroundColor3
+	self.version.BackgroundTransparency = theme.versionBackgroundTransparency
+	self.versionTextLabel.TextColor3 = theme.versionTextColor
+	self.Search.BackgroundColor3 =  theme.dbtncolor
+	self.Search.BackgroundTransparency =  theme.dbtntran
+	self.SearchTextBox2.TextColor3 = theme.TextColor
+	self.ImageLabel.Image = theme.BackGroundIcon
+	self.TextLabel.TextColor3 = theme.TextColor
+	self.TextLabel_2.TextColor3 = theme.SubTtitleTextColor
+	self.TextLabel_5.TextColor3 = theme.TextColor
+	self.close.ImageColor3 = theme.TabsIconColor
+	self.ImageButton_2.ImageColor3 = theme.TabsIconColor
+	self.ImageButton.ImageColor3 = theme.TabsIconColor
+	self.Frame.BackgroundColor3 = theme.headerlinecolor
+	self.BackgroundTransparency = theme.headerlinetrans
+	self.ScrollingFrame.ScrollBarImageColor3 = theme.TabsScrollingBarFrameColor
+	self.Header.BackgroundColor3 = theme.HeaderColor
+	self.dFrame_2.BackgroundColor3 = theme.DestroyGFrame
+	self.dFrame_2.BackgroundTransparency = theme.DestroyGFrameTransparency
+	self.dTextLabel.TextColor3 = theme.TextColor
+	self.dTextButton_2.BackgroundColor3 = theme.dbtncolor
+	self.dTextLabel_2.TextColor3 = theme.SubTtitleTextColor
+	self.dTextButton_2.TextColor3 = theme.TextColor
+	self.wTextLabel.TextColor3 = theme.TextColor
+	self.wTextLabel_2.TextColor3 = theme.SubTtitleTextColor
+	self.CurrentTab["Tab"][1].BackgroundTransparency = theme.TabTransparancy
+
+	for i,v in pairs(self.mainTabs) do
+		v.Tab[1].BackgroundColor3 = theme.TabColor
+		v.Tab[2].TextColor3 = theme.TabTextColor
+		v.Tab[4].ImageColor3 = theme.TabsIconColor
+		v.Tab[3].BackgroundColor3 = theme.TabTextColor
+		v.Tab[5].ScrollBarImageColor3 = theme.SectionsScrollingBarFrameColor
+
+		local updateMap = {
+			{v.ElemBtn, "BackgroundColor3", theme.BackGroundElemCol},
+			{v.ElemBtn, "BackgroundTransparency", theme.BackGroundElemTran},
+			{v.Texttitle, "TextColor3", theme.TabTextColor},
+			{v.Textsubtitle, "TextColor3", theme.TabSubTtitleTextColor},
+			{v.actionBakcColor, "BackgroundColor3", theme.BackGroundElemCol},
+			{v.BtnImg, "ImageColor3", theme.DropDownArrowImg},
+			{v.ArrowImg, "ImageColor3", theme.DropDownArrowImg},
+			{v.DropImg, "BackgroundColor3", theme.DropDownColor},
+			{v.DropDownArrowImg, "ImageColor3", theme.DropDownArrowImg},
+			{v.DropImg, "BackgroundTransparency", theme.DropDownTransparency},
+			{v.InputTextColor, "TextColor3", theme.InputTextColor},
+			{v.SliderUnderLineColor, "BackgroundColor3", theme.SliderUnderLineColor},
+			{v.Togglebtn, "BackgroundColor3", theme.Togglebtn},
+			{v.Sliderball, "BackgroundColor3", theme.Sliderball},
+			{v.ColorPickerColor, "BackgroundColor3", theme.ColorPickerColoro},
+			{v.ListFrames, "BackgroundColor3", theme.ListFrameColor}
+		}
+
+		for _, data in ipairs(updateMap) do
+			local list, prop, val = data[1], data[2], data[3]
+			if list and val ~= nil then
+				for _, obj in ipairs(list) do
+					obj[prop] = val
+				end
+			end
+		end
+		if self.Categories then
+			for _, cat in pairs(self.Categories) do
+				if cat.Header then
+					cat.Header.TextColor3 = theme.TabTextColor
+				end
+				if cat.Arrow then
+					cat.Arrow.ImageColor3 = theme.DropDownArrowImg
+				end
+				if cat.Container then
+					cat.Container.BackgroundColor3 = theme.BackGroundElemCol
+				end
+			end
+		end
+
+		if theme.BackGroundElemTran then
+			for _, bg in ipairs(v.actionBakcColor) do
+				bg.BackgroundTransparency = theme.BackGroundElemTran
+			end
+		end
+	end  
+
+	if self.AllElements and self.AllElements.Toggles then
+		for _, tgl in pairs(self.AllElements.Toggles) do
+			tgl:UpdateVisuals(tgl.Value, true)
+		end
+	end
+end
+
+function Library:AddCategory(name)
+	local Window = self
+	Window.Categories = Window.Categories or {}
+
+	local category = {
+		Name = name,
+		Tabs = {},
+		Header = nil,
+		Arrow = nil,
+		Container = nil,
+		Wrapper = nil
+	}
+
+	local CategoryWrapper = Instance.new("Frame")
+	CategoryWrapper.BackgroundTransparency = 1
+	CategoryWrapper.Size = UDim2.new(0, 173, 0, 0)
+	CategoryWrapper.AutomaticSize = Enum.AutomaticSize.Y
+	CategoryWrapper.Parent = Window.ScrollingFrame
+	category.Wrapper = CategoryWrapper
+
+	local UICorner = Instance.new("UICorner")
+	UICorner.CornerRadius = UDim.new(0, 8)
+	UICorner.Parent = CategoryWrapper
+
+	local WrapperLayout = Instance.new("UIListLayout")
+	WrapperLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	WrapperLayout.Parent = CategoryWrapper
+
+	local HeaderBtn = Instance.new("TextButton")
+	HeaderBtn.BackgroundTransparency = 1
+	HeaderBtn.Size = UDim2.new(0, 173, 0, 30)
+	HeaderBtn.Text = ""
+	HeaderBtn.Parent = CategoryWrapper
+
+	local HeaderText = Instance.new("TextLabel")
+	HeaderText.BackgroundTransparency = 1
+	HeaderText.Position = UDim2.new(0.05, 0, 0, 0)
+	HeaderText.Size = UDim2.new(0.8, 0, 1, 0)
+	HeaderText.Font = Enum.Font.FredokaOne
+	HeaderText.Text = name:upper()
+	HeaderText.TextColor3 = Window.Theme.TabTextColor
+	HeaderText.TextSize = 11
+	HeaderText.TextXAlignment = Enum.TextXAlignment.Left
+	HeaderText.Parent = HeaderBtn
+	category.Header = HeaderText
+
+	local Arrow = Instance.new("ImageLabel")
+	Arrow.BackgroundTransparency = 1
+	Arrow.Position = UDim2.new(0.85, 0, 0.25, 0)
+	Arrow.Size = UDim2.new(0, 15, 0, 15)
+	Arrow.Image = "rbxassetid://126982255108418" 
+	Arrow.ImageColor3 = Window.Theme.DropDownArrowImg
+	Arrow.Rotation = 0
+	Arrow.Parent = HeaderBtn
+	category.Arrow = Arrow
+
+	local TabsContainer = Instance.new("Frame")
+	TabsContainer.BackgroundColor3 = Window.Theme.BackGroundElemCol
+	TabsContainer.BackgroundTransparency = 1
+	TabsContainer.ClipsDescendants = true
+	TabsContainer.Size = UDim2.new(0, 173, 0, 0)
+	TabsContainer.Parent = CategoryWrapper
+	category.Container = TabsContainer
+
+	local UIListLayout = Instance.new("UIListLayout")
+	UIListLayout.Padding = UDim.new(0, 2)
+	UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	UIListLayout.Parent = TabsContainer
+
+	local IsOpen = true
+
+	local function GetTargetHeight()
+		return (UIListLayout.AbsoluteContentSize.Y / Window.ScaleFactor)
+	end
+
+	HeaderBtn.MouseButton1Click:Connect(function()
+		IsOpen = not IsOpen
+		local targetHeight = IsOpen and GetTargetHeight() or 0
+		local targetRotation = IsOpen and 0 or 180
+
+		Window:Tween(Arrow, {Rotation = targetRotation}, 0.2)
+		Window:Tween(TabsContainer, {Size = UDim2.new(0, 173, 0, targetHeight)}, 0.3)
+	end)
+
+	function category:AddTab(tabName, tabIcon)
+		local newTab = Window:AddTab(tabName, tabIcon)
+		newTab.Button.Parent = TabsContainer
+		newTab.Button.Size = UDim2.new(0, 173, 0, 35)
+
+		if IsOpen then
+			TabsContainer.Size = UDim2.new(0, 173, 0, GetTargetHeight())
+		end
+		table.insert(self.Tabs, newTab)
+		return newTab
+	end
+
+	table.insert(Window.Categories, category)
+	return category
+end
+
+return Library
