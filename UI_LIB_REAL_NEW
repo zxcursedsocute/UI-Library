@@ -338,7 +338,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.SearchTextBox2.BackgroundTransparency = 1.000
 	self.SearchTextBox2.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.SearchTextBox2.BorderSizePixel = 0
-	self.SearchTextBox2.Position = UDim2.new(0.04, 0, 0.115000002, -0.9)
+	self.SearchTextBox2.Position = UDim2.new(0.04, 0, 0.115, -0.9)
 	self.SearchTextBox2.Size = UDim2.new(0, 90, 0, 20)
 	self.SearchTextBox2.Font = Enum.Font.FredokaOne
 	self.SearchTextBox2.Text = "Search..."
@@ -516,7 +516,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.Tabs.BackgroundTransparency = 1
 	self.Tabs.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.Tabs.BorderSizePixel = 0
-	self.Tabs.Position = UDim2.new(0.035, 0, 0.13, 0)
+	self.Tabs.Position = UDim2.new(0.035, 0, 0.115, 0)
 	self.Tabs.Size = UDim2.new(0, 185, 0, 372)
 	self.Tabs.Parent = self.ImageLabel
 
@@ -531,7 +531,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.WindowUser.BackgroundTransparency = 0.95
 	self.WindowUser.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.WindowUser.BorderSizePixel = 0
-	self.WindowUser.Position = UDim2.new(0, 0, 0.96, 0)
+	self.WindowUser.Position = UDim2.new(0, 0, 0.975, 0)
 	self.WindowUser.Size = UDim2.new(0, 180, 0, 45)
 	self.WindowUser.Parent = self.Tabs
 
@@ -629,7 +629,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.ScrollingFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.ScrollingFrame.BorderSizePixel = 0
 	self.ScrollingFrame.Position = UDim2.new(0, 0, 0, 0)
-	self.ScrollingFrame.Size = UDim2.new(0, 187, 0, 354)
+	self.ScrollingFrame.Size = UDim2.new(0, 187, 0, 357)
 	self.ScrollingFrame.ScrollBarThickness = 2
 	self:AddThemeObject(self.ScrollingFrame, "ScrollBarImageColor3", "TabsScrollingBarFrameColor")
 	self.ScrollingFrame.Parent = self.Tabs
@@ -639,7 +639,7 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.Sections.BackgroundTransparency = 1
 	self.Sections.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	self.Sections.BorderSizePixel = 0
-	self.Sections.Position = UDim2.new(0.34, 0, 0.11, 0)
+	self.Sections.Position = UDim2.new(0.34, 0, 0.1, 0)
 	self.Sections.Size = UDim2.new(0, 390, 0, 414)
 	self.Sections.Parent = self.ImageLabel
 
@@ -954,7 +954,7 @@ function Library:AddTab(name : string,icon : string)
 	Frame_4.BackgroundTransparency = 1.000
 	Frame_4.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Frame_4.BorderSizePixel = 0
-	Frame_4.Position = UDim2.new(0, 1, 0.171428576, 0)
+	Frame_4.Position = UDim2.new(0, 1, 0.171, 0)
 	Frame_4.Size = UDim2.new(0, 2, 0, 0)
 	Frame_4.Parent = Frame_3
 	table.insert(tab.Tab, 3,Frame_4)
@@ -966,7 +966,7 @@ function Library:AddTab(name : string,icon : string)
 	ScrollingFrame_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	ScrollingFrame_2.BorderSizePixel = 0
 	ScrollingFrame_2.Position = UDim2.new(0, 0, 0.023, 0)
-	ScrollingFrame_2.Size = UDim2.new(0, 385, 0, 370)
+	ScrollingFrame_2.Size = UDim2.new(0, 385, 0, 372)
 	ScrollingFrame_2.CanvasSize = UDim2.new(0, 0, 0, 0)
 	ScrollingFrame_2.ScrollBarThickness = 2
 	self:AddThemeObject(ScrollingFrame_2, "ScrollBarImageColor3", "SectionsScrollingBarFrameColor")
@@ -2894,7 +2894,7 @@ function Library:ColumnWindow()
 			self.Frame_2.Visible = true
 
 			self.Sections.Size = UDim2.new(0, 390,0, 414)
-			self.Sections.Position = UDim2.new(0.34, 0,0.11, 0)
+			self.Sections.Position = UDim2.new(0.34, 0,0.10, 0)
 			self.Frame_7.Size = UDim2.new(0, 366,0, 379)
 			self.Frame_7.Position = UDim2.new(0, 0,0.085, 0)
 
@@ -2948,7 +2948,7 @@ function Library:ColumnWindow()
 				end
 
 				if not v.Button or v.Tab[1].Parent == self.ScrollingFrame then
-					v.Tab[1].Size = UDim2.new(0, 171,0, 35)
+					v.Tab[1].Size = UDim2.new(0, 180,0, 35)
 				end
 
 				if v.Tab[4].Image ~= "1" then
