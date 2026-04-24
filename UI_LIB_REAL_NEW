@@ -84,7 +84,6 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.saveFolder = nil
 	self.saveFileName = nil
 	self.ActiveNotifications = {}
-	self.SearchData = {}
 
 	local function getTargetContainer()
 		if RunService:IsStudio() then
@@ -136,122 +135,6 @@ function Library.CreateWindow(title,subtitle,size,version)
 	self.ImageLabel.ImageTransparency = 0.05
 	self.ImageLabel.Parent = self.UI
 
-	self.Destroy_gui = Instance.new("Frame")
-	self.dFrame_2 = Instance.new("Frame")
-	self.dTextLabel = Instance.new("TextLabel")
-	local dUICorner = Instance.new("UICorner")
-	self.dTextLabel_2 = Instance.new("TextLabel")
-	self.dTextButton = Instance.new("TextButton")
-	local dUICorner_2 = Instance.new("UICorner")
-	self.dTextButton_2 = Instance.new("TextButton")
-	local dUICorner_3 = Instance.new("UICorner")
-	local dUICorner_4 = Instance.new("UICorner")
-
-	self.Destroy_gui.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	self.Destroy_gui.BackgroundTransparency = 0.4
-	self.Destroy_gui.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	self.Destroy_gui.BorderSizePixel = 0
-	self.Destroy_gui.Position = UDim2.new(0.017, 0, 0.02, 0)
-	self.Destroy_gui.Size = UDim2.new(0, 560, 0, 460)
-	self.Destroy_gui.Visible = false
-	self.Destroy_gui.ZIndex = 10
-	self.Destroy_gui.Parent = self.ImageLabel
-
-	dUICorner_4.CornerRadius = UDim.new(0, 24)
-	dUICorner_4.Parent = self.Destroy_gui
-
-	self:AddThemeObject(self.dFrame_2, "BackgroundColor3", "DestroyGFrame")
-	self.dFrame_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	self.dFrame_2.BorderSizePixel = 0
-	self.dFrame_2.Position = UDim2.new(0.306, 0, 0.328, 0)
-	self.dFrame_2.Size = UDim2.new(0, 250, 0, 150)
-	self.dFrame_2.Transparency = 1
-	self.dFrame_2.BackgroundTransparency = self.Theme.DestroyGFrameTransparency
-	self.dFrame_2.ZIndex = 10
-	self.dFrame_2.Parent = self.Destroy_gui
-
-	local UIPadding = Instance.new("UIPadding")
-	UIPadding.PaddingBottom = UDim.new(0, 5)
-	UIPadding.PaddingLeft = UDim.new(0, 5)
-	UIPadding.PaddingRight = UDim.new(0, 5)
-	UIPadding.PaddingTop = UDim.new(0, 5)
-	UIPadding.Parent = self.dFrame_2
-
-	self.dTextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	self.dTextLabel.BackgroundTransparency = 1.000
-	self.dTextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	self.dTextLabel.BorderSizePixel = 2
-	self.dTextLabel.Position = UDim2.new(0.029, 0, 0.035, 0)
-	self.dTextLabel.Size = UDim2.new(0, 200, 0, 36)
-	self.dTextLabel.Font = Enum.Font.FredokaOne
-	self.dTextLabel.Text = "Destroy Interface?"
-	self:AddThemeObject(self.dTextLabel, "TextColor3", "TextColor")
-	self.dTextLabel.TextSize = 23.000
-	self.dTextLabel.TextWrapped = true
-	self.dTextLabel.Visible = false
-	self.dTextLabel.TextXAlignment = Enum.TextXAlignment.Left
-	self.dTextLabel.Parent = self.dFrame_2
-
-	dUICorner.CornerRadius = UDim.new(0, 12)
-	dUICorner.Parent = self.dFrame_2
-
-	self.dTextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	self.dTextLabel_2.BackgroundTransparency = 1.000
-	self.dTextLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	self.dTextLabel_2.BorderSizePixel = 0
-	self.dTextLabel_2.Position = UDim2.new(0.03, 0, 0.25, 0)
-	self.dTextLabel_2.Size = UDim2.new(0, 219, 0, 40)
-	self.dTextLabel_2.Font = Enum.Font.FredokaOne
-	self.dTextLabel_2.TextWrapped = true
-	self.dTextLabel_2.Text = "This action will permamently close the GUI."
-	self:AddThemeObject(self.dTextLabel_2, "TextColor3", "SubTtitleTextColor")
-	self.dTextLabel_2.TextSize = 15
-	self.dTextLabel_2.Visible = false
-	self.dTextLabel_2.TextXAlignment = Enum.TextXAlignment.Left
-	self.dTextLabel_2.Parent = self.dFrame_2
-
-	self.dTextButton.BackgroundColor3 = Color3.fromRGB(207, 0, 0)
-	self.dTextButton.BackgroundTransparency = 0.4
-	self.dTextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	self.dTextButton.BorderSizePixel = 0
-	self.dTextButton.Position = UDim2.new(0.017, 0, 0.721, 0)
-	self.dTextButton.Size = UDim2.new(0, 112, 0, 36)
-	self.dTextButton.ZIndex = 10
-	self.dTextButton.Font = Enum.Font.FredokaOne
-	self.dTextButton.Text = "Destroy"
-	self.dTextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-	self.dTextButton.Visible = false
-	self.dTextButton.TextSize = 14.000
-	self.dTextButton.Parent = self.dFrame_2
-
-	self.dTextButton.MouseButton1Click:Connect(function()
-		self:Destroy()
-	end)
-
-	dUICorner_2.CornerRadius = UDim.new(0, 10)
-	dUICorner_2.Parent = self.dTextButton
-
-	self:AddThemeObject(self.dTextButton_2, "BackgroundColor3", "dbtncolor")
-	self.dTextButton_2.BackgroundTransparency = 0.950
-	self.dTextButton_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	self.dTextButton_2.BorderSizePixel = 0
-	self.dTextButton_2.Position = UDim2.new(0.517, 0, 0.721, 0)
-	self.dTextButton_2.Size = UDim2.new(0, 112, 0, 36)
-	self.dTextButton_2.ZIndex = 10
-	self.dTextButton_2.Font = Enum.Font.FredokaOne
-	self.dTextButton_2.Text = "Close"
-	self:AddThemeObject(self.dTextButton_2, "TextColor3", "TextColor")
-	self.dTextButton_2.Visible = false
-	self.dTextButton_2.TextSize = 14.000
-	self.dTextButton_2.Parent = self.dFrame_2
-
-	self.dTextButton_2.MouseButton1Click:Connect(function()
-		self:ShowDestroyQ()
-	end)
-
-	dUICorner_3.CornerRadius = UDim.new(0, 10)
-	dUICorner_3.Parent = self.dTextButton_2
-
 	self.Header = Instance.new("Frame")
 	self:AddThemeObject(self.Header, "BackgroundColor3", "HeaderColor")
 	self.Header.BackgroundTransparency = 1
@@ -264,88 +147,6 @@ function Library.CreateWindow(title,subtitle,size,version)
 	local HeaderUICorner = Instance.new("UICorner")
 	HeaderUICorner.CornerRadius = UDim.new(0, 12)
 	HeaderUICorner.Parent = self.Header
-
-	self.Search = Instance.new("Frame")
-	local SearchUICorner = Instance.new("UICorner")
-	self.SearchImageLabel = Instance.new("ImageLabel")
-	self.SearchTextBox2 = Instance.new("TextBox")
-
-	self.SearchTextBox = self.SearchTextBox2
-
-	self.SearchTextBox.Focused:Connect(function()
-		if not self.OriginallyHidden then
-			self.OriginallyHidden = {}
-			for i, v in pairs(self.CurrentTab["Elements"]) do
-				if not v.Visible then
-					self.OriginallyHidden[i] = true
-				end
-			end
-		end
-
-		if self.SearchTextBox.Text == "Search..." then
-			self.SearchTextBox.Text = ""
-		end
-
-		for i, v in pairs(self.CurrentTab["Elements"]) do
-			if v.Visible then
-				v.Visible = false
-			end
-		end
-		self.SearchTextBox2.TextSize = 15.000
-	end)
-
-	self.SearchTextBox.FocusLost:Connect(function()
-		if self.SearchTextBox.Text == "" then
-			self.SearchTextBox2.TextSize = 14.000
-			self.SearchTextBox.Text = "Search..."
-
-			for i, v in pairs(self.CurrentTab["Elements"]) do
-				if not self.OriginallyHidden or not self.OriginallyHidden[i] then
-					v.Visible = true
-				end
-			end
-
-			self.OriginallyHidden = nil
-		end
-	end)
-
-	self.SearchTextBox:GetPropertyChangedSignal("Text"):Connect(function()
-		self:SearchAllTabs()
-	end)
-
-	self:AddThemeObject(self.Search, "BackgroundColor3", "dbtncolor")
-	self:AddThemeObject(self.Search, "BackgroundTransparency", "dbtntran")
-	self.Search.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	self.Search.BorderSizePixel = 0
-	self.Search.Position = UDim2.new(0.570, 0, 0.19, 0)
-	self.Search.Size = UDim2.new(0, 140, 0, 26)
-	self.Search.Parent = self.Header
-
-	SearchUICorner.CornerRadius = UDim.new(0.22, 0)
-	SearchUICorner.Parent = self.Search
-
-	self.SearchImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	self.SearchImageLabel.BackgroundTransparency = 1.000
-	self.SearchImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	self.SearchImageLabel.BorderSizePixel = 0
-	self.SearchImageLabel.Position = UDim2.new(0.81, 0, 0.1, 0)
-	self.SearchImageLabel.Size = UDim2.new(0, 20, 0, 20)
-	self.SearchImageLabel.Image = "rbxassetid://136089190882362"
-	self:AddThemeObject(self.SearchImageLabel, "ImageColor3", "TabsIconColor")
-	self.SearchImageLabel.Parent = self.Search
-
-	self.SearchTextBox2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	self.SearchTextBox2.BackgroundTransparency = 1.000
-	self.SearchTextBox2.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	self.SearchTextBox2.BorderSizePixel = 0
-	self.SearchTextBox2.Position = UDim2.new(0.04, 0, 0.115, -0.9)
-	self.SearchTextBox2.Size = UDim2.new(0, 90, 0, 20)
-	self.SearchTextBox2.Font = Enum.Font.FredokaOne
-	self.SearchTextBox2.Text = "Search..."
-	self:AddThemeObject(self.SearchTextBox2, "TextColor3", "TextColor")
-	self.SearchTextBox2.TextSize = 14.000
-	self.SearchTextBox2.TextXAlignment = Enum.TextXAlignment.Left
-	self.SearchTextBox2.Parent = self.Search
 
 	local function substr(str)
 		local strlen = string.len(str)
@@ -882,7 +683,6 @@ function Library:AddTab(name : string,icon : string)
 		Tab = {},
 		Connections = {},
 		KeybindConnections = {},
-		SearchData = {}
 	}
 
 	setmetatable(tab, { __index = self })
@@ -957,7 +757,7 @@ function Library:AddTab(name : string,icon : string)
 	Frame_4.Position = UDim2.new(0, 1, 0.171, 0)
 	Frame_4.Size = UDim2.new(0, 2, 0, 0)
 	Frame_4.Parent = Frame_3
-	table.insert(tab.Tab, 3,Frame_4)
+	--table.insert(tab.Tab, 3,Frame_4)
 
 	local ScrollingFrame_2 = Instance.new("ScrollingFrame")
 	ScrollingFrame_2.Active = true
@@ -1270,7 +1070,6 @@ function Library:AddTab(name : string,icon : string)
 
 				recalcSizes()
 
-				tab.SearchData[objSelf.Element] = TitleLabel.Text .. " " .. ContentLabel.Text
 				tab:CalcScroll()
 			end,
 
@@ -1288,7 +1087,6 @@ function Library:AddTab(name : string,icon : string)
 			end
 		}
 
-		tab.SearchData[Paragraph] = (title or "") .. " " .. (subtitle or "")
 
 		return paragraphObj
 	end
@@ -1404,8 +1202,6 @@ function Library:AddTab(name : string,icon : string)
 		ImageLabel.Image = "rbxassetid://140083176080437"
 		self:AddThemeObject(ImageLabel, "ImageColor3", "DropDownArrowImg")
 		ImageLabel.Parent = Button
-
-		self.SearchData[Button] = (tostring(config.Name or "") .. " " .. tostring(config.Description or "")):lower()
 
 		local ButtonObj = {
 			Elem = Button
@@ -1532,7 +1328,6 @@ function Library:AddTab(name : string,icon : string)
 		end)
 
 		self.AllElements.Toggles[config.Name] = toggleController
-		self.SearchData[Toggle] = (tostring(config.Name or "") .. " " .. tostring(config.Description or "")):lower()
 
 		return toggleController
 	end
@@ -1667,10 +1462,6 @@ function Library:AddTab(name : string,icon : string)
 			self.AllElements.Keybinds[Keybind.Name] = keybindObj
 		end
 
-		if self.SearchData then
-			self.SearchData[container] = (tostring(Keybind.Name) .. " " .. tostring(Keybind.Description)):lower()
-		end
-
 		return keybindObj
 	end
 
@@ -1775,7 +1566,6 @@ function Library:AddTab(name : string,icon : string)
 			Callback = config.Callback
 		}
 		self.AllElements.Inputs[config.Name] = InputObj
-		self.SearchData[input] = (tostring(config.Name or "") .. " " .. tostring(config.Description or "")):lower()
 
 		return InputObj
 	end
@@ -1919,7 +1709,6 @@ function Library:AddTab(name : string,icon : string)
 		}
 
 		self.AllElements.Sliders[config.Name] = sliderObj
-		self.SearchData[slider] = (tostring(config.Name or "") .. " " .. tostring(config.Description or "")):lower()
 		updateValue(value)
 
 		return sliderObj
@@ -2197,7 +1986,6 @@ function Library:AddTab(name : string,icon : string)
 		function colorPickerObj:GetColor() return currentColor end
 
 		self.AllElements.ColorPickers[config.Name] = colorPickerObj
-		self.SearchData[ColorPick] = (tostring(config.Name or "") .. " " .. tostring(config.Description or "")):lower()
 
 		return colorPickerObj
 	end
@@ -2566,7 +2354,6 @@ function Library:AddTab(name : string,icon : string)
 
 		if config.Default then dropdownObj:SetValue(config.Default) end
 		self.AllElements.Dropdowns[config.Name] = dropdownObj
-		self.SearchData[Dropdown] = (tostring(config.Name or "") .. " " .. tostring(config.Description or "")):lower()
 
 		return dropdownObj
 	end
@@ -2680,7 +2467,6 @@ function Library:Minimaze()
 				self.Tabs.Visible = false
 				self.Sections.Visible = false
 
-				self.Search.Visible = false
 				self.TextLabel.Visible = false
 				self.TextLabel_2.Visible = false
 				self.version.Visible = false
@@ -2731,7 +2517,6 @@ function Library:Minimaze()
 				self.Sections.Visible = true
 				self.Windowscd = false
 			else
-				local IsVisibleSearch = false
 				self.ImageButton_2.Visible = false
 
 				self.ImageLabel.ImageTransparency = self.Theme.BackGroundTran
@@ -2744,7 +2529,6 @@ function Library:Minimaze()
 					self.ImageButton_2.Position = UDim2.new(0.76, 0,0.29, 0)
 				else
 					self:Tween(self.ImageLabel,{Size = UDim2.new(0, 620, 0, 480)},1)
-					IsVisibleSearch = true
 
 					self.ImageButton_2.Position = UDim2.new(0.825, 0,0.29, 0)
 					self:Tween(self.Header,{Size = UDim2.new(0, 620 - 24, 0, 40)},1)
@@ -2763,9 +2547,6 @@ function Library:Minimaze()
 				gui.AnchorPoint = targetAnchor
 				gui.Position = gui.Position + UDim2.new(0, xOffset, 0, yOffset)
 
-				if IsVisibleSearch then
-					self.Search.Visible = true
-				end
 				self.TextLabel.Visible = true
 				self.TextLabel_2.Visible = true
 				self.version.Visible = true
@@ -2782,7 +2563,6 @@ function Library:Minimaze()
 	end
 end
 
-local SearchVis = false
 
 function Library:ColumnWindow()
 	if self.Windowscd == false then
@@ -2792,11 +2572,6 @@ function Library:ColumnWindow()
 		local TabPadding = self.ScrollingFrame:FindFirstChildOfClass("UIPadding")
 
 		if self.Sections.Size ~= UDim2.new(0, 375,0, 370) then
-			SearchVis = false
-			if self.Search.Visible == true then
-				self:ShowSearch()
-				SearchVis = true
-			end
 
 			self.Header.BackgroundTransparency = 1
 			self.ImageLabel.ImageTransparency = self.Theme.BackGroundTran
@@ -2966,9 +2741,6 @@ function Library:ColumnWindow()
 				self.Tabs.Size = UDim2.new(0, 185,0, 372)
 				self.ScrollingFrame.Size = UDim2.new(0, 185,0, 358)
 			end
-			if SearchVis == true then
-				self:ShowSearch()
-			end
 		end
 		self.Windowscd = false
 	end
@@ -2992,8 +2764,9 @@ function Library:Destroy()
 			controller:SetState(false) 
 		end
 	end
-	self:ClearSearchResults()
-	self.Destroy_gui.Visible = false
+	if self.Destroy_gui then
+		self.Destroy_gui.Visible = false
+	end
 	self.AllElements.Toggles = {}
 	self.ThemeObjects = {}
 
@@ -3011,6 +2784,10 @@ function Library:Destroy()
 end
 
 function Library:ShowDestroyQ()
+	if not self.Destroy_gui then
+		self:CreateDestroyGui()
+	end
+
 	if self.Destroy_gui.Visible then
 		self.dTextLabel.Visible = false
 		self.dTextButton.Visible = false
@@ -3132,10 +2909,6 @@ function Library:InputConfig(filename,Config)
 	writefile(filename,Config)
 end
 
--- ==========================================
--- ОПТИМИЗИРОВАННЫЙ БЛОК СОХРАНЕНИЯ/ЗАГРУЗКИ
--- ==========================================
-
 function Library:SaveConfig(foldername,filename)
 	local config = {
 		Toggles = {}, Keybinds = {}, Dropdowns = {},
@@ -3146,7 +2919,6 @@ function Library:SaveConfig(foldername,filename)
 		config.Toggles[name] = obj:GetState()
 	end
 
-	-- Исправлено сохранение кейбиндов
 	for name, obj in pairs(self.AllElements.Keybinds) do
 		local state = obj:GetState()
 		config.Keybinds[name] = state and state.Name or "None" 
@@ -3171,7 +2943,6 @@ function Library:SaveConfig(foldername,filename)
 
 	if not isfolder(foldername) then makefolder(foldername) end
 
-	-- Защищенный энкод JSON для предотвращения крашей
 	local success, encoded = pcall(function() return HttpService:JSONEncode(config) end)
 	if success then
 		writefile(foldername .. "/" .. filename, encoded)
@@ -3197,7 +2968,6 @@ function Library:IsLoadConfig(filename)
 	local toggles = self.AllElements.Toggles
 	local savedToggles = data.Toggles
 
-	-- Расширенный список имен для Auto Load
 	local configKeys = {"Load Config", "Auto Load Config", "Auto Load", "AutoLoad"}
 
 	for _, key in ipairs(configKeys) do
@@ -3235,7 +3005,6 @@ function Library:LoadConfig(filename)
 		end
 	end
 
-	-- Оптимизированная загрузка кейбиндов
 	if data.Keybinds then
 		for name, keyStr in pairs(data.Keybinds) do
 			local obj = self.AllElements.Keybinds[name]
@@ -3293,10 +3062,6 @@ function Library:LoadConfig(filename)
 	return true
 end
 
--- ==========================================
--- КОНЕЦ ОПТИМИЗИРОВАННОГО БЛОКА
--- ==========================================
-
 function Library:SetSavePath(folder, filename)
 	self.saveFolder = folder
 	self.saveFileName = filename
@@ -3333,39 +3098,122 @@ function Library:DeleteConfig(folder, filename)
 	return false
 end
 
-function Library:SearchAllTabs()
-	local searchText = self.SearchTextBox.Text:lower()
+function Library:CreateDestroyGui()
+	self.Destroy_gui = Instance.new("Frame")
+	self.dFrame_2 = Instance.new("Frame")
+	self.dTextLabel = Instance.new("TextLabel")
+	local dUICorner = Instance.new("UICorner")
+	self.dTextLabel_2 = Instance.new("TextLabel")
+	self.dTextButton = Instance.new("TextButton")
+	local dUICorner_2 = Instance.new("UICorner")
+	self.dTextButton_2 = Instance.new("TextButton")
+	local dUICorner_3 = Instance.new("UICorner")
+	local dUICorner_4 = Instance.new("UICorner")
 
-	if searchText == "" or searchText == "search..." then
-		self:ClearSearchResults()
-		return
-	end
+	self.Destroy_gui.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	self.Destroy_gui.BackgroundTransparency = 0.4
+	self.Destroy_gui.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.Destroy_gui.BorderSizePixel = 0
+	self.Destroy_gui.Position = UDim2.new(0.017, 0, 0.02, 0)
+	self.Destroy_gui.Size = UDim2.new(0, 560, 0, 460)
+	self.Destroy_gui.Visible = false
+	self.Destroy_gui.ZIndex = 10
+	self.Destroy_gui.Parent = self.ImageLabel
 
-	local currentTab = self.CurrentTab
-	if not currentTab then return end
+	dUICorner_4.CornerRadius = UDim.new(0, 24)
+	dUICorner_4.Parent = self.Destroy_gui
 
-	for element, searchData in pairs(currentTab.SearchData) do
-		local isMatch = string.find(searchData, searchText, 1, true) ~= nil
+	self:AddThemeObject(self.dFrame_2, "BackgroundColor3", "DestroyGFrame")
+	self.dFrame_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.dFrame_2.BorderSizePixel = 0
+	self.dFrame_2.Position = UDim2.new(0.306, 0, 0.328, 0)
+	self.dFrame_2.Size = UDim2.new(0, 250, 0, 150)
+	self.dFrame_2.Transparency = 1
+	self.dFrame_2.BackgroundTransparency = self.Theme.DestroyGFrameTransparency
+	self.dFrame_2.ZIndex = 10
+	self.dFrame_2.Parent = self.Destroy_gui
 
-		element.Visible = isMatch
-	end
-end
+	local UIPadding = Instance.new("UIPadding")
+	UIPadding.PaddingBottom = UDim.new(0, 5)
+	UIPadding.PaddingLeft = UDim.new(0, 5)
+	UIPadding.PaddingRight = UDim.new(0, 5)
+	UIPadding.PaddingTop = UDim.new(0, 5)
+	UIPadding.Parent = self.dFrame_2
 
-function Library:ClearSearchResults()
-	local currentTab = self.CurrentTab
-	if not currentTab then return end
+	self.dTextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.dTextLabel.BackgroundTransparency = 1.000
+	self.dTextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.dTextLabel.BorderSizePixel = 2
+	self.dTextLabel.Position = UDim2.new(0.029, 0, 0.035, 0)
+	self.dTextLabel.Size = UDim2.new(0, 200, 0, 36)
+	self.dTextLabel.Font = Enum.Font.FredokaOne
+	self.dTextLabel.Text = "Destroy Interface?"
+	self:AddThemeObject(self.dTextLabel, "TextColor3", "TextColor")
+	self.dTextLabel.TextSize = 23.000
+	self.dTextLabel.TextWrapped = true
+	self.dTextLabel.Visible = false
+	self.dTextLabel.TextXAlignment = Enum.TextXAlignment.Left
+	self.dTextLabel.Parent = self.dFrame_2
 
-	for element, _ in pairs(currentTab.SearchData) do
-		element.Visible = true
-	end
-end
+	dUICorner.CornerRadius = UDim.new(0, 12)
+	dUICorner.Parent = self.dFrame_2
 
-function Library:ShowSearch()
-	if self.Search.Visible then
-		self.Search.Visible = false
-	else
-		self.Search.Visible = true
-	end	
+	self.dTextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	self.dTextLabel_2.BackgroundTransparency = 1.000
+	self.dTextLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.dTextLabel_2.BorderSizePixel = 0
+	self.dTextLabel_2.Position = UDim2.new(0.03, 0, 0.25, 0)
+	self.dTextLabel_2.Size = UDim2.new(0, 219, 0, 40)
+	self.dTextLabel_2.Font = Enum.Font.FredokaOne
+	self.dTextLabel_2.TextWrapped = true
+	self.dTextLabel_2.Text = "This action will permamently close the GUI."
+	self:AddThemeObject(self.dTextLabel_2, "TextColor3", "SubTtitleTextColor")
+	self.dTextLabel_2.TextSize = 15
+	self.dTextLabel_2.Visible = false
+	self.dTextLabel_2.TextXAlignment = Enum.TextXAlignment.Left
+	self.dTextLabel_2.Parent = self.dFrame_2
+
+	self.dTextButton.BackgroundColor3 = Color3.fromRGB(207, 0, 0)
+	self.dTextButton.BackgroundTransparency = 0.4
+	self.dTextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.dTextButton.BorderSizePixel = 0
+	self.dTextButton.Position = UDim2.new(0.017, 0, 0.721, 0)
+	self.dTextButton.Size = UDim2.new(0, 112, 0, 36)
+	self.dTextButton.ZIndex = 10
+	self.dTextButton.Font = Enum.Font.FredokaOne
+	self.dTextButton.Text = "Destroy"
+	self.dTextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	self.dTextButton.Visible = false
+	self.dTextButton.TextSize = 14.000
+	self.dTextButton.Parent = self.dFrame_2
+
+	self.dTextButton.MouseButton1Click:Connect(function()
+		self:Destroy()
+	end)
+
+	dUICorner_2.CornerRadius = UDim.new(0, 10)
+	dUICorner_2.Parent = self.dTextButton
+
+	self:AddThemeObject(self.dTextButton_2, "BackgroundColor3", "dbtncolor")
+	self.dTextButton_2.BackgroundTransparency = 0.950
+	self.dTextButton_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	self.dTextButton_2.BorderSizePixel = 0
+	self.dTextButton_2.Position = UDim2.new(0.517, 0, 0.721, 0)
+	self.dTextButton_2.Size = UDim2.new(0, 112, 0, 36)
+	self.dTextButton_2.ZIndex = 10
+	self.dTextButton_2.Font = Enum.Font.FredokaOne
+	self.dTextButton_2.Text = "Close"
+	self:AddThemeObject(self.dTextButton_2, "TextColor3", "TextColor")
+	self.dTextButton_2.Visible = false
+	self.dTextButton_2.TextSize = 14.000
+	self.dTextButton_2.Parent = self.dFrame_2
+
+	self.dTextButton_2.MouseButton1Click:Connect(function()
+		self:ShowDestroyQ()
+	end)
+
+	dUICorner_3.CornerRadius = UDim.new(0, 10)
+	dUICorner_3.Parent = self.dTextButton_2
 end
 
 local Themes = {
