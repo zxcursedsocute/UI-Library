@@ -670,7 +670,9 @@ local TAB_ICONS = {
 	["Text"]      = "rbxassetid://140272486271785", 
 	["Music"]     = "rbxassetid://95074569695751",
 	["Skin"]      = "rbxassetid://77808065458415",
-	["Run"]       = "rbxassetid://94022434049447"
+	["Run"]       = "rbxassetid://94022434049447",
+	["Killer"]    = "rbxassetid://80624492937943",
+	["Survivor"]  = "rbxassetid://76337889437039"
 }
 
 function Library:AddTab(name : string,icon : string)
