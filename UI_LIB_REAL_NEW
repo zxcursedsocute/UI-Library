@@ -3492,19 +3492,30 @@ function Library:GetAsset(url)
 	local req = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 	local getcustomasset = getcustomasset or getsynasset
 
-	if not req or not writefile or not getcustomasset then return nil end
+	if not writefile or not getcustomasset then return nil end
+
+	local safeUrl = url:gsub("[^a-zA-Z0-9]", "")
+	local fileName = "discord_cache_" .. safeUrl .. ".png"
+
+	if isfile and isfile(fileName) then
+		local asset = getcustomasset(fileName)
+		self.ImageCache[url] = asset
+		return asset
+	end
+
+	if not req then return nil end
 
 	local success, response = pcall(function()
 		return req({Url = url, Method = "GET"})
 	end)
 
 	if success and response.StatusCode == 200 then
-		local fileName = "discord_cache_" .. tick() .. ".png"
 		writefile(fileName, response.Body)
 		local asset = getcustomasset(fileName)
 		self.ImageCache[url] = asset
 		return asset
 	end
+	
 	return nil
 end
 
