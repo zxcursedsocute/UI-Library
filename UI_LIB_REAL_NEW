@@ -1056,7 +1056,7 @@ function Library:AddTab(name : string,icon : string)
 			local contentHeight = math.max(16, math.ceil(textSizeVec.Y))
 
 			ContentLabel.Size = UDim2.new(0, 328, 0, contentHeight + 4)
-			Paragraph.Size = UDim2.new(0, 360, 0, 7 + contentHeight)
+			Paragraph.Size = UDim2.new(0, 360, 0, 5 + contentHeight)
 		end
 
 		recalcSizes()
