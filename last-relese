@@ -266,6 +266,7 @@ function Library.CreateWindow(config)
 	self.TextLabel = inst("TextLabel")
 	self.TextLabel.BackgroundTransparency = 1
 	self.TextLabel.AutomaticSize = enum.AutomaticSize.XY
+	self.TextLabel.Position = ud2(0,0,0,10)
 	self.TextLabel.Size = ud2(0, 0, 0, 40)
 	self.TextLabel.Font = enum.Font.FredokaOne
 	self.TextLabel.Text = title
