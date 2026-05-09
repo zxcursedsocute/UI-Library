@@ -1299,7 +1299,7 @@ function Library:AddTab(name : string,icon : string)
 			return nil
 		end
 
-		local currentKey = (typeof(config.Default) == "enumItem") and config.Default or nil
+		local currentKey = (typeof(config.Default) == "EnumItem") and config.Default or nil
 
 		local Keybind = {
 			Name = config.Name or "Keybind",
@@ -1359,7 +1359,7 @@ function Library:AddTab(name : string,icon : string)
 
 		local function setKey(newKey)
 			currentKey = newKey
-			bindButton.Text = (typeof(newKey) == "enumItem" and newKey.Name) or "None"
+			bindButton.Text = (typeof(newKey) == "EnumItem" and newKey.Name) or "None"
 		end
 
 		setKey(currentKey)
