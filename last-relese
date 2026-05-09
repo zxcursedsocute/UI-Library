@@ -2441,7 +2441,9 @@ function Library:Minimaze()
 				self.Sections.Visible = false
 
 				self.TextLabel.Visible = false
-				self.TextLabel_2.Visible = false
+				if self.TextLabel_2 then
+					self.TextLabel_2.Visible = false
+				end
 				self.version.Visible = false
 				self.close.Visible = false
 				self.ImageButton.Visible = false
@@ -2521,7 +2523,9 @@ function Library:Minimaze()
 				gui.Position = gui.Position + ud2(0, xOffset, 0, yOffset)
 
 				self.TextLabel.Visible = true
-				self.TextLabel_2.Visible = true
+				if self.TextLabel_2 then
+					self.TextLabel_2.Visible = true
+				end
 				self.version.Visible = true
 				self.close.Visible = true
 				self.ImageButton.Visible = true
