@@ -70,7 +70,8 @@ local BaseDarkTheme = {
 	Togglebtn = c3rgb(255, 255, 255),
 	Sliderball = c3rgb(255, 255, 255),
 	ColorPickerColoro = c3rgb(61, 63, 65),
-	ListFrameColor = c3rgb(66, 66, 66)
+	ListFrameColor = c3rgb(66, 66, 66),
+	keyback = "rbxassetid://120882935753706"
 }
 
 local Themes = {
@@ -117,7 +118,8 @@ local Themes = {
 		DropDownColor = c3rgb(0, 0, 0),
 		SliderUnderLineColor = c3rgb(0, 0, 0),
 		ColorPickerColoro = c3rgb(0, 0, 0),
-		ListFrameColor = c3rgb(18, 18, 18)
+		ListFrameColor = c3rgb(18, 18, 18),
+		keyback = "rbxassetid://89724657821038"
 	}),
 	["Cursed"] = extendTheme(BaseDarkTheme, {
 		BackGroundIcon = "rbxassetid://139069464889319",
@@ -132,7 +134,8 @@ local Themes = {
 		DropDownFrameColor = c3rgb(63, 59, 126),
 		SliderUnderLineColor = c3rgb(63, 59, 126),
 		ColorPickerColoro = c3rgb(16, 17, 31),
-		ListFrameColor = c3rgb(16, 17, 31)
+		ListFrameColor = c3rgb(16, 17, 31),
+		keyback = "rbxassetid://128602859619396"
 	}),
 	["White"] = extendTheme(BaseDarkTheme, {
 		BackGroundIcon = "rbxassetid://85154344778026",
@@ -169,7 +172,8 @@ local Themes = {
 		Togglebtn = c3rgb(0, 0, 0),
 		Sliderball = c3rgb(0, 0, 0),
 		ColorPickerColoro = c3rgb(255, 255, 255),
-		ListFrameColor = c3rgb(220, 220, 220)
+		ListFrameColor = c3rgb(220, 220, 220),
+		keyback = "rbxassetid://105543908643429"
 	})
 }
 
@@ -182,22 +186,189 @@ function Library:AddThemeObject(instance : Instance, property : string, themeKey
 	end
 end
 
+function Library:BuildKeySystem(config, callback)
+	local KeyUI = inst("ScreenGui")
+	KeyUI.Name = "KeySystem"
+	KeyUI.ZIndexBehavior = enum.ZIndexBehavior.Sibling
+	KeyUI.Parent = gethui and gethui() or (game:GetService("CoreGui") or LocalPlayer:WaitForChild("PlayerGui"))
+
+	local hasIcon = config.Icon and config.Icon ~= ""
+
+	local frameWidth = hasIcon and 600 or 360
+	local contentX = hasIcon and 0.42 or 0.08
+
+	local MainFrame = inst("ImageLabel")
+	MainFrame.Name = "MainFrame"
+	MainFrame.BackgroundColor3 = c3rgb(255, 255, 255)
+	MainFrame.BackgroundTransparency = 1
+	MainFrame.ImageTransparency = 0.05
+	MainFrame.BorderColor3 = c3rgb(0, 0, 0)
+	MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+	MainFrame.Position = ud2(0.5, 0, 0.5, 0)
+	MainFrame.Size = ud2(0, frameWidth, 0, 300)
+	MainFrame.Image = self.Theme.keyback or "" 
+	MainFrame.Parent = KeyUI
+
+	inst("UICorner", MainFrame).CornerRadius = ud(0, 25)
+
+	if hasIcon then
+		local SideIcon = inst("ImageLabel", MainFrame)
+		SideIcon.BackgroundColor3 = c3rgb(255, 255, 255)
+		SideIcon.BorderSizePixel = 0
+		SideIcon.Position = ud2(0.05, 0, 0.135, 0)
+		SideIcon.Size = ud2(0, 200, 0, 220)
+		SideIcon.Image = config.Icon
+		inst("UICorner", SideIcon).CornerRadius = ud(0, 25)
+	end
+
+	local Title = inst("TextLabel", MainFrame)
+	Title.BackgroundTransparency = 1
+	Title.Position = ud2(contentX, 0, 0.036, 0)
+	Title.Size = ud2(0, 320, 0, 50)
+	Title.Font = enum.Font.FredokaOne
+	Title.Text = config.Title or "Key System"
+	Title.TextColor3 = self.Theme.TextColor
+	Title.TextSize = 22
+	Title.TextXAlignment = enum.TextXAlignment.Left
+
+	local BoxFrame = inst("Frame", MainFrame)
+	BoxFrame.BackgroundColor3 = c3rgb(36, 36, 36)
+	BoxFrame.Position = ud2(contentX, 0, 0.64, 0)
+	BoxFrame.Size = ud2(0, hasIcon and 320 or 300, 0, 35)
+	BoxFrame.BackgroundTransparency = self.Theme.BackGroundElemTran
+	BoxFrame.BackgroundColor3 = self.Theme.BackGroundElemCol
+	inst("UICorner", BoxFrame).CornerRadius = ud(0, 12)
+
+	local Box = inst("TextBox", BoxFrame)
+	Box.BackgroundTransparency = 1
+	Box.BackgroundColor3 = self.Theme.BackGroundElemCol
+	Box.Position = ud2(0, 10, 0, 0)
+	Box.Size = ud2(1, -45, 1, 0)
+	Box.Font = enum.Font.FredokaOne
+	Box.PlaceholderText = "Key here..."
+	Box.Text = ""
+	Box.TextColor3 = self.Theme.TextColor
+	Box.TextSize = 16
+	Box.TextXAlignment = enum.TextXAlignment.Left
+
+	local KeyIconInBox = inst("ImageLabel", BoxFrame)
+	KeyIconInBox.BackgroundTransparency = 1
+	KeyIconInBox.Position = ud2(1, -30, 0.5, -12)
+	KeyIconInBox.Size = ud2(0, 24, 0, 24)
+	KeyIconInBox.Image = "rbxassetid://82647781853494"
+	KeyIconInBox.ImageColor3 = self.Theme.TextColor
+
+	local steps = config.Steps or {}
+	for i = 1, math.min(#steps, 3) do
+		local StepCircle = inst("Frame", MainFrame)
+		StepCircle.BackgroundColor3 = self.Theme.BackGroundElemCol
+		StepCircle.BackgroundTransparency = self.Theme.BackGroundElemTran
+		StepCircle.Position = ud2(contentX, 0, 0.22 + (i-1)*0.135, 0)
+		StepCircle.Size = ud2(0, 30, 0, 30) 
+		inst("UICorner", StepCircle).CornerRadius = ud(0, 100)
+
+		local Num = inst("TextLabel", StepCircle)
+		Num.Size = ud2(1, 0, 1, 0)
+		Num.BackgroundTransparency = 1
+		Num.Text = tostring(i)
+		Num.Font = enum.Font.FredokaOne
+		Num.TextColor3 = self.Theme.TextColor
+		Num.TextSize = 18
+
+		local Desc = inst("TextLabel", MainFrame)
+		Desc.BackgroundTransparency = 1
+		Desc.Position = ud2(contentX, 40, 0.22 + (i-1)*0.135 - 0.04, 0)
+		Desc.Size = ud2(0, hasIcon and 280 or 240, 0, 50)
+		Desc.Font = enum.Font.FredokaOne
+		Desc.Text = steps[i]
+		Desc.TextColor3 = self.Theme.TextColor
+		Desc.TextSize = 14
+		Desc.TextXAlignment = enum.TextXAlignment.Left
+	end
+
+	local CopyBtn = inst("TextButton", MainFrame)
+	CopyBtn.BackgroundColor3 = c3rgb(8, 124, 0)
+	CopyBtn.Position = ud2(contentX, 0, 0.81, 0)
+	CopyBtn.Size = ud2(0, hasIcon and 142 or 130, 0, 30)
+	CopyBtn.Text = "Copy link   "
+	CopyBtn.Font = enum.Font.FredokaOne
+	CopyBtn.TextColor3 = c3rgb(255, 255, 255)
+	CopyBtn.TextSize = 15
+	inst("UICorner", CopyBtn).CornerRadius = ud(0, 12)
+
+	local CopyIcon = inst("ImageLabel", CopyBtn)
+	CopyIcon.BackgroundTransparency = 1
+	CopyIcon.Position = ud2(1, -28, 0.5, -10)
+	CopyIcon.Size = ud2(0, 20, 0, 20)
+	CopyIcon.Image = "rbxassetid://118530149675082"
+
+	local EnterBtn = inst("TextButton", MainFrame)
+	EnterBtn.BackgroundColor3 = c3rgb(255, 191, 0)
+	EnterBtn.Position = ud2(contentX, hasIcon and 155 or 145, 0.81, 0)
+	EnterBtn.Size = ud2(0, hasIcon and 165 or 155, 0, 30)
+	EnterBtn.Text = "Enter key   "
+	EnterBtn.Font = enum.Font.FredokaOne
+	EnterBtn.TextColor3 = c3rgb(255, 255, 255)
+	EnterBtn.TextSize = 15
+	inst("UICorner", EnterBtn).CornerRadius = ud(0, 12)
+
+	local EnterIcon = inst("ImageLabel", EnterBtn)
+	EnterIcon.BackgroundTransparency = 1
+	EnterIcon.Position = ud2(1, -28, 0.5, -10)
+	EnterIcon.Size = ud2(0, 20, 0, 20)
+	EnterIcon.Image = "rbxassetid://97369134616256"
+
+	CopyBtn.MouseButton1Click:Connect(function()
+		if setclipboard then setclipboard(config.Link or "") end
+		CopyBtn.Text = "Copied!   "
+		task.wait(1)
+		CopyBtn.Text = "Copy link   "
+	end)
+
+	EnterBtn.MouseButton1Click:Connect(function()
+		local input = Box.Text
+		local valid = false
+		for _, k in pairs(config.Keys or {}) do
+			if input == k then valid = true break end
+		end
+
+		if valid then
+			KeyUI:Destroy()
+			callback()
+		else
+			KeyIconInBox.ImageColor3 = c3rgb(255, 0, 0)
+			EnterBtn.Text = "Invalid!   "
+			task.wait(1.5)
+			EnterBtn.Text = "Enter key   "
+			KeyIconInBox.ImageColor3 = self.Theme.TextColor
+		end
+	end)
+end
+
 function Library.CreateWindow(config)
 	local title = config.Name or "Default Title"
 	local subtitle = config.Description
 	local size = config.Size or 620
 	local version = config.Version
-	
+
 	local self = setmetatable({}, Library)
+
+	self.CurrentThemeName = config.Theme or "Cursed"
+	self.Theme = extendTheme(Themes[self.CurrentThemeName], {})
+
+	if config.Key then
+		local KeyWait = inst("BindableEvent")
+		self:BuildKeySystem(config.KeySettings or {}, function()
+			KeyWait:Fire()
+		end)
+		KeyWait.Event:Wait()
+	end
 
 	self.mainTabs = {}
 	self.CurrentTab = nil
 	self.Notipos = 0.9
 	self.ThemeObjects = {}
 
-	self.CurrentThemeName = "Cursed"
-	self.Theme = extendTheme(Themes[self.CurrentThemeName], {})
-	
 	self.AllElements = {
 		Toggles = {},
 		Keybinds = {},
@@ -241,7 +412,7 @@ function Library.CreateWindow(config)
 	self.ImageLabel.Draggable = true
 	self.ImageLabel.ImageTransparency = 0.05
 	self.ImageLabel.Parent = self.UI
-	
+
 	self.Header = inst("Frame")
 	self:AddThemeObject(self.Header, "BackgroundColor3", "HeaderColor")
 	self.Header.BackgroundTransparency = 1
@@ -1406,7 +1577,7 @@ function Library:AddTab(name : string,icon : string)
 			Default = config.Default or "Default",
 			Callback = config.Callback
 		}
-		
+
 		local internalFullText = Input.Default
 
 		local input = inst("Frame")
