@@ -701,18 +701,16 @@ function Library.CreateWindow(config)
 		end
 	end
 
-	spawn(function()
-		self.Tabs.Visible = false
-		self.Sections.Visible = false
-		self.Header.Visible = false
+	self.Tabs.Visible = false
+	self.Sections.Visible = false
+	self.Header.Visible = false
 
-		self:Tween(self.ImageLabel,{Size = ud2(0,size,0,480)},0.9)
-		task.wait(0.9)
+	self:Tween(self.ImageLabel,{Size = ud2(0,size,0,480)},0.9)
+	task.wait(0.9)
 
-		self.Tabs.Visible = true
-		self.Sections.Visible = true
-		self.Header.Visible = true
-	end)
+	self.Tabs.Visible = true
+	self.Sections.Visible = true
+	self.Header.Visible = true
 
 	return self
 end
