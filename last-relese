@@ -328,6 +328,7 @@ function Library:BuildKeySystem(config, callback)
 	EnterBtn.MouseButton1Click:Connect(function()
 		local input = Box.Text
 		local valid = false
+		getgenv().CursedHubKey = input
 		for _, k in pairs(config.Keys or {}) do
 			if input == k then valid = true break end
 		end
