@@ -8,6 +8,9 @@ local TextService = cloneref(game:GetService("TextService"))
 local Players = cloneref(game:GetService("Players"))
 local LocalPlayer = Players.LocalPlayer
 
+local req = (syn and syn.request) or (http and http.request) or http_request or request
+local getasset = getcustomasset or getsynasset
+
 local c3rgb = Color3.fromRGB
 local c3new = Color3.new
 local inst  = Instance.new
@@ -79,14 +82,18 @@ local Themes = {
 		DestroyGFrame = c3rgb(10, 11, 11),
 		DropDownColor = c3rgb(11, 11, 11)
 	}),
-
 	["Two Time Femboy 2"] = extendTheme(BaseDarkTheme, {
-		BackGroundIcon = "rbxassetid://121845484401978",
+		BackGroundIcon = "rbxassetid://127670191322279",
 		NotiImg = "rbxassetid://101937081141745",
 		DestroyGFrame = c3rgb(10, 11, 11),
 		DropDownColor = c3rgb(11, 11, 11)
 	}),
-
+	["Pregnant Two Time (by mary)"] = extendTheme(BaseDarkTheme, {
+		BackGroundIcon = "rbxassetid://94350788044043",
+		NotiImg = "rbxassetid://101937081141745",
+		DestroyGFrame = c3rgb(10, 11, 11),
+		DropDownColor = c3rgb(11, 11, 11)
+	}),
 	["Dark"] = extendTheme(BaseDarkTheme, {
 		BackGroundIcon = "rbxassetid://124703424830654",
 		HeaderColor = c3rgb(26, 26, 26),
@@ -96,7 +103,6 @@ local Themes = {
 		ColorPickerColoro = c3rgb(47, 47, 47),
 		ListFrameColor = c3rgb(40, 40, 40)
 	}),
-
 	["Black"] = extendTheme(BaseDarkTheme, {
 		BackGroundIcon = "rbxassetid://135546341015171",
 		SubTtitleTextColor = c3rgb(199, 199, 199),
@@ -113,7 +119,6 @@ local Themes = {
 		ColorPickerColoro = c3rgb(0, 0, 0),
 		ListFrameColor = c3rgb(18, 18, 18)
 	}),
-
 	["Cursed"] = extendTheme(BaseDarkTheme, {
 		BackGroundIcon = "rbxassetid://139069464889319",
 		HeaderColor = c3rgb(16, 17, 31),
@@ -129,7 +134,6 @@ local Themes = {
 		ColorPickerColoro = c3rgb(16, 17, 31),
 		ListFrameColor = c3rgb(16, 17, 31)
 	}),
-
 	["White"] = extendTheme(BaseDarkTheme, {
 		BackGroundIcon = "rbxassetid://85154344778026",
 		TextColor = c3rgb(0, 0, 0),
@@ -975,96 +979,63 @@ function Library:AddTab(name : string,icon : string)
 	end
 
 	function tab:AddDiscordInvite(config)
-		local inviteLink = config.Invite or ""
-		local fallbackIcon = config.Icon or "rbxassetid://14458925526"
-		local inviteCode = inviteLink:match("discord%.gg/([%w-]+)") or inviteLink:match("discord%.com/invite/([%w-]+)") or inviteLink
+		local inv = config.Invite or ""
+		local code = inv:match("discord%.gg/([%w-]+)") or inv:match("discord%.com/invite/([%w-]+)") or inv
 
-		local DiscordWidget = inst("Frame")
-		self:AddThemeObject(DiscordWidget, "BackgroundColor3", "BackGroundElemCol")
-		self:AddThemeObject(DiscordWidget, "BackgroundTransparency", "BackGroundElemTran")
-		DiscordWidget.Size = ud2(0, 360, 0, 110)
-		DiscordWidget.Parent = self.Container 
+		local Widget, UICorner = inst("Frame"), inst("UICorner")
+		local Icon, IconCorner = inst("ImageLabel"), inst("UICorner")
+		local Name, Status = inst("TextLabel"), inst("TextLabel")
+		local Btn, BtnCorner = inst("TextButton"), inst("UICorner")
 
-		local UICorner = inst("UICorner")
-		UICorner.CornerRadius = ud(0, 10)
-		UICorner.Parent = DiscordWidget
+		Widget.Size, Widget.Parent = ud2(0, 360, 0, 110), self.Container
+		UICorner.CornerRadius, UICorner.Parent = ud(0, 10), Widget
+		self:AddThemeObject(Widget, "BackgroundColor3", "BackGroundElemCol")
+		self:AddThemeObject(Widget, "BackgroundTransparency", "BackGroundElemTran")
 
-		local ServerIcon = inst("ImageLabel")
-		ServerIcon.Size = ud2(0, 50, 0, 50)
-		ServerIcon.Position = ud2(0, 12, 0, 12)
-		ServerIcon.BackgroundColor3 = c3rgb(43, 45, 49)
-		ServerIcon.Image = fallbackIcon
-		ServerIcon.Parent = DiscordWidget
+		Icon.Size, Icon.Position, Icon.BackgroundColor3, Icon.Image, Icon.Parent = ud2(0, 50, 0, 50), ud2(0, 12, 0, 12), c3rgb(43, 45, 49), config.Icon or "rbxassetid://14458925526", Widget
+		IconCorner.CornerRadius, IconCorner.Parent = ud(0, 12), Icon
 
-		local IconCorner = inst("UICorner")
-		IconCorner.CornerRadius = ud(0, 12)
-		IconCorner.Parent = ServerIcon
+		Name.Position, Name.Size, Name.BackgroundTransparency, Name.Font, Name.Text = ud2(0, 75, 0, 15), ud2(0, 270, 0, 20), 1, enum.Font.FredokaOne, "Loading Discord..."
+		Name.TextSize, Name.TextXAlignment, Name.Parent = 16, enum.TextXAlignment.Left, Widget
+		self:AddThemeObject(Name, "TextColor3", "TabTextColor")
 
-		local ServerName = inst("TextLabel")
-		ServerName.Position = ud2(0, 75, 0, 15)
-		ServerName.Size = ud2(0, 270, 0, 20)
-		ServerName.BackgroundTransparency = 1
-		ServerName.Font = enum.Font.FredokaOne 
-		ServerName.Text = "Loading Discord..."
-		self:AddThemeObject(ServerName, "TextColor3", "TabTextColor")
-		ServerName.TextSize = 16
-		ServerName.TextXAlignment = enum.TextXAlignment.Left
-		ServerName.Parent = DiscordWidget
+		Status.Position, Status.Size, Status.BackgroundTransparency, Status.Font, Status.Text = ud2(0, 75, 0, 38), ud2(0, 270, 0, 15), 1, enum.Font.FredokaOne, "Connecting..."
+		Status.TextSize, Status.TextXAlignment, Status.RichText, Status.Parent = 13, enum.TextXAlignment.Left, true, Widget
+		self:AddThemeObject(Status, "TextColor3", "TabSubTtitleTextColor")
 
-		local StatusText = inst("TextLabel")
-		StatusText.Position = ud2(0, 75, 0, 38)
-		StatusText.Size = ud2(0, 270, 0, 15)
-		StatusText.BackgroundTransparency = 1
-		StatusText.Font = enum.Font.FredokaOne
-		StatusText.Text = "Connecting..."
-		self:AddThemeObject(StatusText, "TextColor3", "TabSubTtitleTextColor")
-		StatusText.TextSize = 13
-		StatusText.TextXAlignment = enum.TextXAlignment.Left
-		StatusText.RichText = true
-		StatusText.Parent = DiscordWidget
+		Btn.Size, Btn.Position, Btn.BackgroundColor3, Btn.Font, Btn.Text = ud2(1, -24, 0, 30), ud2(0, 12, 0, 70), c3rgb(36, 128, 70), enum.Font.FredokaOne, "Copy Invite Link"
+		Btn.TextColor3, Btn.TextSize, Btn.Parent = c3rgb(255, 255, 255), 14, Widget
+		BtnCorner.CornerRadius, BtnCorner.Parent = ud(0, 8), Btn
 
-		local JoinBtn = inst("TextButton")
-		JoinBtn.Size = ud2(1, -24, 0, 30)
-		JoinBtn.Position = ud2(0, 12, 0, 70)
-		JoinBtn.BackgroundColor3 = c3rgb(36, 128, 70)
-		JoinBtn.Font = enum.Font.FredokaOne
-		JoinBtn.Text = "Copy Invite Link"
-		JoinBtn.TextColor3 = c3rgb(255, 255, 255)
-		JoinBtn.TextSize = 14
-		JoinBtn.Parent = DiscordWidget
-
-		local BtnCorner = inst("UICorner")
-		BtnCorner.CornerRadius = ud(0, 8)
-		BtnCorner.Parent = JoinBtn
-
-		JoinBtn.MouseButton1Click:Connect(function()
+		Btn.MouseButton1Click:Connect(function()
 			if setclipboard then
-				setclipboard("https://discord.gg/" .. inviteCode)
-				JoinBtn.Text = "Copied to Clipboard!"
+				setclipboard("https://discord.gg/" .. code)
+				Btn.Text = "Copied to Clipboard!"
 				task.wait(2)
-				JoinBtn.Text = "Copy Invite Link"
+				Btn.Text = "Copy Invite Link"
 			end
 		end)
 
 		task.spawn(function()
-			local req = (syn and syn.request) or (http and http.request) or http_request or request
-			if req then
-				local res = req({Url = "https://discord.com/api/v9/invites/" .. inviteCode .. "?with_counts=true", Method = "GET"})
-				if res.StatusCode == 200 then
-					local data = game:GetService("HttpService"):JSONDecode(res.Body)
-					ServerName.Text = data.guild.name
-					StatusText.Text = string.format("<font color='#23a559'>●</font> %s Online  <font color='#80848e'>●</font> %s Members", data.approximate_presence_count or 0, data.approximate_member_count or 0)
+			if not req then return end
+			local res = req({Url = "https://discord.com/api/v9/invites/" .. code .. "?with_counts=true", Method = "GET"})
+			if res.StatusCode == 200 then
+				local data = HttpService:JSONDecode(res.Body)
+				Name.Text = data.guild.name
+				Status.Text = ("<font color='#23a559'>●</font> %s Online  <font color='#80848e'>●</font> %s Members"):format(data.approximate_presence_count or 0, data.approximate_member_count or 0)
 
-					if data.guild.icon then
-						local iconUrl = "https://cdn.discordapp.com/icons/" .. data.guild.id .. "/" .. data.guild.icon .. ".png?size=128"
-						local asset = Library:GetAsset(iconUrl)
-						if asset then ServerIcon.Image = asset end
-					end
+				if data.guild.icon then
+					local iconUrl = ("https://cdn.discordapp.com/icons/%s/%s.png?size=128"):format(data.guild.id, data.guild.icon)
+					local asset = Library:GetAsset(iconUrl)
+					if asset then Icon.Image = asset end
 				end
+			else
+				Name.Text = "Invalid Invite"
+				Status.Text = "Could not fetch server data"
 			end
 		end)
 
-		return DiscordWidget
+		return Widget
 	end
 
 	function tab:AddParagraph(title, subtitle, backColor, color)
@@ -2546,178 +2517,105 @@ function Library:ColumnWindow()
 		self.Windowscd = true
 
 		local TabListLayout = self.ScrollingFrame:FindFirstChildOfClass("UIListLayout")
-		local TabPadding = self.ScrollingFrame:FindFirstChildOfClass("UIPadding")
 
-		if self.Sections.Size ~= ud2(0, 375,0, 370) then
+		local isCompact = self.Sections.Size ~= ud2(0, 375, 0, 370)
 
-			self.Header.BackgroundTransparency = 1
-			self.ImageLabel.ImageTransparency = self.Theme.BackGroundTran
-			self.Frame_2.Visible = false
+		self.Header.BackgroundTransparency = 1
+		self.ImageLabel.ImageTransparency = self.Theme.BackGroundTran
+		self.Frame_2.Visible = not isCompact
+		self.TextLabel_5.Visible = not isCompact
 
-			self:Tween(self.close, {Position = ud2(0.92, 0,0.2, 0)}, 1)
-			self:Tween(self.ImageButton, {Position = ud2(0.854, 0,0.35, 0)}, 1)
-			self:Tween(self.ImageButton_2, {Position = ud2(0.76, 0,0.29, 0)}, 1)
-			self:Tween(self.ImageLabel, {Size = ud2(0, 405,0, 480)}, 1)
-			self:Tween(self.Header, {Size = ud2(0, 381,0, 40)}, 1)
+		self.Tabs.Visible = false
+		self.Sections.Visible = false
+		if isCompact then self.WindowUser.Visible = false end
 
-			self.Tabs.Visible = false
-			self.Sections.Visible = false
-			self.WindowUser.Visible = false
+		self:Tween(self.close, {Position = isCompact and ud2(0.92, 0, 0.2, 0) or ud2(0.945, 0, 0.2, 0)}, 1)
+		self:Tween(self.ImageButton, {Position = isCompact and ud2(0.854, 0, 0.35, 0) or ud2(0.897, 0, 0.35, 0)}, 1)
+		self:Tween(self.ImageButton_2, {Position = isCompact and ud2(0.76, 0, 0.29, 0) or ud2(0.835, 0, 0.29, 0)}, 1)
+		self:Tween(self.ImageLabel, {Size = isCompact and ud2(0, 405, 0, 480) or ud2(0, 620, 0, 480)}, 1)
+		self:Tween(self.Header, {Size = isCompact and ud2(0, 381, 0, 40) or ud2(0, 596, 0, 40)}, 1)
 
-			self.Sections.Size = ud2(0, 375,0, 370)
-			self.Sections.Position = ud2(0.02, 0,0.201, 0)
-			self.Frame_7.Size = ud2(0, 375,0, 370)
-			self.Frame_7.Position = ud2(0, 2,0, 5)
+		self.Sections.Size = isCompact and ud2(0, 375, 0, 370) or ud2(0, 390, 0, 414)
+		self.Sections.Position = isCompact and ud2(0.02, 0, 0.201, 0) or ud2(0.34, 0, 0.10, 0)
+		self.Frame_7.Size = isCompact and ud2(0, 375, 0, 370) or ud2(0, 366, 0, 379)
+		self.Frame_7.Position = isCompact and ud2(0, 2, 0, 5) or ud2(0, 0, 0.085, 0)
 
-			self.Tabs.Size = ud2(0, 375,0, 45)
-			self.Tabs.Position = ud2(0.02,0,0.12, 0)
-			self.ScrollingFrame.Size = ud2(0, 375,0, 45)
-			self.ScrollingFrame.Position = ud2(0,0,0,0)
-			self.TextLabel_5.Visible = false
+		self.Tabs.Size = isCompact and ud2(0, 375, 0, 45) or ud2(0, 185, 0, 414)
+		self.Tabs.Position = isCompact and ud2(0.02, 0, 0.12, 0) or ud2(0.035, 0, 0.116, 0)
+		self.ScrollingFrame.Size = isCompact and ud2(0, 365, 0, 45) or ud2(0, 185, 0, 415)
+		self.ScrollingFrame.Position = isCompact and ud2(0, 10, 0, 0) or ud2(0, 0, 0, 0)
 
-			self.ScrollingFrame.ScrollingDirection = enum.ScrollingDirection.X
-			self.ScrollingFrame.AutomaticCanvasSize = enum.AutomaticSize.X
-			self.ScrollingFrame.CanvasSize = ud2(0, 0, 0, 0)
+		self.ScrollingFrame.ScrollingDirection = isCompact and enum.ScrollingDirection.X or enum.ScrollingDirection.Y
+		self.ScrollingFrame.AutomaticCanvasSize = isCompact and enum.AutomaticSize.X or enum.AutomaticSize.Y
+		self.ScrollingFrame.CanvasSize = ud2(0, 0, 0, 0)
+		self.ScrollingFrame.ScrollBarImageTransparency = isCompact and 1 or 0
 
-			if TabListLayout then
-				TabListLayout.FillDirection = enum.FillDirection.Horizontal
-				TabListLayout.Padding = ud(0, 8)
-				TabListLayout.SortOrder = enum.SortOrder.LayoutOrder
-			end
-			if TabPadding then
-				TabPadding.PaddingLeft = ud(0, 10)
-			end
+		if TabListLayout then
+			TabListLayout.FillDirection = isCompact and enum.FillDirection.Horizontal or enum.FillDirection.Vertical
+			TabListLayout.Padding = isCompact and ud(0, 8) or ud(0, 5)
+			if isCompact then TabListLayout.SortOrder = enum.SortOrder.LayoutOrder end
+		end
 
-			if self.Categories then
-				for _, category in pairs(self.Categories) do
-					if category.Wrapper then category.Wrapper.Visible = false end
-					for _, tab in pairs(category.Tabs) do
-						local btn = tab.Button or (tab.Tab and tab.Tab[1])
-						if btn then
+		if self.Categories then
+			for _, category in pairs(self.Categories) do
+				if category.Wrapper then category.Wrapper.Visible = not isCompact end
+				for _, tab in pairs(category.Tabs) do
+					local btn = tab.Button or (tab.Tab and tab.Tab[1])
+					if btn then
+						if isCompact then
 							btn.Parent = self.ScrollingFrame
-						end
-					end
-				end
-			end
-
-			for i,v in pairs(self.mainTabs) do
-				v.Tab[5].Position = ud2(0,0,0,0)
-				v.Tab[5].Size = ud2(0, 380,0, 365)
-
-				if v.Tab[5]:IsA("ScrollingFrame") then
-					v.Tab[5].AutomaticCanvasSize = enum.AutomaticSize.Y
-					v.Tab[5].CanvasSize = ud2(0, 0, 0, 0)
-				end
-
-				local elemPadding = v.Tab[5]:FindFirstChildOfClass("UIPadding")
-				if elemPadding then
-					elemPadding.PaddingLeft = ud(0, 10)
-					elemPadding.PaddingRight = ud(0, 10)
-					elemPadding.PaddingTop = ud(0, 10)
-					elemPadding.PaddingBottom = ud(0, 10) 
-				end
-
-				v.Tab[1].Parent = self.ScrollingFrame
-				v.Tab[1].Size = ud2(0, 130,0, 35)
-				v.Tab[1].LayoutOrder = i
-
-				if v.Tab[4].Image ~= "" then
-					v.Tab[2].Position = ud2(0.28, 0,0, -1)
-				end
-			end
-
-			self.ScrollingFrame.ScrollBarImageTransparency = 1
-
-			task.wait(1)
-			self.Tabs.Visible = true
-			self.Sections.Visible = true
-			self.Windowscd = false
-
-		else
-			self.Header.BackgroundTransparency = 1
-			self.ImageLabel.ImageTransparency = self.Theme.BackGroundTran
-			self:Tween(self.ImageLabel, {Size = ud2(0, 620,0, 480)}, 1)
-			self:Tween(self.Header, {Size = ud2(0, 596,0, 40)}, 1)
-			self:Tween(self.close, {Position = ud2(0.945, 0,0.2, 0)}, 1)
-			self:Tween(self.ImageButton, {Position = ud2(0.897, 0,0.35, 0)}, 1)
-			self:Tween(self.ImageButton_2, {Position = ud2(0.835, 0,0.29, 0)}, 1)
-			self.Tabs.Visible = false
-			self.Sections.Visible = false
-			self.Frame_2.Visible = true
-
-			self.Sections.Size = ud2(0, 390,0, 414)
-			self.Sections.Position = ud2(0.34, 0,0.10, 0)
-			self.Frame_7.Size = ud2(0, 366,0, 379)
-			self.Frame_7.Position = ud2(0, 0,0.085, 0)
-
-			self.Tabs.Size = ud2(0, 185,0, 414)
-			self.Tabs.Position = ud2(0.035, 0,0.116, 0)
-			self.ScrollingFrame.Size = ud2(0, 185,0, 415)
-			self.ScrollingFrame.Position = ud2(0, 0,0, 0)
-			self.TextLabel_5.Visible = true
-
-			self.ScrollingFrame.ScrollingDirection = enum.ScrollingDirection.Y
-			self.ScrollingFrame.AutomaticCanvasSize = enum.AutomaticSize.Y
-			self.ScrollingFrame.CanvasSize = ud2(0, 0, 0, 0)
-
-			if TabListLayout then
-				TabListLayout.FillDirection = enum.FillDirection.Vertical
-				TabListLayout.Padding = ud(0, 5)
-			end
-			if TabPadding then
-				TabPadding.PaddingLeft = ud(0, 5)
-				TabPadding.PaddingRight = ud(0, 5)
-			end
-
-			if self.Categories then
-				for _, category in pairs(self.Categories) do
-					if category.Wrapper then category.Wrapper.Visible = true end
-					for _, tab in pairs(category.Tabs) do
-						local btn = tab.Button or (tab.Tab and tab.Tab[1])
-						if btn then
+						else
 							btn.Parent = category.Container
 							btn.Size = ud2(0, 173, 0, 35)
 						end
 					end
 				end
 			end
+		end
 
-			for i,v in pairs(self.mainTabs) do
-				v.Tab[5].Position = ud2(0, 0,0.023, 0)
-				v.Tab[5].Size = ud2(0, 385,0, 370)
+		for i, v in pairs(self.mainTabs) do
+			v.Tab[5].Position = isCompact and ud2(0, 0, 0, 0) or ud2(0, 0, 0.023, 0)
+			v.Tab[5].Size = isCompact and ud2(0, 380, 0, 365) or ud2(0, 385, 0, 370)
 
-				if v.Tab[5]:IsA("ScrollingFrame") then
-					v.Tab[5].AutomaticCanvasSize = enum.AutomaticSize.Y
-					v.Tab[5].CanvasSize = ud2(0, 0, 0, 0)
+			if v.Tab[5]:IsA("ScrollingFrame") then
+				v.Tab[5].AutomaticCanvasSize = enum.AutomaticSize.Y
+				v.Tab[5].CanvasSize = ud2(0, 0, 0, 0)
+			end
+
+			local elemPadding = v.Tab[5]:FindFirstChildOfClass("UIPadding")
+			if elemPadding then
+				elemPadding.PaddingLeft = ud(0, 10)
+				elemPadding.PaddingRight = ud(0, 10)
+				elemPadding.PaddingTop = ud(0, 10)
+				elemPadding.PaddingBottom = ud(0, 10) 
+			end
+
+			if isCompact then
+				v.Tab[1].Parent = self.ScrollingFrame
+				v.Tab[1].Size = ud2(0, 130, 0, 35)
+				v.Tab[1].LayoutOrder = i
+
+				if v.Tab[4].Image ~= "" then
+					v.Tab[2].Position = ud2(0.28, 0, 0, -1)
 				end
-
-				local elemPadding = v.Tab[5]:FindFirstChildOfClass("UIPadding")
-				if elemPadding then
-					elemPadding.PaddingLeft = ud(0, 10)
-					elemPadding.PaddingRight = ud(0, 10)
-					elemPadding.PaddingTop = ud(0, 10)
-					elemPadding.PaddingBottom = ud(0, 10) 
-				end
-
+			else
 				if not v.Button or v.Tab[1].Parent == self.ScrollingFrame then
-					v.Tab[1].Size = ud2(0, 180,0, 35)
+					v.Tab[1].Size = ud2(0, 180, 0, 35)
 				end
 
 				if v.Tab[4].Image ~= "" then
-					v.Tab[2].Position = ud2(0.21, 0,0, -1)
+					v.Tab[2].Position = ud2(0.21, 0, 0, -1)
 				end
 			end
+		end
 
-			self.ScrollingFrame.ScrollBarImageTransparency = 0
-
-			task.wait(1)
-			self.Tabs.Visible = true
-			self.Sections.Visible = true
-			if self.userinfo then
-				self.WindowUser.Visible = true
-				self.Tabs.Size = ud2(0, 185,0, 372)
-				self.ScrollingFrame.Size = ud2(0, 185,0, 358)
-			end
+		task.wait(1)
+		self.Tabs.Visible = true
+		self.Sections.Visible = true
+		if not isCompact and self.userinfo then
+			self.WindowUser.Visible = true
+			self.Tabs.Size = ud2(0, 185, 0, 372)
+			self.ScrollingFrame.Size = ud2(0, 185, 0, 358)
 		end
 		self.Windowscd = false
 	end
@@ -3194,37 +3092,22 @@ function Library:CreateDestroyGui()
 end
 
 function Library:GetAsset(url)
-	if not self.ImageCache then self.ImageCache = {} end
+	self.ImageCache = self.ImageCache or {}
 	if self.ImageCache[url] then return self.ImageCache[url] end
+	if not (writefile and getasset and isfile and req) then return nil end
 
-	local req = (syn and syn.request) or (http and http.request) or http_request or request
-	local getcustomasset = getcustomasset or getsynasset
+	local fileName = "d_cache_" .. url:gsub("[^%w]", ""):sub(-30) .. ".png"
 
-	if not writefile or not getcustomasset then return nil end
-
-	local safeUrl = url:gsub("[^a-zA-Z0-9]", "")
-	local fileName = "discord_cache_" .. safeUrl .. ".png"
-
-	if isfile and isfile(fileName) then
-		local asset = getcustomasset(fileName)
-		self.ImageCache[url] = asset
-		return asset
+	if isfile(fileName) then
+		self.ImageCache[url] = getasset(fileName)
+	else
+		local success, res = pcall(function() return req({Url = url, Method = "GET"}) end)
+		if success and res.StatusCode == 200 then
+			writefile(fileName, res.Body)
+			self.ImageCache[url] = getasset(fileName)
+		end
 	end
-
-	if not req then return nil end
-
-	local success, response = pcall(function()
-		return req({Url = url, Method = "GET"})
-	end)
-
-	if success and response.StatusCode == 200 then
-		writefile(fileName, response.Body)
-		local asset = getcustomasset(fileName)
-		self.ImageCache[url] = asset
-		return asset
-	end
-
-	return nil
+	return self.ImageCache[url]
 end
 
 function Library:SetTheme(themeName : string)
