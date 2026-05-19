@@ -1641,7 +1641,7 @@ function Library:AddTab(name : string,icon : string)
 		UICorner_2.CornerRadius = ud(0, 5)
 		UICorner_2.Parent = TextBox
 
-		TextBox.FocusLost:Connect(function()
+	TextBox.FocusLost:Connect(function()
 			local currentText = TextBox.Text
 
 			if Input.SaveUserText then
@@ -1651,7 +1651,8 @@ function Library:AddTab(name : string,icon : string)
 					TextBox.Text = string.sub(currentText, 1, 15) .. "..."
 				end
 			else
-				internalFullText = Input.Default
+				internalFullText = currentText 
+				
 				task.spawn(function()
 					task.wait()
 					TextBox.Text = Input.Default
