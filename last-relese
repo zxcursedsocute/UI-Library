@@ -89,6 +89,11 @@ local Themes = {
 		DestroyGFrame = c3rgb(10, 11, 11),
 		DropDownColor = c3rgb(11, 11, 11)
 	}),
+	["Entity"] = extendTheme(BaseDarkTheme, {
+		BackGroundIcon = "rbxassetid://73446098621859",
+		DestroyGFrame = c3rgb(10, 11, 11),
+		DropDownColor = c3rgb(11, 11, 11)
+	}),
 	["Pregnant Two Time (by mary)"] = extendTheme(BaseDarkTheme, {
 		BackGroundIcon = "rbxassetid://94350788044043",
 		NotiImg = "rbxassetid://101937081141745",
