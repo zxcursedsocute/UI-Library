@@ -192,6 +192,26 @@ function Library:AddThemeObject(instance : Instance, property : string, themeKey
 end
 
 function Library:BuildKeySystem(config, callback)
+	-- [НОВОЕ] Проверка сохраненного ключа перед отрисовкой интерфейса
+	if config.SaveKey and isfile and readfile then
+		local fileName = config.KeyFileName or "SavedHubKey.txt"
+		if isfile(fileName) then
+			local savedKey = readfile(fileName)
+			local valid = false
+			
+			for _, k in pairs(config.Keys or {}) do
+				if savedKey == k then valid = true break end
+			end
+
+			if valid then
+				getgenv().CursedHubKey = savedKey
+				task.spawn(callback)
+				return -- Выходим, чтобы окно не появлялось
+			end
+		end
+	end
+	-- [КОНЕЦ НОВОГО КОДА]
+
 	local KeyUI = inst("ScreenGui")
 	KeyUI.Name = "KeySystem"
 	KeyUI.ZIndexBehavior = enum.ZIndexBehavior.Sibling
@@ -339,6 +359,13 @@ function Library:BuildKeySystem(config, callback)
 		end
 
 		if valid then
+			-- [НОВОЕ] Сохранение ключа в файл при верном вводе
+			if config.SaveKey and writefile then
+				local fileName = config.KeyFileName or "SavedHubKey.txt"
+				writefile(fileName, input)
+			end
+			-- [КОНЕЦ НОВОГО КОДА]
+
 			KeyUI:Destroy()
 			callback()
 		else
