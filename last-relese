@@ -205,7 +205,7 @@ function Library:BuildKeySystem(config, callback)
 
 			if valid then
 				getgenv().CursedHubKey = savedKey
-				task.spawn(callback)
+				task.defer(callback)
 				return -- Выходим, чтобы окно не появлялось
 			end
 		end
