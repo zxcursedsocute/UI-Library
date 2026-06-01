@@ -1,5 +1,6 @@
 local cloneref = (cloneref or clonereference or function(instance) return instance end)
 
+local CoreGui = cloneref(game:GetService("CoreGui"))
 local HttpService = cloneref(game:GetService("HttpService"))
 local TweenService = cloneref(game:GetService("TweenService"))
 local UserInputService = cloneref(game:GetService("UserInputService"))
