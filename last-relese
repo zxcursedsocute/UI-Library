@@ -97,9 +97,13 @@ local Themes = {
 		DestroyGFrame = c3rgb(10, 11, 11),
 		DropDownColor = c3rgb(11, 11, 11)
 	}),
-	["Pregnant Two Time (by mary)"] = extendTheme(BaseDarkTheme, {
-		BackGroundIcon = "rbxassetid://94350788044043",
-		NotiImg = "rbxassetid://101937081141745",
+	["Art Contex 1"] = extendTheme(BaseDarkTheme, {
+		BackGroundIcon = "rbxassetid://100420470220220",
+		DestroyGFrame = c3rgb(10, 11, 11),
+		DropDownColor = c3rgb(11, 11, 11)
+	}),
+	["Art Contex 2"] = extendTheme(BaseDarkTheme, {
+		BackGroundIcon = "rbxassetid://126729993390334",
 		DestroyGFrame = c3rgb(10, 11, 11),
 		DropDownColor = c3rgb(11, 11, 11)
 	}),
