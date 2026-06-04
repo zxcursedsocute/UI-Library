@@ -3007,7 +3007,7 @@ function Library:SaveConfig(foldername,filename)
 	end
 
 	for name, obj in pairs(self.AllElements.Dropdowns) do
-		config.Dropdowns[name] = obj.GetValue()
+		config.Dropdowns[name] = obj:GetValue()
 	end
 
 	for name, obj in pairs(self.AllElements.Inputs) do
