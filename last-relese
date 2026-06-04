@@ -24,7 +24,9 @@ Library.__index = Library
 
 local function extendTheme(base, overrides)
 	local theme = {}
-	for k, v in pairs(base) do theme[k] = v end
+	for k, v in base do 
+		theme[k] = v 
+	end
 	for k, v in pairs(overrides) do theme[k] = v end
 	return theme
 end
@@ -184,8 +186,15 @@ local Themes = {
 }
 
 function Library:AddThemeObject(instance : Instance, property : string, themeKey : string)
-	if not self.ThemeObjects then self.ThemeObjects = {} end
-	table.insert(self.ThemeObjects, {Instance = instance, Property = property, ThemeKey = themeKey})
+	if not self.ThemeObjects then 
+		self.ThemeObjects = setmetatable({}, {__mode = "k"}) 
+	end
+
+	if not self.ThemeObjects[instance] then
+		self.ThemeObjects[instance] = {}
+	end
+
+	table.insert(self.ThemeObjects[instance], {Property = property, ThemeKey = themeKey})
 
 	if self.Theme and self.Theme[themeKey] ~= nil then
 		instance[property] = self.Theme[themeKey]
@@ -193,13 +202,12 @@ function Library:AddThemeObject(instance : Instance, property : string, themeKey
 end
 
 function Library:BuildKeySystem(config, callback)
-	-- [НОВОЕ] Проверка сохраненного ключа перед отрисовкой интерфейса
 	if config.SaveKey and isfile and readfile then
 		local fileName = config.KeyFileName or "SavedHubKey.txt"
 		if isfile(fileName) then
-			local savedKey = readfile(fileName)
+			local savedKey = string.gsub(readfile(fileName), "^%s*(.-)%s*$", "%1")
 			local valid = false
-			
+
 			for _, k in pairs(config.Keys or {}) do
 				if savedKey == k then valid = true break end
 			end
@@ -207,16 +215,14 @@ function Library:BuildKeySystem(config, callback)
 			if valid then
 				getgenv().CursedHubKey = savedKey
 				task.defer(callback)
-				return -- Выходим, чтобы окно не появлялось
+				return 
 			end
 		end
 	end
-	-- [КОНЕЦ НОВОГО КОДА]
 
 	local KeyUI = inst("ScreenGui")
-	KeyUI.Name = "KeySystem"
 	KeyUI.ZIndexBehavior = enum.ZIndexBehavior.Sibling
-	KeyUI.Parent = gethui and gethui() or (game:GetService("CoreGui") or LocalPlayer:WaitForChild("PlayerGui"))
+	KeyUI.Parent = gethui and gethui() or (CoreGui or LocalPlayer:WaitForChild("PlayerGui"))
 
 	local hasIcon = config.Icon and config.Icon ~= ""
 
@@ -224,7 +230,6 @@ function Library:BuildKeySystem(config, callback)
 	local contentX = hasIcon and 0.42 or 0.08
 
 	local MainFrame = inst("ImageLabel")
-	MainFrame.Name = "MainFrame"
 	MainFrame.BackgroundColor3 = c3rgb(255, 255, 255)
 	MainFrame.BackgroundTransparency = 1
 	MainFrame.ImageTransparency = 0.05
@@ -234,8 +239,6 @@ function Library:BuildKeySystem(config, callback)
 	MainFrame.Size = ud2(0, frameWidth, 0, 300)
 	MainFrame.Image = self.Theme.keyback or "" 
 	MainFrame.Parent = KeyUI
-
-	inst("UICorner", MainFrame).CornerRadius = ud(0, 25)
 
 	if hasIcon then
 		local SideIcon = inst("ImageLabel", MainFrame)
@@ -352,21 +355,17 @@ function Library:BuildKeySystem(config, callback)
 	end)
 
 	EnterBtn.MouseButton1Click:Connect(function()
-		local input = Box.Text
+		local input = string.gsub(Box.Text, "^%s*(.-)%s*$", "%1")
 		local valid = false
-		getgenv().CursedHubKey = input
 		for _, k in pairs(config.Keys or {}) do
 			if input == k then valid = true break end
 		end
 
 		if valid then
-			-- [НОВОЕ] Сохранение ключа в файл при верном вводе
 			if config.SaveKey and writefile then
 				local fileName = config.KeyFileName or "SavedHubKey.txt"
 				writefile(fileName, input)
 			end
-			-- [КОНЕЦ НОВОГО КОДА]
-
 			KeyUI:Destroy()
 			callback()
 		else
@@ -442,10 +441,57 @@ function Library.CreateWindow(config)
 
 	self:AddThemeObject(self.ImageLabel, "Image", "BackGroundIcon")
 	self.ImageLabel.Active = true
-	self.ImageLabel.Selectable = true
-	self.ImageLabel.Draggable = true
 	self.ImageLabel.ImageTransparency = 0.05
 	self.ImageLabel.Parent = self.UI
+
+	local dragging = false
+	local dragInput = nil
+	local dragStart = Vector3.new()
+	local startPos = ud2(0, 0, 0, 0)
+
+	self.ImageLabel.InputBegan:Connect(function(input)
+		if input.UserInputType == enum.UserInputType.MouseButton1 or input.UserInputType == enum.UserInputType.Touch then
+			if Library.IsInteractingWithUI then
+				Library.IsInteractingWithUI = false 
+				return 
+			end
+
+			dragging = true
+			dragInput = input
+			dragStart = input.Position
+			startPos = self.ImageLabel.Position
+
+			local connection
+			connection = input.Changed:Connect(function()
+				if input.UserInputState == enum.UserInputState.End then
+					dragging = false
+					dragInput = nil
+					if connection then
+						connection:Disconnect()
+					end
+				end
+			end)
+		end
+	end)
+
+	UserInputService.InputChanged:Connect(function(input)
+		if dragging then
+			local isTouch = (input == dragInput)
+			local isMouse = (dragInput.UserInputType == enum.UserInputType.MouseButton1 and input.UserInputType == enum.UserInputType.MouseMovement)
+
+			if isTouch or isMouse then
+				local delta = input.Position - dragStart
+				local scale = self.ScaleFactor or 1
+
+				self.ImageLabel.Position = ud2(
+					startPos.X.Scale, 
+					startPos.X.Offset + (delta.X / scale), 
+					startPos.Y.Scale, 
+					startPos.Y.Offset + (delta.Y / scale)
+				)
+			end
+		end
+	end)
 
 	self.Header = inst("Frame")
 	self:AddThemeObject(self.Header, "BackgroundColor3", "HeaderColor")
@@ -530,7 +576,7 @@ function Library.CreateWindow(config)
 	self.close.BackgroundTransparency = 1.000
 	self.close.Position = ud2(0.945, 0, 0.2, 0)
 	self.close.Size = ud2(0, 24, 0, 24)
-	self.close.Image = "rbxassetid://115483385285173"
+	self.close.Image = "rbxassetid://94538718832963"
 	self:AddThemeObject(self.close, "ImageColor3", "TabsIconColor")
 	self.close.Parent = self.Header
 
@@ -585,10 +631,8 @@ function Library.CreateWindow(config)
 	TabListLayout.SortOrder = enum.SortOrder.LayoutOrder
 	TabListLayout.Padding = ud(0, 5)
 
-	TabListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-		local correctHeight = TabListLayout.AbsoluteContentSize.Y / self.ScaleFactor
-		self.ScrollingFrame.CanvasSize = ud2(0, 0, 0, correctHeight)
-	end)
+	self.ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+	self.ScrollingFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
 
 	self.Tabs.BackgroundColor3 = c3rgb(255, 255, 255)
 	self.Tabs.BackgroundTransparency = 1
@@ -613,7 +657,7 @@ function Library.CreateWindow(config)
 	self.WindowUser.Size = ud2(0, 180, 0, 45)
 	self.WindowUser.Parent = self.Tabs
 
-	UICorner_User.CornerRadius = ud(0.3, 0)
+	UICorner_User.CornerRadius = ud(0.35, 0)
 	UICorner_User.Parent = self.WindowUser
 
 	ImageLabel.BackgroundColor3 = c3rgb(255, 255, 255)
@@ -1010,7 +1054,7 @@ function Library:AddTab(name : string,icon : string)
 	TextLabel_3.BackgroundTransparency = 1.000
 	TextLabel_3.BorderColor3 = c3rgb(0, 0, 0)
 	TextLabel_3.BorderSizePixel = 0
-	TextLabel_3.Position = ud2((icon and icon ~= "") and 0.21 or 0.05, 0, 0, -1)
+	TextLabel_3.Position = ud2((icon and icon ~= "") and 0.22 or 0.05, 0, 0, 0)
 	TextLabel_3.Size = ud2(0, 52, 0, 35)
 	TextLabel_3.Font = enum.Font.FredokaOne
 	TextLabel_3.Text = name
@@ -1053,10 +1097,8 @@ function Library:AddTab(name : string,icon : string)
 	UIPadding.PaddingTop = ud(0, 0)
 	UIPadding.PaddingLeft = ud(0, 10)
 
-	UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-		local correctHeight = UIListLayout.AbsoluteContentSize.Y / (self.ScaleFactor or 1)
-		ScrollingFrame_2.CanvasSize = ud2(0, 0, 0, correctHeight + 5)
-	end)
+	ScrollingFrame_2.CanvasSize = UDim2.new(0, 0, 0, 0)
+	ScrollingFrame_2.AutomaticCanvasSize = Enum.AutomaticSize.Y
 
 	local ImageLabel = inst("ImageLabel")
 
@@ -1430,9 +1472,11 @@ function Library:AddTab(name : string,icon : string)
 		sliderbutton.BackgroundColor3, sliderbutton.BackgroundTransparency = self.Theme.ToggleButton, self.Theme.ToggleTran
 		sliderbutton.BorderSizePixel, sliderbutton.Position, sliderbutton.Size, sliderbutton.Parent = 0, ud2(0.8, 0, 0.206, 0), ud2(0, 54, 0, 25), Toggle
 		UICorner_2.Parent = sliderbutton
+		UICorner_2.CornerRadius = ud(0, 12)
 
 		Frame.BorderSizePixel, Frame.Position, Frame.Size, Frame.Parent = 0, ud2(0, 3, 0.12, 0), ud2(0, 19, 0, 19), sliderbutton
 		UICorner_3.Parent = Frame
+		UICorner_3.CornerRadius = ud(0, 35)
 		self:AddThemeObject(Frame, "BackgroundColor3", "Togglebtn")
 
 		local toggleController = {
@@ -1603,16 +1647,7 @@ function Library:AddTab(name : string,icon : string)
 	end
 
 	function tab:AddInput(config)
-		local Input = {
-			Name = config.Name,
-			Description = config.Description or '',
-			SaveUserText = config.SaveUserText or false,
-			SaveConfig = config.SaveConfig or false,
-			Default = config.Default or "Default",
-			Callback = config.Callback
-		}
-
-		local internalFullText = Input.Default
+		local internalFullText = config.Default or "Default"
 
 		local input = inst("Frame")
 		local UICorner = inst("UICorner")
@@ -1623,7 +1658,6 @@ function Library:AddTab(name : string,icon : string)
 
 		self:AddThemeObject(input, "BackgroundColor3", "BackGroundElemCol")
 		self:AddThemeObject(input, "BackgroundTransparency", "BackGroundElemTran")
-		input.BorderColor3 = c3rgb(0, 0, 0)
 		input.BorderSizePixel = 0
 		input.Size = ud2(0, 360, 0, 45)
 		input.Parent = self.Container
@@ -1631,105 +1665,77 @@ function Library:AddTab(name : string,icon : string)
 		UICorner.CornerRadius = ud(0, 12)
 		UICorner.Parent = input
 
-		local namepos = (config.Description and config.Description ~= '') and 4 or 12.5
-
-		name.BackgroundColor3 = c3rgb(255, 255, 255)
-		name.BackgroundTransparency = 1.000
-		name.BorderColor3 = c3rgb(0, 0, 0)
+		name.BackgroundTransparency = 1
 		name.BorderSizePixel = 0
-		name.Position = ud2(0.0290000141, 0, 0, namepos)
+		name.Position = ud2(0.029, 0, 0, (config.Description and config.Description ~= "") and 4 or 12.5)
 		name.Size = ud2(0, 77, 0, 20)
 		name.Font = enum.Font.FredokaOne
-		name.Text = Input.Name
-		self:AddThemeObject(name, "TextColor3", "TabTextColor")
-		name.TextSize = 16.000
+		name.Text = config.Name or "Input"
+		name.TextSize = 16
 		name.TextXAlignment = enum.TextXAlignment.Left
 		name.Parent = input
+		self:AddThemeObject(name, "TextColor3", "TabTextColor")
 
-		subtext.BackgroundColor3 = c3rgb(255, 255, 255)
-		subtext.BackgroundTransparency = 1.000
-		subtext.BorderColor3 = c3rgb(0, 0, 0)
+		subtext.BackgroundTransparency = 1
 		subtext.BorderSizePixel = 0
-		subtext.Position = ud2(0.0289855078, 0, 0, 25)
+		subtext.Position = ud2(0.029, 0, 0, 25)
 		subtext.Size = ud2(0, 193, 0, 14)
 		subtext.Font = enum.Font.FredokaOne
-		subtext.Text = Input.Description
-		self:AddThemeObject(subtext, "TextColor3", "TabSubTtitleTextColor")
-		subtext.TextSize = 14.000
+		subtext.Text = config.Description or ""
+		subtext.TextSize = 14
 		subtext.TextXAlignment = enum.TextXAlignment.Left
+		subtext.Visible = (config.Description and config.Description ~= "")
 		subtext.Parent = input
+		self:AddThemeObject(subtext, "TextColor3", "TabSubTtitleTextColor")
 
-		self:AddThemeObject(TextBox, "BackgroundColor3", "BackGroundElemCol")
-		self:AddThemeObject(TextBox, "BackgroundTransparency", "BackGroundButtonTran")
-		TextBox.BorderColor3 = c3rgb(255, 255, 255)
 		TextBox.BorderSizePixel = 0
-		TextBox.Position = ud2(0.574999988, 0, 0.155555561, 0)
+		TextBox.Position = ud2(0.575, 0, 0.15, 0)
 		TextBox.Size = ud2(0, 135, 0, 30)
 		TextBox.Font = enum.Font.FredokaOne
-		TextBox.Text = Input.Default
-		self:AddThemeObject(TextBox, "TextColor3", "InputTextColor")
-		TextBox.TextSize = 14.000
+		TextBox.Text = internalFullText
+		TextBox.TextSize = 14
 		TextBox.Parent = input
+		self:AddThemeObject(TextBox, "BackgroundColor3", "BackGroundElemCol")
+		self:AddThemeObject(TextBox, "BackgroundTransparency", "BackGroundButtonTran")
+		self:AddThemeObject(TextBox, "TextColor3", "InputTextColor")
 
 		UICorner_2.CornerRadius = ud(0, 5)
 		UICorner_2.Parent = TextBox
 
-	TextBox.FocusLost:Connect(function()
-			local currentText = TextBox.Text
-
-			if Input.SaveUserText then
-				internalFullText = currentText
-
-				if #currentText > 18 then
-					TextBox.Text = string.sub(currentText, 1, 15) .. "..."
+		TextBox.FocusLost:Connect(function()
+			internalFullText = TextBox.Text
+			if config.SaveUserText then
+				if #internalFullText > 18 then
+					TextBox.Text = string.sub(internalFullText, 1, 15) .. "..."
 				end
 			else
-				internalFullText = currentText 
-				
-				task.spawn(function()
-					task.wait()
-					TextBox.Text = Input.Default
-				end)
+				task.defer(function() TextBox.Text = config.Default or "Default" end)
 			end
-
-			if config.Callback then
-				task.spawn(config.Callback, internalFullText)
-			end
+			if config.Callback then task.spawn(config.Callback, internalFullText) end
 		end)
-
-		local function SetInput(Text2)
-			TextBox.Text = Text2
-			if config.Callback then
-				config.Callback(Text2)
-			end
-		end
 
 		local InputObj = {
 			Name = config.Name,
 			Elem = input,
-			SetText = SetInput,
-			GetState = function(self)
-				return TextBox.Text
+			SetText = function(text)
+				internalFullText = text
+				TextBox.Text = (config.SaveUserText and #text > 18) and (string.sub(text, 1, 15) .. "...") or text
+				if config.Callback then task.spawn(config.Callback, text) end
 			end,
-			SaveConfig = Input.SaveConfig,
+			GetState = function() return internalFullText end,
+			SaveConfig = config.SaveConfig or false,
 			Callback = config.Callback
 		}
 		self.AllElements.Inputs[config.Name] = InputObj
-
 		return InputObj
 	end
 
 	function tab:AddSlider(config)
-		local Slider = {
-			Name = config.Name,
-			Description = config.Description or '',
-			min = config.Min or 0,
-			max = config.Max or 100,
-			Callback = config.Callback,
-		}
-		local value = config.Default or Slider.min
+		local minVal = config.Min or 0
+		local maxVal = config.Max or 100
+		local value = config.Default or minVal
 
-		local slider = inst("TextButton")
+		local slider = inst("Frame")
 		local UICorner = inst("UICorner")
 		local name = inst("TextLabel")
 		local subtext = inst("TextLabel")
@@ -1742,21 +1748,22 @@ function Library:AddTab(name : string,icon : string)
 
 		self:AddThemeObject(slider, "BackgroundColor3", "BackGroundElemCol")
 		self:AddThemeObject(slider, "BackgroundTransparency", "BackGroundElemTran")
-		slider.BorderSizePixel = 0
-		slider.Text = ""
+
+		slider.Active = true
 		slider.Size = ud2(0, 360, 0, 45)
 		slider.Parent = self.Container
 
 		UICorner.CornerRadius = ud(0, 12)
 		UICorner.Parent = slider
 
-		local namepos = (config.Description and config.Description ~= '') and 4 or 12.5
+		local hasDesc = config.Description and config.Description ~= ''
+		local namepos = hasDesc and 4 or 12.5
 
 		name.BackgroundTransparency = 1.000
 		name.Position = ud2(0.029, 0, 0, namepos)
 		name.Size = ud2(0, 77, 0, 20)
 		name.Font = enum.Font.FredokaOne
-		name.Text = Slider.Name
+		name.Text = config.Name
 		self:AddThemeObject(name, "TextColor3", "TabTextColor")
 		name.TextSize = 16.000
 		name.TextXAlignment = enum.TextXAlignment.Left
@@ -1766,7 +1773,7 @@ function Library:AddTab(name : string,icon : string)
 		subtext.Position = ud2(0.029, 0, 0, 25)
 		subtext.Size = ud2(0, 193, 0, 14)
 		subtext.Font = enum.Font.FredokaOne
-		subtext.Text = Slider.Description
+		subtext.Text = config.Description or ''
 		self:AddThemeObject(subtext, "TextColor3", "TabSubTtitleTextColor")
 		subtext.TextSize = 14.000
 		subtext.TextXAlignment = enum.TextXAlignment.Left
@@ -1823,13 +1830,16 @@ function Library:AddTab(name : string,icon : string)
 		end
 
 		local function updateValue(newValue)
-			value = math.clamp(newValue, Slider.min, Slider.max)
-			local percent = (value - Slider.min) / (Slider.max - Slider.min)
+			value = math.clamp(newValue, minVal, maxVal)
+
+			local range = maxVal - minVal
+			local percent = (range > 0) and ((value - minVal) / range) or 0
+
 			underline.Size = ud2(percent, 0, 0, 2)
 			sliderball.Position = ud2(percent, 0, 0.5, 0)
 
-			local displayValue = (Slider.max > 10) and math.floor(value + 0.5) or (math.floor(value * 10 + 0.5) / 10)
-			slideramount.Text = (Slider.max > 10) and tostring(displayValue) or string.format("%.1f", displayValue)
+			local displayValue = (maxVal > 10) and math.floor(value + 0.5) or (math.floor(value * 10 + 0.5) / 10)
+			slideramount.Text = (maxVal > 10) and tostring(displayValue) or string.format("%.1f", displayValue)
 
 			if config.Callback then
 				task.spawn(config.Callback, displayValue)
@@ -1839,11 +1849,12 @@ function Library:AddTab(name : string,icon : string)
 		local function moveSlider(input)
 			local pos = input.Position.X - sliderbutton.AbsolutePosition.X
 			local percent = math.clamp(pos / sliderbutton.AbsoluteSize.X, 0, 1)
-			updateValue(Slider.min + percent * (Slider.max - Slider.min))
+			updateValue(minVal + percent * (maxVal - minVal))
 		end
 
 		sliderbutton.InputBegan:Connect(function(input)
 			if input.UserInputType == enum.UserInputType.MouseButton1 or input.UserInputType == enum.UserInputType.Touch then
+				Library.IsInteractingWithUI = true
 				Library.SharedSliderState.ActiveMoveFunc = moveSlider
 				moveSlider(input)
 			end
@@ -2140,14 +2151,13 @@ function Library:AddTab(name : string,icon : string)
 	end
 
 	function tab:AddDropdown(config)
-		local dropdown = {
+		local dropdownObj = {
 			Name = config.Name,
-			Description = config.Description or '',
 			Options = config.Options or {},
-			Default = config.Default or "",
 			Multi = config.Multi or false,
 			Callback = config.Callback,
-			Selected = config.Multi and {} or nil
+			Selected = config.Multi and {} or nil,
+			Elem = nil 
 		}
 
 		local guiRoot = self.Container.Parent.Parent
@@ -2176,6 +2186,10 @@ function Library:AddTab(name : string,icon : string)
 			SharedOptions.ZIndex = 50
 			SharedOptions.ScrollBarThickness = 2
 			SharedOptions.ClipsDescendants = true
+
+			SharedOptions.CanvasSize = ud2(0, 0, 0, 0)
+			SharedOptions.AutomaticCanvasSize = enum.AutomaticSize.Y
+
 			SharedOptions.Parent = SharedContainer
 
 			local UICorner_3 = inst("UICorner")
@@ -2198,6 +2212,8 @@ function Library:AddTab(name : string,icon : string)
 		local SharedOptions = Library.SharedDropdownState.OptionsFrame
 
 		local Dropdown = inst("Frame")
+		dropdownObj.Elem = Dropdown 
+
 		local UICorner = inst("UICorner")
 		local name = inst("TextLabel")
 		local subtext = inst("TextLabel")
@@ -2222,7 +2238,7 @@ function Library:AddTab(name : string,icon : string)
 		name.Position = ud2(0.029, 0, 0, namepos)
 		name.Size = ud2(0, 77, 0, 20)
 		name.Font = enum.Font.FredokaOne
-		name.Text = dropdown.Name
+		name.Text = dropdownObj.Name
 		self:AddThemeObject(name, "TextColor3", "TabTextColor")
 		name.TextSize = 16.000
 		name.TextXAlignment = enum.TextXAlignment.Left
@@ -2232,7 +2248,7 @@ function Library:AddTab(name : string,icon : string)
 		subtext.Position = ud2(0.0289, 0, 0, 25)
 		subtext.Size = ud2(0, 193, 0, 14)
 		subtext.Font = enum.Font.FredokaOne
-		subtext.Text = dropdown.Description
+		subtext.Text = config.Description or ""
 		self:AddThemeObject(subtext, "TextColor3", "TabSubTtitleTextColor")
 		subtext.TextSize = 14.000
 		subtext.TextXAlignment = enum.TextXAlignment.Left
@@ -2258,6 +2274,9 @@ function Library:AddTab(name : string,icon : string)
 		TextLabel.TextSize = 14.000
 		TextLabel.TextXAlignment = enum.TextXAlignment.Left
 
+		TextLabel.TextWrapped = true
+		TextLabel.TextTruncate = enum.TextTruncate.AtEnd
+
 		ImageLabel.Parent = Select
 		ImageLabel.BackgroundTransparency = 1.000
 		ImageLabel.Position = ud2(0.816, 0, 0.166, 0)
@@ -2267,31 +2286,9 @@ function Library:AddTab(name : string,icon : string)
 
 		local optionElements = {}
 
-		local function formatTextWrap(str, wrapLimit, maxLimit)
-			if not str or str == "" then return "Select..." end
-			local visible_count = 0
-			for i = 1, #str do
-				local c = str:sub(i, i)
-				if c ~= " " and c ~= "," then visible_count = visible_count + 1 end
-				if visible_count >= wrapLimit then
-					local break_pos = i
-					for j = i + 1, #str do
-						local next_char = str:sub(j, j)
-						if next_char ~= " " and next_char ~= "," then break end
-						break_pos = j
-					end
-					local result = str
-					if #result >= maxLimit then result = result:sub(1, maxLimit) .. "..." end
-					return result:sub(1, break_pos) .. "\n" .. result:sub(break_pos + 1)
-				end
-			end
-			if #str >= maxLimit then return str:sub(1, maxLimit) .. "..." end
-			return str
-		end
-
 		local function refreshVisuals()
 			for optText, frameInd in pairs(optionElements) do
-				local isSelected = dropdown.Multi and dropdown.Selected[optText] or (dropdown.Selected == optText)
+				local isSelected = dropdownObj.Multi and dropdownObj.Selected[optText] or (dropdownObj.Selected == optText)
 				if isSelected then
 					Library:Tween(frameInd, {Size = ud2(0, 2, 0, 22), BackgroundTransparency = 0}, 0.2)
 				else
@@ -2319,25 +2316,25 @@ function Library:AddTab(name : string,icon : string)
 		end
 
 		local function handleOptionClick(option)
-			if dropdown.Multi then
-				dropdown.Selected[option] = not dropdown.Selected[option]
+			if dropdownObj.Multi then
+				dropdownObj.Selected[option] = not dropdownObj.Selected[option]
 
 				local selectedText = ""
-				for opt, sel in pairs(dropdown.Selected) do
-					if sel then selectedText = selectedText .. (selectedText == "" and opt or "," .. opt) end
+				for opt, sel in pairs(dropdownObj.Selected) do
+					if sel then selectedText = selectedText .. (selectedText == "" and opt or ", " .. opt) end
 				end
-				TextLabel.Text = formatTextWrap(selectedText, 14, 28)
+				TextLabel.Text = selectedText == "" and "Select..." or selectedText
 				refreshVisuals()
 			else
-				TextLabel.Text = formatTextWrap(option, 14, 28)
-				dropdown.Selected = option
+				TextLabel.Text = option
+				dropdownObj.Selected = option
 				refreshVisuals()
 				closeDropdown()
 			end
 
-			if type(dropdown.Callback) == "function" then
+			if type(dropdownObj.Callback) == "function" then
 				task.spawn(function()
-					local success, err = pcall(dropdown.Callback, dropdown.Multi and dropdown.Selected or option)
+					local success, err = pcall(dropdownObj.Callback, dropdownObj.Multi and dropdownObj.Selected or option)
 				end)
 			end
 		end
@@ -2356,7 +2353,7 @@ function Library:AddTab(name : string,icon : string)
 
 			Option.MouseEnter:Connect(function()
 				Library:Tween(Option, {BackgroundTransparency = 0.95}, 0.3)
-				local isSelected = dropdown.Multi and dropdown.Selected[optionText] or (dropdown.Selected == optionText)
+				local isSelected = dropdownObj.Multi and dropdownObj.Selected[optionText] or (dropdownObj.Selected == optionText)
 				if not isSelected then
 					Library:Tween(Frame, {Size = ud2(0, 2, 0, 22), BackgroundTransparency = 0.5}, 0.3)
 				end
@@ -2364,7 +2361,7 @@ function Library:AddTab(name : string,icon : string)
 
 			Option.MouseLeave:Connect(function()
 				Library:Tween(Option, {BackgroundTransparency = 1}, 0.3)
-				local isSelected = dropdown.Multi and dropdown.Selected[optionText] or (dropdown.Selected == optionText)
+				local isSelected = dropdownObj.Multi and dropdownObj.Selected[optionText] or (dropdownObj.Selected == optionText)
 				if not isSelected then
 					Library:Tween(Frame, {BackgroundTransparency = 1, Size = ud2(0, 2, 0, 0)}, 0.3)
 				end
@@ -2374,10 +2371,14 @@ function Library:AddTab(name : string,icon : string)
 			OptionTextLabel.Position = ud2(0.047, 0, 0, 0)
 			OptionTextLabel.Size = ud2(0, 124, 0, 30)
 			OptionTextLabel.Font = enum.Font.FredokaOne
-			OptionTextLabel.Text = formatTextWrap(optionText, 18, 38)
+			OptionTextLabel.Text = optionText
 			self:AddThemeObject(OptionTextLabel, "TextColor3", "TabTextColor")
 			OptionTextLabel.TextSize = 14
 			OptionTextLabel.TextXAlignment = enum.TextXAlignment.Left
+
+			OptionTextLabel.TextWrapped = true
+			OptionTextLabel.TextTruncate = enum.TextTruncate.AtEnd
+
 			OptionTextLabel.Parent = Option
 
 			self:AddThemeObject(Frame, "BackgroundColor3", "DropDownFrameColor")
@@ -2420,12 +2421,12 @@ function Library:AddTab(name : string,icon : string)
 			end
 			table.clear(optionElements)
 
-			for _, option in ipairs(dropdown.Options) do createOption(option) end
-			SharedOptions.CanvasSize = ud2(0, 0, 0, #dropdown.Options * 30)
+			for _, option in ipairs(dropdownObj.Options) do createOption(option) end
 
 			updateDropdownPosition()
 			SharedContainer.Visible = true
-			local height = math.min(150, #dropdown.Options * 30)
+
+			local height = math.min(150, #dropdownObj.Options * 30)
 			Library:Tween(SharedContainer, {Size = ud2(0, 140, 0, height + 10)}, 0.2)
 			Library:Tween(SharedOptions, {Size = ud2(0, 135, 0, height)}, 0.2)
 			refreshVisuals()
@@ -2457,49 +2458,47 @@ function Library:AddTab(name : string,icon : string)
 			end
 		end)
 
-		local dropdownObj = {
-			Name = config.Name,
-			Elem = Dropdown,
-			Value = config.Default,
-			Options = config.Options,
-			Multi = config.Multi,
-			GetValue = function() return dropdown.Selected end,
-			SetValue = function(self, value)
-				if self.Multi then
-					table.clear(dropdown.Selected)
-					if type(value) == "table" then
-						for option, selected in pairs(value) do
-							if selected and table.find(self.Options, option) then dropdown.Selected[option] = true end
-						end
+		dropdownObj.GetValue = function(self) return self.Selected end
+
+		dropdownObj.SetValue = function(self, value)
+			if self.Multi then
+				table.clear(self.Selected)
+				if type(value) == "table" then
+					for option, selected in pairs(value) do
+						if selected and table.find(self.Options, option) then self.Selected[option] = true end
 					end
-					local selectedText = ""
-					for opt, sel in pairs(dropdown.Selected) do
-						if sel then selectedText = selectedText .. (selectedText == "" and opt or "," .. opt) end
-					end
-					TextLabel.Text = formatTextWrap(selectedText, 14, 28)
+				end
+				local selectedText = ""
+				for opt, sel in pairs(self.Selected) do
+					if sel then selectedText = selectedText .. (selectedText == "" and opt or ", " .. opt) end
+				end
+				TextLabel.Text = selectedText == "" and "Select..." or selectedText
+			else
+				if table.find(self.Options, value) then
+					self.Selected = value
+					TextLabel.Text = value
 				else
-					if table.find(self.Options, value) then
-						dropdown.Selected = value
-						TextLabel.Text = formatTextWrap(value, 14, 28)
-					end
+					TextLabel.Text = "Select..."
 				end
-				if Library.SharedDropdownState.ActiveCloseFunc == closeDropdown then refreshVisuals() end
-				if config.Callback then config.Callback(dropdown.Selected) end
-			end,
-			UpdateOptions = function(self, newOptions, newDefault)
-				self.Options = newOptions
-				dropdown.Options = newOptions
-				if SharedContainer.Visible and Library.SharedDropdownState.ActiveCloseFunc == closeDropdown then
-					openDropdown()
-				end
-				self:SetValue(newDefault or (dropdown.Multi and {} or nil))
-			end,
-			SetVisible = function(self, visible) Dropdown.Visible = visible end,
-			Destroy = function(self)
-				if Library.SharedDropdownState.ActiveCloseFunc == closeDropdown then closeDropdown() end
-				Dropdown:Destroy()
 			end
-		}
+			if Library.SharedDropdownState.ActiveCloseFunc == closeDropdown then refreshVisuals() end
+			if self.Callback then self.Callback(self.Selected) end
+		end
+
+		dropdownObj.UpdateOptions = function(self, newOptions, newDefault)
+			self.Options = newOptions
+			if SharedContainer.Visible and Library.SharedDropdownState.ActiveCloseFunc == closeDropdown then
+				openDropdown()
+			end
+			self:SetValue(newDefault or (self.Multi and {} or nil))
+		end
+
+		dropdownObj.SetVisible = function(self, visible) Dropdown.Visible = visible end
+
+		dropdownObj.Destroy = function(self)
+			if Library.SharedDropdownState.ActiveCloseFunc == closeDropdown then closeDropdown() end
+			Dropdown:Destroy()
+		end
 
 		if config.Default then dropdownObj:SetValue(config.Default) end
 		self.AllElements.Dropdowns[config.Name] = dropdownObj
@@ -3323,15 +3322,14 @@ function Library:SetTheme(themeName : string)
 	self.CurrentThemeName = themeName
 	self.Theme = theme
 
-	local aliveObjects = {}
 	if self.ThemeObjects then
-		for _, obj in ipairs(self.ThemeObjects) do
-			if obj.Instance and obj.Instance.Parent then
-				obj.Instance[obj.Property] = theme[obj.ThemeKey]
-				table.insert(aliveObjects, obj)
+		for instance, properties in pairs(self.ThemeObjects) do
+			for _, data in ipairs(properties) do
+				if theme[data.ThemeKey] ~= nil then
+					instance[data.Property] = theme[data.ThemeKey]
+				end
 			end
 		end
-		self.ThemeObjects = aliveObjects
 	end
 
 	for i, v in pairs(self.ActiveNotifications) do
