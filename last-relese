@@ -1412,41 +1412,47 @@ function Library:AddTab(name : string,icon : string)
 	end
 
 	function tab:AddButton(config)
-		local Button = inst("TextButton")
-		local UICorner = inst("UICorner")
-		local name = inst("TextLabel")
-		local subtext = inst("TextLabel")
-		local ImageLabel = inst("ImageLabel")
-
-		local desc = config.Description or ""
-		local hasDesc = desc ~= ""
-
-		self:AddThemeObject(Button, "BackgroundColor3", "BackGroundElemCol")
-		self:AddThemeObject(Button, "BackgroundTransparency", "BackGroundElemTran")
-		Button.BorderSizePixel, Button.Size, Button.Text, Button.Parent = 0, ud2(0, 360, 0, 45), "", self.Container
-
-		Button.MouseButton1Click:Connect(function()
-			if config.Callback then task.spawn(config.Callback) end
-		end)
-
-		UICorner.CornerRadius, UICorner.Parent = ud(0, 12), Button
-
-		name.BackgroundTransparency, name.BorderSizePixel, name.Font = 1, 0, enum.Font.FredokaOne
-		name.Position, name.Size, name.Text = ud2(0.029, 0, 0, hasDesc and 4 or 12.5), ud2(0, 77, 0, 20), config.Name
-		name.TextSize, name.TextXAlignment, name.Parent = 16, enum.TextXAlignment.Left, Button
-		self:AddThemeObject(name, "TextColor3", "TabTextColor")
-
-		subtext.BackgroundTransparency, subtext.BorderSizePixel, subtext.Font = 1, 0, enum.Font.FredokaOne
-		subtext.Position, subtext.Size, subtext.Text = ud2(0.029, 0, 0, 25), ud2(0, 193, 0, 14), desc
-		subtext.TextSize, subtext.TextXAlignment, subtext.Visible, subtext.Parent = 14, enum.TextXAlignment.Left, hasDesc, Button
-		self:AddThemeObject(subtext, "TextColor3", "TabSubTtitleTextColor")
-
-		ImageLabel.BackgroundTransparency, ImageLabel.BorderSizePixel = 1, 0
-		ImageLabel.Position, ImageLabel.Size, ImageLabel.Image = ud2(0.841, 0, 0.244, 0), ud2(0, 25, 0, 23), "rbxassetid://140083176080437"
-		ImageLabel.Parent = Button
-		self:AddThemeObject(ImageLabel, "ImageColor3", "DropDownArrowImg")
-
-		return { Elem = Button }
+	    local Button = inst("TextButton")
+	    local UICorner = inst("UICorner")
+	    local name = inst("TextLabel")
+	    local subtext = inst("TextLabel")
+	    local ImageLabel = inst("ImageLabel")
+	
+	    local desc = config.Description or ""
+	    local hasDesc = desc ~= ""
+	
+	    self:AddThemeObject(Button, "BackgroundColor3", "BackGroundElemCol")
+	    self:AddThemeObject(Button, "BackgroundTransparency", "BackGroundElemTran")
+	    Button.BorderSizePixel, Button.Size, Button.Text, Button.Parent = 0, ud2(0, 360, 0, 45), "", self.Container
+	
+	    Button.MouseButton1Click:Connect(function()
+	        if config.Callback then 
+	            task.spawn(config.Callback) 
+	        end
+	        
+	        if config.DestroyOnClick then
+	            Button:Destroy()
+	        end
+	    end)
+	
+	    UICorner.CornerRadius, UICorner.Parent = ud(0, 12), Button
+	
+	    name.BackgroundTransparency, name.BorderSizePixel, name.Font = 1, 0, enum.Font.FredokaOne
+	    name.Position, name.Size, name.Text = ud2(0.029, 0, 0, hasDesc and 4 or 12.5), ud2(0, 77, 0, 20), config.Name
+	    name.TextSize, name.TextXAlignment, name.Parent = 16, enum.TextXAlignment.Left, Button
+	    self:AddThemeObject(name, "TextColor3", "TabTextColor")
+	
+	    subtext.BackgroundTransparency, subtext.BorderSizePixel, subtext.Font = 1, 0, enum.Font.FredokaOne
+	    subtext.Position, subtext.Size, subtext.Text = ud2(0.029, 0, 0, 25), ud2(0, 193, 0, 14), desc
+	    subtext.TextSize, subtext.TextXAlignment, subtext.Visible, subtext.Parent = 14, enum.TextXAlignment.Left, hasDesc, Button
+	    self:AddThemeObject(subtext, "TextColor3", "TabSubTtitleTextColor")
+	
+	    ImageLabel.BackgroundTransparency, ImageLabel.BorderSizePixel = 1, 0
+	    ImageLabel.Position, ImageLabel.Size, ImageLabel.Image = ud2(0.841, 0, 0.244, 0), ud2(0, 25, 0, 23), "rbxassetid://140083176080437"
+	    ImageLabel.Parent = Button
+	    self:AddThemeObject(ImageLabel, "ImageColor3", "DropDownArrowImg")
+	
+	    return { Elem = Button }
 	end
 
 	function tab:AddToggle(config)
