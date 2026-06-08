@@ -97,15 +97,13 @@ local Themes = {
 		DestroyGFrame = c3rgb(10, 11, 11),
 		DropDownColor = c3rgb(11, 11, 11)
 	}),
-	["Art Contex 1"] = extendTheme(BaseDarkTheme, {
-		BackGroundIcon = "rbxassetid://100420470220220",
-		DestroyGFrame = c3rgb(10, 11, 11),
-		DropDownColor = c3rgb(11, 11, 11)
-	}),
-	["Art Contex 2"] = extendTheme(BaseDarkTheme, {
-		BackGroundIcon = "rbxassetid://126729993390334",
-		DestroyGFrame = c3rgb(10, 11, 11),
-		DropDownColor = c3rgb(11, 11, 11)
+	["Jane Doe (by Entity)"] = extendTheme(BaseDarkTheme, {
+		BackGroundIcon = "rbxassetid://83231488479500",
+		NotiImg = "rbxassetid://116972706357235",
+		DestroyGFrame = Color3.fromRGB(102, 34, 102),
+		DropDownColor = Color3.fromRGB(102, 34, 102),
+		SubTtitleTextColor = c3rgb(140, 140, 140),
+		TogleActivColor =c3rgb(139, 46, 139),
 	}),
 	["Dark"] = extendTheme(BaseDarkTheme, {
 		BackGroundIcon = "rbxassetid://124703424830654",
