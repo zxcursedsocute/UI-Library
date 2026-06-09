@@ -3002,36 +3002,54 @@ function Library:SaveConfig(foldername,filename)
 	}
 
 	for name, obj in pairs(self.AllElements.Toggles) do
-		config.Toggles[name] = obj:GetState()
+		pcall(function()
+			config.Toggles[name] = obj:GetState()
+		end)
 	end
 
 	for name, obj in pairs(self.AllElements.Keybinds) do
-		local state = obj:GetState()
-		config.Keybinds[name] = state and state.Name or "None" 
+		pcall(function()
+			local state = obj:GetState()
+			config.Keybinds[name] = state and state.Name or "None" 
+		end)
 	end
 
 	for name, obj in pairs(self.AllElements.Sliders) do
-		config.Sliders[name] = obj:GetState()
+		pcall(function()
+			config.Sliders[name] = obj:GetState()
+		end)
 	end
 
 	for name, obj in pairs(self.AllElements.Dropdowns) do
-		config.Dropdowns[name] = obj:GetValue()
+		pcall(function()
+			config.Dropdowns[name] = obj:GetValue()
+		end)
 	end
 
 	for name, obj in pairs(self.AllElements.Inputs) do
-		config.Inputs[name] = obj:GetState()
+		pcall(function()
+			config.Inputs[name] = obj:GetState()
+		end)
 	end
 
 	for name, obj in pairs(self.AllElements.ColorPickers) do
-		local color = obj:GetColor()
-		config.ColorPickers[name] = {R = color.R, G = color.G, B = color.B}
+		pcall(function()
+			local color = obj:GetColor()
+			if color then
+				config.ColorPickers[name] = {R = color.R, G = color.G, B = color.B}
+			end
+		end)
 	end
 
-	if not isfolder(foldername) then makefolder(foldername) end
+	if not isfolder(foldername) then 
+		pcall(makefolder, foldername) 
+	end
 
 	local success, encoded = pcall(function() return HttpService:JSONEncode(config) end)
 	if success then
-		writefile(foldername .. "/" .. filename, encoded)
+		pcall(function()
+			writefile(foldername .. "/" .. filename, encoded)
+		end)
 	end
 end
 
@@ -3085,7 +3103,9 @@ function Library:LoadConfig(filename)
 			local obj = self.AllElements.Inputs[name]
 			if obj then
 				if obj.SaveConfig ~= true then
-					obj.SetText(value)
+					pcall(function()
+						obj.SetText(value)
+					end)
 				end
 			end
 		end
@@ -3096,7 +3116,11 @@ function Library:LoadConfig(filename)
 			local obj = self.AllElements.Keybinds[name]
 			if obj and keyStr and keyStr ~= "None" and keyStr ~= "nil" then
 				local successKey, keyCode = pcall(function() return enum.KeyCode[keyStr] end)
-				if successKey then obj.SetKey(keyCode) end
+				if successKey then
+					pcall(function()
+						obj.SetKey(keyCode)
+					end)
+				end
 			end
 		end
 	end
@@ -3104,7 +3128,11 @@ function Library:LoadConfig(filename)
 	if data.Sliders then
 		for name, value in pairs(data.Sliders) do
 			local obj = self.AllElements.Sliders[name]
-			if obj then obj.SetValue(value) end
+			if obj then
+				pcall(function()
+					obj.SetValue(value)
+				end)
+			end
 		end
 	end
 
@@ -3112,15 +3140,17 @@ function Library:LoadConfig(filename)
 		for name, value in pairs(data.Dropdowns) do
 			local obj = self.AllElements.Dropdowns[name]
 			if obj and obj.SetValue then
-				if obj.Multi and type(value) == "table" then
-					local fixed = {}
-					for k, v in pairs(value) do
-						if type(k) == "string" then fixed[k] = v else fixed[v] = true end
+				pcall(function()
+					if obj.Multi and type(value) == "table" then
+						local fixed = {}
+						for k, v in pairs(value) do
+							if type(k) == "string" then fixed[k] = v else fixed[v] = true end
+						end
+						obj:SetValue(fixed)
+					else
+						obj:SetValue(value)
 					end
-					obj:SetValue(fixed)
-				else
-					obj:SetValue(value)
-				end
+				end)
 			end
 		end
 	end
@@ -3129,7 +3159,9 @@ function Library:LoadConfig(filename)
 		for name, c in pairs(data.ColorPickers) do
 			local obj = self.AllElements.ColorPickers[name]
 			if obj and c.R and c.G and c.B then 
-				obj:SetColor(c3new(c.R, c.G, c.B)) 
+				pcall(function()
+					obj:SetColor(c3new(c.R, c.G, c.B))
+				end)
 			end
 		end
 	end
@@ -3139,7 +3171,9 @@ function Library:LoadConfig(filename)
 			local obj = self.AllElements.Toggles[name]
 			if obj then
 				if name ~= "Load Config" and name ~= "Auto Load Config" and name ~= "Auto Load" and name ~= "AutoLoad" then
-					obj:SetState(state)
+					pcall(function()
+						obj:SetState(state)
+					end)
 				end
 			end
 		end
