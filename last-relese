@@ -80,6 +80,19 @@ local BaseDarkTheme = {
 local Themes = {
 	["Darkness"] = BaseDarkTheme,
 
+	["Forest 2021"] = extendTheme(BaseDarkTheme, {
+		BackGroundIcon = "rbxassetid://101614984726336",
+		HeaderColor = c3rgb(0, 0, 0),
+		headerlinecolor = c3rgb(229, 229, 229),
+		NotiImg = "rbxassetid://129831795524094",
+		DestroyGFrame = c3rgb(54, 54, 54),
+		versionBackgroundTransparency = 0.8,
+		versionTextColor = c3rgb(255, 255, 255),
+		DropDownColor = c3rgb(255, 255, 255),
+		DropDownTransparency = 0.95,
+		ColorPickerColoro = c3rgb(152, 152, 152),
+		ListFrameColor = c3rgb(40, 40, 40)
+	}),
 	["Two Time Femboy (Mary)"] = extendTheme(BaseDarkTheme, {
 		BackGroundIcon = "rbxassetid://94836966125792",
 		NotiImg = "rbxassetid://98241085507817",
