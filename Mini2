@@ -1,0 +1,3284 @@
+local a=(cloneref or clonereference or function(a)return a end)
+
+local b=a(game:GetService"CoreGui")
+local c=a(game:GetService"HttpService")
+local d=a(game:GetService"TweenService")
+local e=a(game:GetService"UserInputService")
+local f=a(game:GetService"TextService")
+local g=a(game:GetService"Players")
+local h=g.LocalPlayer
+
+local i=Color3.fromRGB
+local j=Color3.new
+local k=Instance.new
+local l=Enum
+local m=UDim2.new
+local n=UDim.new
+
+local o={}
+o.__index=o
+
+local function extendTheme(p,q)
+local r={}
+for s,t in p do
+r[s]=t
+end
+for s,t in pairs(q)do r[s]=t end
+return r
+end
+
+local p={
+BackGroundIcon="rbxassetid://71126967316056",
+TextColor=i(255,255,255),
+SubTtitleTextColor=i(125,125,125),
+Notisubtitlecolor=i(199,199,199),
+HeaderColor=i(61,63,65),
+headerlinecolor=i(255,255,255),
+headerlinetrans=1,
+TabsScrollingBarFrameColor=i(255,255,255),
+NotiImg="rbxassetid://116797594577574",
+NotiTitleColor=i(255,255,255),
+BackGroundTran=0.05,
+DestroyGFrame=i(61,63,65),
+DestroyGFrameTransparency=0,
+dbtntran=0.95,
+TabTransparancy=0.95,
+dbtncolor=i(255,255,255),
+versionBackgroundColor3=i(255,255,255),
+versionBackgroundTransparency=0,
+versionTextColor=i(0,0,0),
+IOSdraglineColor=i(255,255,255),
+TabTextColor=i(255,255,255),
+TabColor=i(255,255,255),
+TabSubTtitleTextColor=i(199,199,199),
+TogleActivColor=i(28,96,255),
+DropDownArrowImg=i(255,255,255),
+TabsIconColor=i(255,255,255),
+InputTextColor=i(175,175,175),
+BackGroundElemTran=0.95,
+BackGroundElemCol=i(255,255,255),
+BackGroundButtonTran=0.95,
+ActionBackColor=i(255,255,255),
+ToggleButton=i(255,255,255),
+ToggleTran=0.9,
+SectionsScrollingBarFrameColor=i(255,255,255),
+DropDownColor=i(61,63,65),
+DropDownTransparency=0,
+DropDownFrameColor=i(255,255,255),
+SliderUnderLineColor=i(28,96,255),
+Togglebtn=i(255,255,255),
+Sliderball=i(255,255,255),
+ColorPickerColoro=i(61,63,65),
+ListFrameColor=i(66,66,66),
+keyback="rbxassetid://120882935753706"
+}
+
+local q={Darkness=
+p,
+
+["Forest 2021"]=extendTheme(p,{
+BackGroundIcon="rbxassetid://101614984726336",
+HeaderColor=i(0,0,0),
+headerlinecolor=i(229,229,229),
+NotiImg="rbxassetid://129831795524094",
+DestroyGFrame=i(54,54,54),
+versionBackgroundTransparency=0.8,
+versionTextColor=i(255,255,255),
+DropDownColor=i(255,255,255),
+DropDownTransparency=0.95,
+ColorPickerColoro=i(152,152,152),
+ListFrameColor=i(40,40,40)
+}),
+["Two Time Femboy (Mary)"]=extendTheme(p,{
+BackGroundIcon="rbxassetid://94836966125792",
+NotiImg="rbxassetid://98241085507817",
+DestroyGFrame=i(10,11,11),
+DropDownColor=i(11,11,11)
+}),
+["Two Time Femboy 2"]=extendTheme(p,{
+BackGroundIcon="rbxassetid://127670191322279",
+NotiImg="rbxassetid://101937081141745",
+DestroyGFrame=i(10,11,11),
+DropDownColor=i(11,11,11)
+}),Entity=
+extendTheme(p,{
+BackGroundIcon="rbxassetid://73446098621859",
+DestroyGFrame=i(10,11,11),
+DropDownColor=i(11,11,11)
+}),
+["Jane Doe (by Entity)"]=extendTheme(p,{
+BackGroundIcon="rbxassetid://83231488479500",
+NotiImg="rbxassetid://116972706357235",
+DestroyGFrame=Color3.fromRGB(102,34,102),
+DropDownColor=Color3.fromRGB(102,34,102),
+SubTtitleTextColor=i(140,140,140),
+TogleActivColor=i(139,46,139),
+}),Dark=
+extendTheme(p,{
+BackGroundIcon="rbxassetid://124703424830654",
+HeaderColor=i(26,26,26),
+NotiImg="rbxassetid://101518186301089",
+DestroyGFrame=i(22,22,22),
+DropDownColor=i(47,47,47),
+ColorPickerColoro=i(47,47,47),
+ListFrameColor=i(40,40,40)
+}),Black=
+extendTheme(p,{
+BackGroundIcon="rbxassetid://135546341015171",
+SubTtitleTextColor=i(199,199,199),
+HeaderColor=i(0,0,0),
+headerlinecolor=i(165,165,165),
+NotiImg="rbxassetid://121010433723211",
+DestroyGFrame=i(0,0,0),
+dbtntran=0.9,
+TabSubTtitleTextColor=i(203,203,203),
+TogleActivColor=i(0,0,0),
+InputTextColor=i(255,255,255),
+DropDownColor=i(0,0,0),
+SliderUnderLineColor=i(0,0,0),
+ColorPickerColoro=i(0,0,0),
+ListFrameColor=i(18,18,18),
+keyback="rbxassetid://89724657821038"
+}),Cursed=
+extendTheme(p,{
+BackGroundIcon="rbxassetid://139069464889319",
+HeaderColor=i(16,17,31),
+NotiImg="rbxassetid://133419353491012",
+DestroyGFrame=i(22,23,42),
+versionBackgroundColor3=i(224,206,255),
+IOSdraglineColor=i(63,59,126),
+TogleActivColor=i(63,59,126),
+DropDownArrowImg=i(69,65,140),
+DropDownColor=i(16,17,31),
+DropDownFrameColor=i(63,59,126),
+SliderUnderLineColor=i(63,59,126),
+ColorPickerColoro=i(16,17,31),
+ListFrameColor=i(16,17,31),
+keyback="rbxassetid://128602859619396"
+}),White=
+extendTheme(p,{
+BackGroundIcon="rbxassetid://85154344778026",
+TextColor=i(0,0,0),
+SubTtitleTextColor=i(49,49,49),
+Notisubtitlecolor=i(67,67,67),
+HeaderColor=i(255,255,255),
+headerlinecolor=i(165,165,165),
+TabsScrollingBarFrameColor=i(0,0,0),
+NotiImg="rbxassetid://103895576341932",
+NotiTitleColor=i(0,0,0),
+DestroyGFrame=i(255,255,255),
+dbtntran=0.8,
+dbtncolor=i(0,0,0),
+versionBackgroundColor3=i(0,0,0),
+versionTextColor=i(255,255,255),
+IOSdraglineColor=i(0,0,0),
+TabTextColor=i(0,0,0),
+TabColor=i(0,0,0),
+TabSubTtitleTextColor=i(67,67,67),
+TogleActivColor=i(103,103,103),
+DropDownArrowImg=i(0,0,0),
+TabsIconColor=i(0,0,0),
+InputTextColor=i(67,67,67),
+BackGroundElemTran=0.9,
+BackGroundElemCol=i(0,0,0),
+ActionBackColor=i(33,33,33),
+ToggleButton=i(0,0,0),
+BackGroundButtonTran=0.9,
+SectionsScrollingBarFrameColor=i(0,0,0),
+DropDownColor=i(202,202,202),
+DropDownFrameColor=i(0,0,0),
+SliderUnderLineColor=i(0,0,0),
+Togglebtn=i(0,0,0),
+Sliderball=i(0,0,0),
+ColorPickerColoro=i(255,255,255),
+ListFrameColor=i(220,220,220),
+keyback="rbxassetid://105543908643429"
+})
+}
+
+function o.AddThemeObject(r,s:Instance,t:string,u:string)
+if not r.ThemeObjects then
+r.ThemeObjects=setmetatable({},{__mode="k"})
+end
+
+if not r.ThemeObjects[s]then
+r.ThemeObjects[s]={}
+end
+
+table.insert(r.ThemeObjects[s],{Property=t,ThemeKey=u})
+
+if r.Theme and r.Theme[u]~=nil then
+s[t]=r.Theme[u]
+end
+end
+
+function o.CreateWindow(r)
+local s=r.Name or"Default Title"
+local t=r.Description
+local u=r.Size or 620
+local v=r.Version
+
+local w=setmetatable({},o)
+
+w.CurrentThemeName=r.Theme or"Cursed"
+w.Theme=extendTheme(q[w.CurrentThemeName],{})
+
+w.mainTabs={}
+w.CurrentTab=nil
+w.Notipos=0.9
+w.ThemeObjects={}
+
+w.AllElements={
+Toggles={},
+Keybinds={},
+Dropdowns={},
+Sliders={},
+ColorPickers={},
+Inputs={}
+}
+w.Windowscd=false
+w.userinfo=true
+w.saveFolder=nil
+w.saveFileName=nil
+w.ActiveNotifications={}
+
+w.UI=k"ScreenGui"
+w.UI.ZIndexBehavior=l.ZIndexBehavior.Sibling
+w.UI.Parent=gethui and gethui()or(b or h:WaitForChild"PlayerGui")
+
+w.ImageLabel=k"ImageLabel"
+w.ImageLabel.BackgroundColor3=i(255,255,255)
+w.ImageLabel.BackgroundTransparency=1
+w.ImageLabel.BorderColor3=i(0,0,0)
+w.ImageLabel.AnchorPoint=Vector2.new(0.5,0.5)
+w.ImageLabel.Position=m(0.5,0,0.5,0)
+w.ImageLabel.Size=m(0,10,0,10)
+
+w.ScaleFactor=1
+
+if e.touchEnabled then
+local x=k"UIScale"
+x.Scale=0.75
+x.Parent=w.ImageLabel
+
+w.ScaleFactor=0.75
+end
+
+w:AddThemeObject(w.ImageLabel,"Image","BackGroundIcon")
+w.ImageLabel.Active=true
+w.ImageLabel.ImageTransparency=0.05
+w.ImageLabel.Parent=w.UI
+
+local x=false
+local y
+local z=Vector3.new()
+local A=m(0,0,0,0)
+
+w.ImageLabel.InputBegan:Connect(function(B)
+if B.UserInputType==l.UserInputType.MouseButton1 or B.UserInputType==l.UserInputType.Touch then
+if o.IsInteractingWithUI then
+o.IsInteractingWithUI=false
+return
+end
+
+x=true
+y=B
+z=B.Position
+A=w.ImageLabel.Position
+
+local C
+C=B.Changed:Connect(function()
+if B.UserInputState==l.UserInputState.End then
+x=false
+y=nil
+if C then
+C:Disconnect()
+end
+end
+end)
+end
+end)
+
+e.InputChanged:Connect(function(B)
+if x then
+local C=(B==y)
+local D=(y.UserInputType==l.UserInputType.MouseButton1 and B.UserInputType==l.UserInputType.MouseMovement)
+
+if C or D then
+local E=B.Position-z
+local F=w.ScaleFactor or 1
+
+w.ImageLabel.Position=m(
+A.X.Scale,
+A.X.Offset+(E.X/F),
+A.Y.Scale,
+A.Y.Offset+(E.Y/F)
+)
+end
+end
+end)
+
+w.Header=k"Frame"
+w:AddThemeObject(w.Header,"BackgroundColor3","HeaderColor")
+w.Header.BackgroundTransparency=1
+w.Header.Position=m(0.02,0,0.025,0)
+w.Header.Size=m(0,u-24,0,40)
+w.Header.Parent=w.ImageLabel
+
+local B=k"UICorner"
+B.CornerRadius=n(0,12)
+B.Parent=w.Header
+
+w.TitleContainer=k"Frame"
+w.TitleContainer.BackgroundTransparency=1
+w.TitleContainer.Position=m(0,10,0,0)
+w.TitleContainer.Size=m(0.7,0,1,0)
+w.TitleContainer.Parent=w.Header
+
+local C=k"UIListLayout"
+C.FillDirection=l.FillDirection.Horizontal
+C.VerticalAlignment=l.VerticalAlignment.Center
+C.Padding=n(0,10)
+C.SortOrder=l.SortOrder.LayoutOrder
+C.Parent=w.TitleContainer
+
+w.TextLabel=k"TextLabel"
+w.TextLabel.BackgroundTransparency=1
+w.TextLabel.AutomaticSize=l.AutomaticSize.XY
+w.TextLabel.Position=m(0,0,0,10)
+w.TextLabel.Size=m(0,0,0,40)
+w.TextLabel.Font=l.Font.FredokaOne
+w.TextLabel.Text=s
+w.TextLabel.TextSize=16
+w.TextLabel.LayoutOrder=1
+w:AddThemeObject(w.TextLabel,"TextColor3","TextColor")
+w.TextLabel.Parent=w.TitleContainer
+
+if t then
+w.TextLabel_2=k"TextLabel"
+w.TextLabel_2.BackgroundTransparency=1
+w.TextLabel_2.AutomaticSize=l.AutomaticSize.XY
+w.TextLabel_2.Size=m(0,0,0,40)
+w.TextLabel_2.Font=l.Font.FredokaOne
+w.TextLabel_2.Text=t
+w.TextLabel_2.TextSize=14
+w.TextLabel_2.LayoutOrder=2
+w:AddThemeObject(w.TextLabel_2,"TextColor3","SubTtitleTextColor")
+w.TextLabel_2.Parent=w.TitleContainer
+end
+
+if v then
+w.version=k"Frame"
+w.version.AutomaticSize=l.AutomaticSize.XY
+w.version.Size=m(0,0,0,24)
+w.version.LayoutOrder=3
+w:AddThemeObject(w.version,"BackgroundColor3","versionBackgroundColor3")
+w:AddThemeObject(w.version,"BackgroundTransparency","versionBackgroundTransparency")
+w.version.Parent=w.TitleContainer
+
+local D=k"UIPadding"
+D.PaddingLeft=n(0,12)
+D.PaddingRight=n(0,12)
+D.Parent=w.version
+
+local E=k"UICorner"
+E.CornerRadius=n(0,11)
+E.Parent=w.version
+
+w.versionTextLabel=k"TextLabel"
+w.versionTextLabel.BackgroundTransparency=1
+w.versionTextLabel.AutomaticSize=l.AutomaticSize.XY
+w.versionTextLabel.Size=m(0,0,1,0)
+w.versionTextLabel.Font=l.Font.FredokaOne
+w.versionTextLabel.Text=v
+w.versionTextLabel.TextSize=14
+w:AddThemeObject(w.versionTextLabel,"TextColor3","versionTextColor")
+w.versionTextLabel.Parent=w.version
+end
+
+w.close=k"ImageLabel"
+w.close.BackgroundTransparency=1
+w.close.Position=m(0.945,0,0.2,0)
+w.close.Size=m(0,24,0,24)
+w.close.Image="rbxassetid://94538718832963"
+w:AddThemeObject(w.close,"ImageColor3","TabsIconColor")
+w.close.Parent=w.Header
+
+local D=k"TextButton"
+D.Size=m(1,0,1,0)
+D.BackgroundTransparency=1
+D.Text=""
+D.Parent=w.close
+D.MouseButton1Click:Connect(function()w:ShowDestroyQ()end)
+
+w.ImageButton=k"ImageLabel"
+w.ImageButton.BackgroundTransparency=1
+w.ImageButton.Position=m(0.897,0,0.35,0)
+w.ImageButton.Size=m(0,16,0,12)
+w.ImageButton.Image="rbxassetid://89738650787294"
+w:AddThemeObject(w.ImageButton,"ImageColor3","TabsIconColor")
+w.ImageButton.Parent=w.Header
+
+local E=k"TextButton"
+E.Size=m(1,6,1,6)
+E.Position=m(0,-3,0,-3)
+E.BackgroundTransparency=1
+E.Text=""
+E.Parent=w.ImageButton
+E.MouseButton1Click:Connect(function()w:ColumnWindow()end)
+
+w.ImageButton_2=k"ImageLabel"
+w.ImageButton_2.BackgroundTransparency=1
+w.ImageButton_2.Position=m(0.835,0,0.29,0)
+w.ImageButton_2.Size=m(0,18,0,18)
+w.ImageButton_2.Image="rbxassetid://122178947900744"
+w:AddThemeObject(w.ImageButton_2,"ImageColor3","TabsIconColor")
+w.ImageButton_2.Parent=w.Header
+
+local F=k"TextButton"
+F.Size=m(1,4,1,4)
+F.Position=m(0,-2,0,-2)
+F.BackgroundTransparency=1
+F.Text=""
+F.Parent=w.ImageButton_2
+F.MouseButton1Click:Connect(function()w:Minimaze()end)
+
+w.Tabs=k"Frame"
+w.Frame_2=k"Frame"
+k"ImageButton"
+k"ImageButton"
+k"ImageButton"
+w.ScrollingFrame=k"ScrollingFrame"
+
+local G=k"UIListLayout"
+G.Parent=w.ScrollingFrame
+G.SortOrder=l.SortOrder.LayoutOrder
+G.Padding=n(0,5)
+
+w.ScrollingFrame.CanvasSize=UDim2.new(0,0,0,0)
+w.ScrollingFrame.AutomaticCanvasSize=Enum.AutomaticSize.Y
+
+w.Tabs.BackgroundColor3=i(255,255,255)
+w.Tabs.BackgroundTransparency=1
+w.Tabs.BorderColor3=i(0,0,0)
+w.Tabs.Position=m(0.035,0,0.115,0)
+w.Tabs.Size=m(0,185,0,372)
+w.Tabs.Parent=w.ImageLabel
+
+w.WindowUser=k"Frame"
+local H=k"ImageLabel"
+local I=k"UICorner"
+local J=k"UICorner"
+w.wTextLabel=k"TextLabel"
+w.wTextLabel_2=k"TextLabel"
+
+w:AddThemeObject(w.WindowUser,"BackgroundColor3","versionBackgroundColor3")
+w.WindowUser.BackgroundTransparency=0.95
+w.WindowUser.BorderColor3=i(0,0,0)
+w.WindowUser.Position=m(0,0,0.975,0)
+w.WindowUser.Size=m(0,180,0,45)
+w.WindowUser.Parent=w.Tabs
+
+J.CornerRadius=n(0.35,0)
+J.Parent=w.WindowUser
+
+H.BackgroundColor3=i(255,255,255)
+H.BorderColor3=i(0,0,0)
+H.Position=m(0.05,0,0,8)
+H.Size=m(0,30,0,30)
+H.Image="rbxasset://textures/ui/LuaChat/graphic/gr-profile-placeholder-70x70.png"
+H.Parent=w.WindowUser
+
+local K="rbxasset://textures/ui/LuaChat/graphic/gr-profile-placeholder-70x70.png"
+
+task.spawn(function()
+local L=h.UserId
+local M=l.ThumbnailType.HeadShot
+local N=l.ThumbnailSize.Size150x150
+
+local O,P=pcall(function()
+return g:GetUserThumbnailAsync(L,M,N)
+end)
+
+if O and P then
+task.defer(function()
+H.Image=P
+K=P
+end)
+end
+end)
+
+I.CornerRadius=n(0,100)
+I.Parent=H
+
+local function limit(L)
+if#L>16 then
+return string.sub(L,1,16).."..."
+else
+return L
+end
+end
+
+local L=limit(h.DisplayName)
+local M=limit(h.Name)
+
+local N=H
+local O=false
+
+w.WindowUser.InputBegan:Connect(function(P)
+if P.UserInputType==l.UserInputType.MouseButton1 or P.UserInputType==l.UserInputType.Touch then
+O=not O
+if O then
+N.Image=""
+w.wTextLabel.Text="Roblox"
+w.wTextLabel_2.Text="@Roblox"
+else
+N.Image=K
+w.wTextLabel.Text=L
+w.wTextLabel_2.Text="@"..M
+end
+end
+end)
+
+w.wTextLabel.BackgroundColor3=i(255,255,255)
+w.wTextLabel.BackgroundTransparency=1
+w.wTextLabel.BorderColor3=i(0,0,0)
+w.wTextLabel.Position=m(0.27,0,0,7)
+w.wTextLabel.Size=m(0,131,0,15)
+w.wTextLabel.Font=l.Font.FredokaOne
+w:AddThemeObject(w.wTextLabel,"TextColor3","TextColor")
+w.wTextLabel.TextSize=14
+w.wTextLabel.Text=L
+w.wTextLabel.TextXAlignment=l.TextXAlignment.Left
+w.wTextLabel.Parent=w.WindowUser
+
+w.wTextLabel_2.BackgroundColor3=i(255,255,255)
+w.wTextLabel_2.BackgroundTransparency=1
+w.wTextLabel_2.BorderColor3=i(0,0,0)
+w.wTextLabel_2.Position=m(0.27,0,0,21)
+w.wTextLabel_2.Size=m(0,131,0,15)
+w.wTextLabel_2.Font=l.Font.FredokaOne
+w:AddThemeObject(w.wTextLabel_2,"TextColor3","SubTtitleTextColor")
+w.wTextLabel_2.TextSize=14
+w.wTextLabel_2.Text="@"..M
+w.wTextLabel_2.TextXAlignment=l.TextXAlignment.Left
+w.wTextLabel_2.Parent=w.WindowUser
+
+w.ScrollingFrame.Active=true
+w.ScrollingFrame.BackgroundColor3=i(255,255,255)
+w.ScrollingFrame.BackgroundTransparency=1
+w.ScrollingFrame.BorderColor3=i(0,0,0)
+w.ScrollingFrame.BorderSizePixel=0
+w.ScrollingFrame.Position=m(0,0,0,0)
+w.ScrollingFrame.Size=m(0,187,0,357)
+w.ScrollingFrame.ScrollBarThickness=2
+w:AddThemeObject(w.ScrollingFrame,"ScrollBarImageColor3","TabsScrollingBarFrameColor")
+w.ScrollingFrame.Parent=w.Tabs
+
+w.Sections=k"Frame"
+w.Sections.BackgroundColor3=i(255,255,255)
+w.Sections.BackgroundTransparency=1
+w.Sections.BorderColor3=i(0,0,0)
+w.Sections.BorderSizePixel=0
+w.Sections.Position=m(0.34,0,0.1,0)
+w.Sections.Size=m(0,390,0,414)
+w.Sections.Parent=w.ImageLabel
+
+w.TextLabel_5=k"TextLabel"
+w.TextLabel_5.BackgroundColor3=i(255,255,255)
+w.TextLabel_5.BackgroundTransparency=1
+w.TextLabel_5.BorderColor3=i(0,0,0)
+w.TextLabel_5.Position=m(0.0191,0,0.0144,0)
+w.TextLabel_5.Size=m(0,192,0,29)
+w.TextLabel_5.Font=l.Font.FredokaOne
+w.TextLabel_5.Text=''
+w:AddThemeObject(w.TextLabel_5,"TextColor3","TextColor")
+w.TextLabel_5.TextSize=24
+w.TextLabel_5.TextWrapped=true
+w.TextLabel_5.TextXAlignment=l.TextXAlignment.Left
+w.TextLabel_5.Parent=w.Sections
+
+w.Frame_7=k"Frame"
+w.Frame_7.BackgroundColor3=i(255,255,255)
+w.Frame_7.BackgroundTransparency=1
+w.Frame_7.BorderColor3=i(0,0,0)
+w.Frame_7.BorderSizePixel=0
+w.Frame_7.Position=m(0,0,0.084,0)
+w.Frame_7.Size=m(0,366,0,379)
+w.Frame_7.Parent=w.Sections
+
+local P={
+Notification="rbxassetid://75930996983661",
+Warn="rbxassetid://85045950898455",
+Error="rbxassetid://71852580046993"
+}
+
+function o.Notification(Q,R)
+Q.NotificationCounter=(Q.NotificationCounter or 0)+1
+local S=Q.NotificationCounter
+Q.ActiveNotifications=Q.ActiveNotifications or{}
+
+local T=R.Name or"Notification"
+local U=R.Description or""
+local V=R.Duration or 5
+local W=R.Type or"Notification"
+
+local X=e.TouchEnabled and not e.KeyboardEnabled and not e.MouseEnabled
+local Y=X and 0.55 or 0.8
+local Z=X and 0.75 or 0.9
+local _=X and 0.2 or 0.08
+local aa=X and 280 or 360
+
+if not Q.NotificationTemplate then
+Q:CreateNotificationTemplate()
+end
+
+local ab=Q.NotificationTemplate:Clone()
+
+local ac=P[W]
+if W=='Notification'then
+ab.Icon.ImageColor3=Q.Theme.TabsIconColor
+end
+
+if not ac then return end
+
+ab.Name=W
+ab.Parent=Q.UI
+ab.Size=m(0,aa,0,75)
+ab.Position=m(1.2,0,Z,0)
+ab.Visible=true
+ab.Image=Q.Theme.NotiImg
+
+ab.Icon.Image=ac
+ab.Title.Text=T
+ab.Description.Text=U
+ab.Title.TextColor3=Q.Theme.TextColor
+ab.Description.TextColor3=Q.Theme.Notisubtitlecolor
+ab.CloseButton.ImageColor3=Q.Theme.TabsIconColor
+
+ab.CloseButton.MouseButton1Click:Connect(function()
+if Q and Q.CloseNotification then
+Q:CloseNotification(S)
+end
+end)
+
+Q.ActiveNotifications[S]={
+notification=ab,
+targetX=Y,
+targetY=Z,
+multi=_
+}
+
+local ad=TweenInfo.new(0.3,l.EasingStyle.Quad,l.EasingDirection.Out)
+d:Create(ab,ad,{Position=m(Y,0,Z,0)}):Play()
+
+for ae,af in pairs(Q.ActiveNotifications)do
+if ae~=S then
+local ag=af.notification.Position.Y.Scale-_
+af.targetY=ag
+d:Create(af.notification,ad,{Position=m(Y,0,ag,0)}):Play()
+end
+end
+
+task.delay(V,function()
+Q:CloseNotification(S)
+end)
+end
+
+function o.CreateNotificationTemplate(aa)
+local ab=k"ImageLabel"
+ab.BackgroundTransparency=1
+ab.BorderSizePixel=0
+ab.Size=m(0,360,0,75)
+ab.Visible=false
+
+local ac=k"UICorner"
+ac.CornerRadius=n(0,6)
+ac.Parent=ab
+
+local ad=k"ImageLabel"
+ad.Name="Icon"
+ad.BackgroundTransparency=1
+ad.Position=m(0.04,0,0.24,0)
+ad.Size=m(0,18,0,18)
+ad.Parent=ab
+
+local ae=k"TextLabel"
+ae.Name="Description"
+ae.BackgroundTransparency=1
+ae.Position=m(0.04,0,0.47,0)
+ae.Size=m(0,321,0,23)
+ae.Font=l.Font.FredokaOne
+ae.TextSize=14
+ae.TextXAlignment=l.TextXAlignment.Left
+ae.Parent=ab
+
+local af=k"TextLabel"
+af.Name="Title"
+af.BackgroundTransparency=1
+af.Position=m(0.11,0,0.19,0)
+af.Size=m(0,200,0,24)
+af.Font=l.Font.FredokaOne
+af.TextSize=18
+af.TextXAlignment=l.TextXAlignment.Left
+af.Parent=ab
+
+local ag=k"ImageButton"
+ag.Name="CloseButton"
+ag.BackgroundTransparency=1
+ag.Position=m(0.91,0,0.21,0)
+ag.Size=m(0,14,0,14)
+ag.Image="rbxassetid://134899599114088"
+ag.Parent=ab
+
+aa.NotificationTemplate=ab
+end
+
+function o.CloseNotification(aa,ab)
+local ac=aa.ActiveNotifications[ab]
+if not ac then return end
+
+local ad=ac.notification
+aa.ActiveNotifications[ab]=nil
+
+local ae=TweenInfo.new(0.3,l.EasingStyle.Quad,l.EasingDirection.Out)
+
+local af=d:Create(ad,ae,{Position=m(1.2,0,ad.Position.Y.Scale,0)})
+af:Play()
+
+af.Completed:Connect(function()
+ad:Destroy()
+end)
+
+local ag={}
+for Q,R in pairs(aa.ActiveNotifications)do
+table.insert(ag,{id=Q,data=R})
+end
+
+table.sort(ag,function(Q,R)return Q.id<R.id end)
+
+local Q=e.TouchEnabled and not e.KeyboardEnabled and not e.MouseEnabled
+local R=Q and 0.75 or 0.9
+
+local S=R
+for T=#ag,1,-1 do
+local U=ag[T]
+d:Create(U.data.notification,ae,{Position=m(U.data.targetX,0,S,0)}):Play()
+S=S-U.data.multi
+end
+end
+
+w.Tabs.Visible=false
+w.Sections.Visible=false
+w.Header.Visible=false
+
+w:Tween(w.ImageLabel,{Size=m(0,u,0,480)},0.9)
+task.wait(0.9)
+
+w.Tabs.Visible=true
+w.Sections.Visible=true
+w.Header.Visible=true
+
+return w
+end
+
+local aa={Settings=
+"rbxassetid://121074539743502",Visual=
+"rbxassetid://92250291747112",Player=
+"rbxassetid://92793433656183",Combat=
+"rbxassetid://73787033062338",Generator=
+"rbxassetid://88963434013027",AutoFarm=
+"rbxassetid://119088300179156",Animation=
+"rbxassetid://126672101469278",Items=
+"rbxassetid://100873317961037",Teleport=
+"rbxassetid://93236186125909",Badge=
+"rbxassetid://119734718512317",Quests=
+"rbxassetid://88588775334975",Main=
+"rbxassetid://102448859836734",Halloween=
+"rbxassetid://115053236948532",Misc=
+"rbxassetid://137583062645541",Block=
+"rbxassetid://94027029642332",Aim=
+"rbxassetid://130183131122604",Fun=
+"rbxassetid://137362629704355",Fish=
+"rbxassetid://105045060721724",WebHook=
+"rbxassetid://95301251075575",Heart=
+"rbxassetid://111088001331743",Shop=
+"rbxassetid://82363507426406",Boat=
+"rbxassetid://103950075513303",Trade=
+"rbxassetid://128997687956087",Text=
+"rbxassetid://140272486271785",Music=
+"rbxassetid://95074569695751",Skin=
+"rbxassetid://77808065458415",Run=
+"rbxassetid://94022434049447",Killer=
+"rbxassetid://80624492937943",Survivor=
+"rbxassetid://76337889437039"
+}
+
+function o.AddTab(ab,ac:string,ad:string)
+local ae={
+Name=ac,
+Elements={},
+Container=nil,
+Button=nil,
+Frame=nil,
+Tab={},
+Connections={},
+KeybindConnections={},
+}
+
+setmetatable(ae,{__index=ab})
+
+local af=k"TextButton"
+local ag=k"UICorner"
+local r=k"TextLabel"
+local s=k"Frame"
+
+af.BackgroundColor3=i(255,255,255)
+af.BackgroundTransparency=1
+af.BorderColor3=i(0,0,0)
+af.BorderSizePixel=0
+af.Size=m(0,180,0,36)
+af.Text=''
+
+ab:AddThemeObject(af,"BackgroundColor3","TabColor")
+table.insert(ae.Tab,af)
+
+af.MouseEnter:Connect(function()
+ab:Tween(af,{BackgroundTransparency=ab.Theme.TabTransparancy},0.3)
+ab:Tween(s,{Size=m(0,2,0,23)},0.3)
+ab:Tween(s,{BackgroundTransparency=0},0.3)
+end)
+
+af.MouseLeave:Connect(function()
+if ab.CurrentTab~=ae then
+ab:Tween(af,{BackgroundTransparency=1},0.3)
+ab:Tween(s,{BackgroundTransparency=1},0.3)
+ab:Tween(s,{Size=m(0,2,0,0)},0.3)
+end
+end)
+
+af.MouseButton1Click:Connect(function()
+ab:SelectTab(ae,af)
+end)
+
+af.Parent=ab.ScrollingFrame
+
+ag.CornerRadius=n(0,12)
+ag.Parent=af
+
+ad=aa[ad]or ad
+
+r.BackgroundColor3=i(255,255,255)
+r.BackgroundTransparency=1
+r.BorderColor3=i(0,0,0)
+r.BorderSizePixel=0
+r.Position=m((ad and ad~="")and 0.22 or 0.05,0,0,0)
+r.Size=m(0,52,0,35)
+r.Font=l.Font.FredokaOne
+r.Text=ac
+ab:AddThemeObject(r,"TextColor3","TabTextColor")
+table.insert(ae.Tab,r)
+r.TextSize=14
+r.TextXAlignment=l.TextXAlignment.Left
+r.Parent=af
+
+ab:AddThemeObject(s,"BackgroundColor3","TabTextColor")
+s.BackgroundTransparency=1
+s.BorderColor3=i(0,0,0)
+s.BorderSizePixel=0
+s.Position=m(0,1,0.171,0)
+s.Size=m(0,2,0,0)
+s.Parent=af
+
+local t=k"ScrollingFrame"
+t.Active=true
+t.BackgroundColor3=i(255,255,255)
+t.BackgroundTransparency=1
+t.BorderColor3=i(0,0,0)
+t.BorderSizePixel=0
+t.Position=m(0,0,0.023,0)
+t.Size=m(0,385,0,372)
+t.CanvasSize=m(0,0,0,0)
+t.ScrollBarThickness=2
+ab:AddThemeObject(t,"ScrollBarImageColor3","SectionsScrollingBarFrameColor")
+t.Visible=false
+t.Parent=ab.Frame_7
+table.insert(ae.Tab,5,t)
+
+local u=k"UIListLayout"
+u.Parent=t
+u.SortOrder=l.SortOrder.LayoutOrder
+u.Padding=n(0,5)
+
+local v=k"UIPadding"
+v.Parent=t
+v.PaddingTop=n(0,0)
+v.PaddingLeft=n(0,10)
+
+t.CanvasSize=UDim2.new(0,0,0,0)
+t.AutomaticCanvasSize=Enum.AutomaticSize.Y
+
+local w=k"ImageLabel"
+
+w.BackgroundColor3=i(255,255,255)
+w.BackgroundTransparency=1
+w.BorderColor3=i(0,0,0)
+w.BorderSizePixel=0
+w.Position=m(0,8,0,6.5)
+w.Size=m(0,22,0,22)
+w.Image=ad or""
+ab:AddThemeObject(w,"ImageColor3","TabsIconColor")
+w.Parent=af
+table.insert(ae.Tab,4,w)
+
+ae.Container=t
+ae.Button=af
+ae.Frame=s
+
+table.insert(ab.mainTabs,ae)
+
+if#ab.mainTabs==1 then
+ab:SelectTab(ae,af)
+end
+
+function ae.AddList(x,y)
+local z={
+Name=y.Name,
+Elems=y.Elems,
+}
+
+local A=k"Frame"
+A.BackgroundTransparency=0.95
+A.Size=m(0,360,0,0)
+A.AutomaticSize=l.AutomaticSize.Y
+x:AddThemeObject(A,"BackgroundColor3","ListFrameColor")
+A.Parent=x.Container
+
+local B=k"UICorner"
+B.CornerRadius=n(0,10)
+B.Parent=A
+
+local C=k"UIListLayout"
+C.SortOrder=l.SortOrder.LayoutOrder
+C.Parent=A
+
+local D=k"TextButton"
+local E=k"UICorner"
+local F=k"TextLabel"
+local G=k"ImageLabel"
+
+x:AddThemeObject(D,"BackgroundColor3","BackGroundElemCol")
+x:AddThemeObject(D,"BackgroundTransparency","BackGroundElemTran")
+D.Size=m(0,360,0,35)
+D.Text=""
+D.LayoutOrder=1
+D.Parent=A
+
+E.CornerRadius=n(0,10)
+E.Parent=D
+
+F.BackgroundTransparency=1
+F.Position=m(0.03,0,0,0)
+F.Size=m(0.7,0,1,0)
+F.Font=l.Font.FredokaOne
+F.Text=z.Name
+x:AddThemeObject(F,"TextColor3","TabTextColor")
+F.TextSize=16
+F.TextXAlignment=l.TextXAlignment.Left
+F.Parent=D
+
+G.BackgroundTransparency=1
+G.Position=m(0.9,0,0.2,0)
+G.Rotation=-180
+G.Size=m(0,20,0,20)
+G.Image="rbxassetid://126982255108418"
+x:AddThemeObject(G,"ImageColor3","DropDownArrowImg")
+G.Parent=D
+
+local H=k"Frame"
+local I=k"UIListLayout"
+local J=k"UIPadding"
+
+H.BackgroundTransparency=1
+H.ClipsDescendants=true
+H.Size=m(0,360,0,0)
+H.Visible=false
+H.LayoutOrder=2
+H.Parent=A
+
+I.Parent=H
+I.Padding=n(0,5)
+I.SortOrder=l.SortOrder.LayoutOrder
+
+J.Parent=H
+J.PaddingTop=n(0,5)
+
+for K,L in pairs(z.Elems)do
+if L.Elem then
+L.Elem.Parent=H
+L.Elem.Visible=true
+end
+end
+
+local K=false
+D.MouseButton1Click:Connect(function()
+K=not K
+x:Tween(G,{Rotation=K and 0 or-180},0.3)
+
+if K then
+H.Visible=true
+local L=I.AbsoluteContentSize.Y/(x.ScaleFactor or 1)
+local M=L+J.PaddingTop.Offset+J.PaddingBottom.Offset
+x:Tween(H,{Size=m(0,360,0,M)},0.4)
+else
+x:Tween(H,{Size=m(0,360,0,0)},0.3)
+task.delay(0.3,function()
+if not K then
+H.Visible=false
+end
+end)
+end
+end)
+end
+
+function ae.AddDiscordInvite(x,y)
+local z=y.Invite or""
+local A=z:match"discord%.gg/([%w-]+)"or z:match"discord%.com/invite/([%w-]+)"or z
+
+local B,C=k"Frame",k"UICorner"
+local D,E=k"ImageLabel",k"UICorner"
+local F,G=k"TextLabel",k"TextLabel"
+local H,I=k"TextButton",k"UICorner"
+
+B.Size,B.Parent=m(0,360,0,110),x.Container
+C.CornerRadius,C.Parent=n(0,10),B
+x:AddThemeObject(B,"BackgroundColor3","BackGroundElemCol")
+x:AddThemeObject(B,"BackgroundTransparency","BackGroundElemTran")
+
+D.Size,D.Position,D.BackgroundColor3,D.Image,D.Parent=m(0,50,0,50),m(0,12,0,12),i(43,45,49),y.Icon or"rbxassetid://93164175094440",B
+E.CornerRadius,E.Parent=n(0,12),D
+
+F.Position,F.Size,F.BackgroundTransparency,F.Font,F.Text=m(0,75,0,15),m(0,270,0,20),1,l.Font.FredokaOne,"Loading Discord..."
+F.TextSize,F.TextXAlignment,F.Parent=16,l.TextXAlignment.Left,B
+x:AddThemeObject(F,"TextColor3","TabTextColor")
+
+G.Position,G.Size,G.BackgroundTransparency,G.Font,G.Text=m(0,75,0,38),m(0,270,0,15),1,l.Font.FredokaOne,"Connecting..."
+G.TextSize,G.TextXAlignment,G.RichText,G.Parent=13,l.TextXAlignment.Left,true,B
+x:AddThemeObject(G,"TextColor3","TabSubTtitleTextColor")
+
+H.Size,H.Position,H.BackgroundColor3,H.Font,H.Text=m(1,-24,0,30),m(0,12,0,70),i(36,128,70),l.Font.FredokaOne,"Copy Invite Link"
+H.TextColor3,H.TextSize,H.Parent=i(255,255,255),14,B
+I.CornerRadius,I.Parent=n(0,8),H
+
+H.MouseButton1Click:Connect(function()
+if setclipboard then
+setclipboard("https://discord.gg/"..A)
+H.Text="Copied to Clipboard!"
+task.wait(2)
+H.Text="Copy Invite Link"
+end
+end)
+
+task.spawn(function()
+local J=(syn and syn.request)or(http and http.request)or http_request or request
+if not J then return end
+local K=J{Url="https://discord.com/api/v9/invites/"..A.."?with_counts=true",Method="GET"}
+if K.StatusCode==200 then
+local L=c:JSONDecode(K.Body)
+F.Text=L.guild.name
+G.Text=("<font color='#23a559'>●</font> %s Online  <font color='#80848e'>●</font> %s Members"):format(L.approximate_presence_count or 0,L.approximate_member_count or 0)
+else
+F.Text="Invalid Invite"
+G.Text="Could not fetch server data"
+end
+end)
+
+return B
+end
+
+function ae.AddParagraph(x,y,z,A,B)
+local C=k"Frame"
+local D=k"UICorner"
+local E=k"TextLabel"
+local F=k"TextLabel"
+
+if typeof(A)=="Color3"then
+C.BackgroundColor3=A
+else
+x:AddThemeObject(C,"BackgroundColor3","BackGroundElemCol")
+x:AddThemeObject(C,"BackgroundTransparency","BackGroundElemTran")
+end
+C.BorderSizePixel=0
+
+D.CornerRadius=n(0,12)
+D.Parent=C
+
+E.BackgroundTransparency=1
+E.Size=m(0,328,0,20)
+E.Font=l.Font.FredokaOne
+E.Text=y or""
+
+if typeof(B)=="Color3"then
+E.TextColor3=B
+else
+x:AddThemeObject(E,"TextColor3","TabTextColor")
+end
+
+E.TextSize=16
+E.TextXAlignment=l.TextXAlignment.Left
+E.Parent=C
+
+F.BackgroundTransparency=1
+F.Font=l.Font.FredokaOne
+F.Text=z or""
+
+if typeof(B)=="Color3"then
+F.TextColor3=B
+else
+x:AddThemeObject(F,"TextColor3","TabSubTtitleTextColor")
+end
+
+F.TextSize=14
+F.TextWrapped=true
+F.TextXAlignment=l.TextXAlignment.Left
+F.TextYAlignment=l.TextYAlignment.Top
+F.Parent=C
+
+C.Parent=x.Container
+
+local function recalcSizes()
+local G=F.Text
+local H=G~=""
+
+if H then
+local I=f:GetTextSize(G,F.TextSize,F.Font,Vector2.new(328,10000))
+local J=math.max(16,math.ceil(I.Y))
+
+F.Visible=true
+F.Position=m(0.027,0,0,28)
+F.Size=m(0,328,0,J+4)
+
+E.Position=m(0.027,0,0,5)
+C.Size=m(0,360,0,33+J)
+else
+F.Visible=false
+C.Size=m(0,360,0,40)
+E.Position=m(0.027,0,0,10)
+end
+end
+
+recalcSizes()
+
+local G={
+Element=C,
+Elem=C,
+Update=function(G,H,I)
+if not G.Element then return end
+
+if H then E.Text=H end
+if I~=nil then F.Text=I end
+
+recalcSizes()
+end,
+Destroy=function(G)
+if G.Element then
+G.Element:Destroy()
+G.Element=nil
+end
+end
+}
+
+return G
+end
+
+function ae.AddImage(x,y)
+local z=k"ImageLabel"
+z.Name="CustomImage"
+z.Parent=x.Container
+z.BackgroundTransparency=1
+z.Size=y.Size or m(0,80,0,80)
+z.Image=y.Image or""
+
+if y.CornerRadius then
+local A=k"UICorner"
+A.CornerRadius=y.CornerRadius
+A.Parent=z
+end
+
+return z
+end
+
+function ae.AddSection(x,y)
+local z=k"TextLabel"
+
+z.BackgroundTransparency,z.BorderSizePixel=1,0
+z.Size,z.Font,z.Text=m(0,193,0,21),l.Font.FredokaOne,y
+z.TextSize,z.TextXAlignment,z.Parent=18,l.TextXAlignment.Left,x.Container
+
+x:AddThemeObject(z,"TextColor3","TabTextColor")
+
+return{Elem=z}
+end
+
+function ae.AddButton(x,y)
+local z=k"TextButton"
+local A=k"UICorner"
+local B=k"TextLabel"
+local C=k"TextLabel"
+local D=k"ImageLabel"
+
+local E=y.Description or""
+local F=E~=""
+
+x:AddThemeObject(z,"BackgroundColor3","BackGroundElemCol")
+x:AddThemeObject(z,"BackgroundTransparency","BackGroundElemTran")
+z.BorderSizePixel,z.Size,z.Text,z.Parent=0,m(0,360,0,45),"",x.Container
+
+z.MouseButton1Click:Connect(function()
+if y.Callback then
+task.spawn(y.Callback)
+end
+
+if y.DestroyOnClick then
+z:Destroy()
+end
+end)
+
+A.CornerRadius,A.Parent=n(0,12),z
+
+B.BackgroundTransparency,B.BorderSizePixel,B.Font=1,0,l.Font.FredokaOne
+B.Position,B.Size,B.Text=m(0.029,0,0,F and 4 or 12.5),m(0,77,0,20),y.Name
+B.TextSize,B.TextXAlignment,B.Parent=16,l.TextXAlignment.Left,z
+x:AddThemeObject(B,"TextColor3","TabTextColor")
+
+C.BackgroundTransparency,C.BorderSizePixel,C.Font=1,0,l.Font.FredokaOne
+C.Position,C.Size,C.Text=m(0.029,0,0,25),m(0,193,0,14),E
+C.TextSize,C.TextXAlignment,C.Visible,C.Parent=14,l.TextXAlignment.Left,F,z
+x:AddThemeObject(C,"TextColor3","TabSubTtitleTextColor")
+
+D.BackgroundTransparency,D.BorderSizePixel=1,0
+D.Position,D.Size,D.Image=m(0.841,0,0.244,0),m(0,25,0,23),"rbxassetid://140083176080437"
+D.Parent=z
+x:AddThemeObject(D,"ImageColor3","DropDownArrowImg")
+
+return{Elem=z}
+end
+
+function ae.AddToggle(x,y)
+local z,A=k"TextButton",k"UICorner"
+local B,C=k"TextLabel",k"TextLabel"
+local D,E=k"Frame",k"UICorner"
+local F,G=k"Frame",k"UICorner"
+
+local H=y.Description and y.Description~=""
+local I=y.Default or false
+
+z.BorderSizePixel,z.Size,z.Text,z.Parent=0,m(0,360,0,45),"",x.Container
+A.CornerRadius,A.Parent=n(0,12),z
+x:AddThemeObject(z,"BackgroundColor3","BackGroundElemCol")
+x:AddThemeObject(z,"BackgroundTransparency","BackGroundElemTran")
+
+B.BackgroundTransparency,B.BorderSizePixel,B.Font=1,0,l.Font.FredokaOne
+B.Position,B.Size,B.Text=m(0.029,0,0,H and 4 or 12.5),m(0,77,0,20),y.Name
+B.TextSize,B.TextXAlignment,B.Parent=15,l.TextXAlignment.Left,z
+x:AddThemeObject(B,"TextColor3","TabTextColor")
+
+C.BackgroundTransparency,C.BorderSizePixel,C.Font=1,0,l.Font.FredokaOne
+C.Position,C.Size,C.Text=m(0.028,0,0,25),m(0,193,0,14),y.Description or""
+C.TextSize,C.TextXAlignment,C.Visible,C.Parent=14,l.TextXAlignment.Left,H,z
+x:AddThemeObject(C,"TextColor3","TabSubTtitleTextColor")
+
+D.BackgroundColor3,D.BackgroundTransparency=x.Theme.ToggleButton,x.Theme.ToggleTran
+D.BorderSizePixel,D.Position,D.Size,D.Parent=0,m(0.8,0,0.206,0),m(0,54,0,25),z
+E.Parent=D
+E.CornerRadius=n(0,12)
+
+F.BorderSizePixel,F.Position,F.Size,F.Parent=0,m(0,3,0.12,0),m(0,19,0,19),D
+G.Parent=F
+G.CornerRadius=n(0,35)
+x:AddThemeObject(F,"BackgroundColor3","Togglebtn")
+
+local J={
+Elem=z,
+Value=I,
+UpdateVisuals=function(J,K,L)
+local M=o.Theme or x.Theme
+local N=K and m(0,32,0.12,0)or m(0,3,0.12,0)
+local O=K and M.TogleActivColor or M.ToggleButton
+local P=K and 0 or M.ToggleTran
+
+if L then
+F.Position=N
+D.BackgroundColor3,D.BackgroundTransparency=O,P
+else
+o:Tween(F,{Position=N},0.2)
+o:Tween(D,{BackgroundColor3=O,BackgroundTransparency=P},0.2)
+end
+end,
+SetState=function(J,K)
+if K==J.Value then return end
+J.Value=K
+J:UpdateVisuals(K,false)
+if y.Callback then task.spawn(y.Callback,K)end
+end,
+GetState=function(J)return J.Value end,
+Toggle=function(J)J:SetState(not J.Value)end
+}
+
+z.MouseButton1Click:Connect(function()J:Toggle()end)
+J:UpdateVisuals(I,true)
+
+x.AllElements.Toggles[y.Name]=J
+return J
+end
+
+function ae.AddKeybind(x,y)
+if e.TouchEnabled and not e.KeyboardEnabled then
+return nil
+end
+
+local z=(typeof(y.Default)=="EnumItem")and y.Default or nil
+
+local A={
+Name=y.Name or"Keybind",
+Description=y.Description or"",
+Callback=y.Callback
+}
+
+local B=k"Frame"
+local C=k"UICorner"
+local D=k"TextLabel"
+local E=k"TextLabel"
+local F=k"TextButton"
+local G=k"UICorner"
+
+x:AddThemeObject(B,"BackgroundColor3","BackGroundElemCol")
+x:AddThemeObject(B,"BackgroundTransparency","BackGroundElemTran")
+B.BorderSizePixel=0
+B.Size=m(0,360,0,45)
+B.Parent=x.Container
+
+C.CornerRadius=n(0,12)
+C.Parent=B
+
+local H=(A.Description~='')and 4 or 12.5
+
+D.BackgroundTransparency=1
+D.Position=m(0.029,0,0,H)
+D.Size=m(0,77,0,20)
+D.Font=l.Font.FredokaOne
+D.Text=A.Name
+x:AddThemeObject(D,"TextColor3","TabTextColor")
+D.TextSize=16
+D.TextXAlignment=l.TextXAlignment.Left
+D.Parent=B
+
+E.BackgroundTransparency=1
+E.Position=m(0.0289,0,0,25)
+E.Size=m(0,193,0,14)
+E.Font=l.Font.FredokaOne
+E.Text=A.Description
+x:AddThemeObject(E,"TextColor3","TabSubTtitleTextColor")
+E.TextSize=14
+E.TextXAlignment=l.TextXAlignment.Left
+E.Parent=B
+
+x:AddThemeObject(F,"BackgroundColor3","BackGroundElemCol")
+x:AddThemeObject(F,"BackgroundTransparency","BackGroundButtonTran")
+F.Position=m(0.672,0,0.221,0)
+F.Size=m(0,100,0,25)
+F.Font=l.Font.FredokaOne
+x:AddThemeObject(F,"TextColor3","TabTextColor")
+F.TextSize=14
+F.Parent=B
+
+G.CornerRadius=n(0,5)
+G.Parent=F
+
+local function setKey(I)
+z=I
+F.Text=(typeof(I)=="EnumItem"and I.Name)or"None"
+end
+
+setKey(z)
+
+local I={
+[l.KeyCode.Unknown]=true,[l.KeyCode.W]=true,
+[l.KeyCode.A]=true,[l.KeyCode.S]=true,
+[l.KeyCode.D]=true,[l.KeyCode.Escape]=true,
+[l.KeyCode.Space]=true,[l.KeyCode.Backspace]=true
+}
+
+local J
+J=F.MouseButton1Click:Connect(function()
+F.Text="..."
+local K
+
+K=e.InputBegan:Connect(function(L,M)
+task.wait()
+if M and L.UserInputType==l.UserInputType.Keyboard then return end
+
+if L.UserInputType==l.UserInputType.Keyboard then
+if not I[L.KeyCode]then
+setKey(L.KeyCode)
+else
+setKey(nil)
+end
+K:Disconnect()
+elseif L.UserInputType==l.UserInputType.MouseButton1 or L.UserInputType==l.UserInputType.MouseButton2 then
+setKey(nil)
+K:Disconnect()
+end
+end)
+end)
+table.insert(ae.Connections,J)
+
+if not x.AllElements.GlobalKeybindConnection then
+x.AllElements.GlobalKeybindConnection=e.InputBegan:Connect(function(K,L)
+if L then return end
+
+if K.UserInputType==l.UserInputType.Keyboard then
+for M,N in pairs(x.AllElements.Keybinds)do
+local O=N:GetState()
+if O and K.KeyCode==O and N.Callback then
+task.spawn(N.Callback)
+end
+end
+end
+end)
+end
+
+local K={
+Name=A.Name,
+Elem=B,
+SetKey=setKey,
+GetState=function()
+return z
+end,
+Callback=A.Callback
+}
+
+if x.AllElements and x.AllElements.Keybinds then
+x.AllElements.Keybinds[A.Name]=K
+end
+
+return K
+end
+
+function ae.AddInput(x,y)
+local z=y.Default or"Default"
+
+local A=k"Frame"
+local B=k"UICorner"
+local C=k"TextLabel"
+local D=k"TextLabel"
+local E=k"TextBox"
+local F=k"UICorner"
+
+x:AddThemeObject(A,"BackgroundColor3","BackGroundElemCol")
+x:AddThemeObject(A,"BackgroundTransparency","BackGroundElemTran")
+A.BorderSizePixel=0
+A.Size=m(0,360,0,45)
+A.Parent=x.Container
+
+B.CornerRadius=n(0,12)
+B.Parent=A
+
+C.BackgroundTransparency=1
+C.BorderSizePixel=0
+C.Position=m(0.029,0,0,(y.Description and y.Description~="")and 4 or 12.5)
+C.Size=m(0,77,0,20)
+C.Font=l.Font.FredokaOne
+C.Text=y.Name or"Input"
+C.TextSize=16
+C.TextXAlignment=l.TextXAlignment.Left
+C.Parent=A
+x:AddThemeObject(C,"TextColor3","TabTextColor")
+
+D.BackgroundTransparency=1
+D.BorderSizePixel=0
+D.Position=m(0.029,0,0,25)
+D.Size=m(0,193,0,14)
+D.Font=l.Font.FredokaOne
+D.Text=y.Description or""
+D.TextSize=14
+D.TextXAlignment=l.TextXAlignment.Left
+D.Visible=(y.Description and y.Description~="")
+D.Parent=A
+x:AddThemeObject(D,"TextColor3","TabSubTtitleTextColor")
+
+E.BorderSizePixel=0
+E.Position=m(0.575,0,0.15,0)
+E.Size=m(0,135,0,30)
+E.Font=l.Font.FredokaOne
+E.Text=z
+E.TextSize=14
+E.Parent=A
+x:AddThemeObject(E,"BackgroundColor3","BackGroundElemCol")
+x:AddThemeObject(E,"BackgroundTransparency","BackGroundButtonTran")
+x:AddThemeObject(E,"TextColor3","InputTextColor")
+
+F.CornerRadius=n(0,5)
+F.Parent=E
+
+E.FocusLost:Connect(function()
+z=E.Text
+if y.SaveUserText then
+if#z>18 then
+E.Text=string.sub(z,1,15).."..."
+end
+else
+task.defer(function()E.Text=y.Default or"Default"end)
+end
+if y.Callback then task.spawn(y.Callback,z)end
+end)
+
+local G={
+Name=y.Name,
+Elem=A,
+SetText=function(G)
+z=G
+E.Text=(y.SaveUserText and#G>18)and(string.sub(G,1,15).."...")or G
+if y.Callback then task.spawn(y.Callback,G)end
+end,
+GetState=function()return z end,
+SaveConfig=y.SaveConfig or false,
+Callback=y.Callback
+}
+x.AllElements.Inputs[y.Name]=G
+return G
+end
+
+function ae.AddSlider(x,y)
+local z=y.Min or 0
+local A=y.Max or 100
+local B=y.Default or z
+
+local C=k"Frame"
+local D=k"UICorner"
+local E=k"TextLabel"
+local F=k"TextLabel"
+local G=k"Frame"
+local H=k"Frame"
+local I=k"Frame"
+local J=k"UICorner"
+local K=k"TextLabel"
+local L=k"Frame"
+
+x:AddThemeObject(C,"BackgroundColor3","BackGroundElemCol")
+x:AddThemeObject(C,"BackgroundTransparency","BackGroundElemTran")
+
+C.Active=true
+C.Size=m(0,360,0,45)
+C.Parent=x.Container
+
+D.CornerRadius=n(0,12)
+D.Parent=C
+
+local M=y.Description and y.Description~=''
+local N=M and 4 or 12.5
+
+E.BackgroundTransparency=1
+E.Position=m(0.029,0,0,N)
+E.Size=m(0,77,0,20)
+E.Font=l.Font.FredokaOne
+E.Text=y.Name
+x:AddThemeObject(E,"TextColor3","TabTextColor")
+E.TextSize=16
+E.TextXAlignment=l.TextXAlignment.Left
+E.Parent=C
+
+F.BackgroundTransparency=1
+F.Position=m(0.029,0,0,25)
+F.Size=m(0,193,0,14)
+F.Font=l.Font.FredokaOne
+F.Text=y.Description or''
+x:AddThemeObject(F,"TextColor3","TabSubTtitleTextColor")
+F.TextSize=14
+F.TextXAlignment=l.TextXAlignment.Left
+F.Parent=C
+
+G.BackgroundTransparency=1
+G.Position=m(0.671,0,0.244,0)
+G.Size=m(0,100,0,22)
+G.Parent=C
+
+H.BackgroundColor3=i(255,255,255)
+H.BorderSizePixel=0
+H.Position=m(0,0,0.455,0)
+H.Size=m(1,0,0,2)
+H.Parent=G
+
+x:AddThemeObject(I,"BackgroundColor3","Sliderball")
+I.BorderSizePixel=0
+I.AnchorPoint=Vector2.new(0.5,0.5)
+I.Position=m(0,0,0.5,0)
+I.Size=m(0,15,0,15)
+I.ZIndex=2
+I.Parent=G
+
+J.CornerRadius=n(1,0)
+J.Parent=I
+
+K.BackgroundTransparency=1
+K.Position=m(0,-35,0.075,0)
+K.Size=m(0,21,0,18)
+K.Font=l.Font.FredokaOne
+x:AddThemeObject(K,"TextColor3","TabTextColor")
+K.TextSize=14
+K.Parent=G
+
+x:AddThemeObject(L,"BackgroundColor3","SliderUnderLineColor")
+L.BorderSizePixel=0
+L.Position=m(0,0,0.455,0)
+L.Size=m(0,0,0,2)
+L.Parent=G
+
+if not o.SharedSliderState then
+o.SharedSliderState={ActiveMoveFunc=nil}
+e.InputChanged:Connect(function(O)
+if o.SharedSliderState.ActiveMoveFunc and(O.UserInputType==l.UserInputType.MouseMovement or O.UserInputType==l.UserInputType.Touch)then
+o.SharedSliderState.ActiveMoveFunc(O)
+end
+end)
+e.InputEnded:Connect(function(O)
+if O.UserInputType==l.UserInputType.MouseButton1 or O.UserInputType==l.UserInputType.Touch then
+o.SharedSliderState.ActiveMoveFunc=nil
+end
+end)
+end
+
+local function updateValue(O)
+B=math.clamp(O,z,A)
+
+local P=A-z
+local Q=(P>0)and((B-z)/P)or 0
+
+L.Size=m(Q,0,0,2)
+I.Position=m(Q,0,0.5,0)
+
+local R=(A>10)and math.floor(B+0.5)or(math.floor(B*10+0.5)/10)
+K.Text=(A>10)and tostring(R)or string.format("%.1f",R)
+
+if y.Callback then
+task.spawn(y.Callback,R)
+end
+end
+
+local function moveSlider(O)
+local P=O.Position.X-G.AbsolutePosition.X
+local Q=math.clamp(P/G.AbsoluteSize.X,0,1)
+updateValue(z+Q*(A-z))
+end
+
+G.InputBegan:Connect(function(O)
+if O.UserInputType==l.UserInputType.MouseButton1 or O.UserInputType==l.UserInputType.Touch then
+o.IsInteractingWithUI=true
+o.SharedSliderState.ActiveMoveFunc=moveSlider
+moveSlider(O)
+end
+end)
+
+local O={
+Elem=C,
+Name=y.Name,
+Value=B,
+GetState=function()return B end,
+SetValue=updateValue
+}
+
+x.AllElements.Sliders[y.Name]=O
+updateValue(B)
+
+return O
+end
+
+function ae.AddColorPicker(x,y)
+local z={
+Name=y.Name,
+Description=y.Description or"",
+Default=y.Default or j(1,1,1),
+Callback=y.Callback
+}
+
+local function create(A,B)
+local C=k(A)
+for D,E in pairs(B)do C[D]=E end
+return C
+end
+
+local A=y.Description and y.Description~=''and 4 or 12.5
+
+local B=create("Frame",{
+Parent=x.Container,
+BorderSizePixel=0,
+Size=m(0,360,0,45)
+})
+x:AddThemeObject(B,"BackgroundColor3","BackGroundElemCol")
+x:AddThemeObject(B,"BackgroundTransparency","BackGroundElemTran")
+create("UICorner",{CornerRadius=n(0,12),Parent=B})
+
+local C=create("TextLabel",{
+Name="name",Parent=B,BackgroundTransparency=1,
+Position=m(0.029,0,0,A),Size=m(0,77,0,20),
+Font=l.Font.FredokaOne,Text=z.Name,
+TextSize=16,TextXAlignment=l.TextXAlignment.Left
+})
+x:AddThemeObject(C,"TextColor3","TabTextColor")
+
+local D=create("TextLabel",{
+Name="subtext",Parent=B,BackgroundTransparency=1,
+Position=m(0.029,0,0,25),Size=m(0,193,0,14),
+Font=l.Font.FredokaOne,Text=z.Description,
+TextSize=14,TextXAlignment=l.TextXAlignment.Left
+})
+x:AddThemeObject(D,"TextColor3","TabSubTtitleTextColor")
+
+local E=create("TextButton",{
+Parent=B,BackgroundColor3=z.Default,BorderSizePixel=0,
+Position=m(0.802,0,0.206,0),Size=m(0,54,0,25),Text="",ZIndex=2
+})
+create("UICorner",{CornerRadius=n(0,5),Parent=E})
+
+local F=z.Default
+local G,H,I=F:ToHSV()
+
+local function setColor(J,K,L,M)
+if not J then return end
+F=J
+E.BackgroundColor3=J
+
+if K and L and M then
+G,H,I=K,L,M
+else
+local N,O,P=J:ToHSV()
+G=(O==0 or P==0)and G or N
+H=O
+I=P
+end
+
+if x.ActiveColorPicker==B and x.UpdateSharedPaletteVisuals then
+x.UpdateSharedPaletteVisuals(F,G,H,I)
+end
+
+if z.Callback then z.Callback(J)end
+end
+
+local function togglePalette()
+if not x.SharedPaletteUI then
+x.SharedPaletteUI={}
+
+local J=create("Frame",{
+Parent=x.ImageLabel,BackgroundColor3=i(0,0,0),
+BackgroundTransparency=0.5,Size=m(0.966,0,0.96,0),Position=m(0,10,0,10),ZIndex=40,Visible=false
+})
+create("UICorner",{CornerRadius=n(0,24),Parent=J})
+x.SharedPaletteUI.Modal=J
+
+local K=create("Frame",{
+Parent=x.ImageLabel,
+BorderSizePixel=0,ZIndex=50,Visible=false,Size=m(0,0,0,0),
+Position=m(0.5,0,0.5,0),AnchorPoint=Vector2.new(0.5,0.5)
+})
+x:AddThemeObject(K,"BackgroundColor3","ColorPickerColoro")
+create("UICorner",{CornerRadius=n(0,12),Parent=K})
+create("UIStroke",{Color=i(60,60,70),Thickness=2,Parent=K})
+x.SharedPaletteUI.Frame=K
+
+local L=create("Frame",{Parent=K,BackgroundTransparency=1,Size=m(1,0,0,40),ZIndex=51})
+local M=create("TextLabel",{
+Parent=L,Text="Choose a color",Font=l.Font.GothamSemibold,TextSize=16,
+BackgroundTransparency=1,Size=m(1,0,1,0),ZIndex=52
+})
+x:AddThemeObject(M,"TextColor3","TabTextColor")
+
+local N=create("Frame",{Parent=K,Size=m(0,200,0,200),Position=m(0.435,-100,0,50),ZIndex=51})
+create("UICorner",{CornerRadius=n(0,8),Parent=N})
+x.SharedPaletteUI.SVGradient=N
+
+local O=create("Frame",{Parent=N,Size=m(1,0,1,0),BackgroundColor3=j(1,1,1),ZIndex=51})
+create("UICorner",{CornerRadius=n(0,8),Parent=O})
+create("UIGradient",{Parent=O,Transparency=NumberSequence.new{NumberSequenceKeypoint.new(0,0),NumberSequenceKeypoint.new(1,1)}})
+
+local P=create("Frame",{Parent=N,Size=m(1,0,1,0),BackgroundColor3=j(0,0,0),ZIndex=51})
+create("UICorner",{CornerRadius=n(0,8),Parent=P})
+create("UIGradient",{Parent=P,Rotation=90,Transparency=NumberSequence.new{NumberSequenceKeypoint.new(0,1),NumberSequenceKeypoint.new(1,0)}})
+
+local Q=create("Frame",{Parent=N,Size=m(0,14,0,14),AnchorPoint=Vector2.new(0.5,0.5),BackgroundTransparency=1,BorderSizePixel=2,BorderColor3=j(1,1,1),ZIndex=52})
+create("UICorner",{CornerRadius=n(1,0),Parent=Q})
+x.SharedPaletteUI.SVSelector=Q
+
+local R=create("Frame",{Parent=Q,Size=m(0,6,0,6),AnchorPoint=Vector2.new(0.5,0.5),Position=m(0.5,0,0.5,0),ZIndex=53})
+create("UICorner",{CornerRadius=n(1,0),Parent=R})
+x.SharedPaletteUI.InnerCircle=R
+
+local S=create("Frame",{Parent=K,Size=m(0,20,0,200),Position=m(0.82,0,0,50),BackgroundTransparency=1,ZIndex=51})
+local T=create("Frame",{Parent=S,Size=m(1,0,1,0),ZIndex=51})
+create("UICorner",{CornerRadius=n(0,8),Parent=T})
+
+local U={}
+for V=0,6 do table.insert(U,ColorSequenceKeypoint.new(V/6,Color3.fromHSV(V/6,1,1)))end
+create("UIGradient",{Parent=T,Rotation=90,Color=ColorSequence.new(U)})
+
+local V=create("Frame",{Parent=S,Size=m(1,0,0,4),BackgroundColor3=j(1,1,1),BorderSizePixel=0,ZIndex=52})
+create("UICorner",{CornerRadius=n(0,2),Parent=V})
+x.SharedPaletteUI.HueSlider=V
+
+local W=create("Frame",{Parent=K,BackgroundTransparency=1,Size=m(1,-40,0,40),Position=m(0,30,0,260),ZIndex=51})
+
+local X=create("TextBox",{
+Parent=W,Size=m(0.7,0,1,0),BackgroundColor3=i(40,40,45),
+BackgroundTransparency=0.5,Font=l.Font.Gotham,
+TextSize=14,TextXAlignment=l.TextXAlignment.Center,ZIndex=52
+})
+x:AddThemeObject(X,"TextColor3","TabTextColor")
+create("UICorner",{CornerRadius=n(0,6),Parent=X})
+create("UIStroke",{Color=i(60,60,70),Thickness=1,Parent=X})
+x.SharedPaletteUI.HexInput=X
+
+local Y=create("Frame",{Parent=K,Size=m(0,40,0,40),Position=m(0.76,0,0,260),ZIndex=51})
+create("UICorner",{CornerRadius=n(0,8),Parent=Y})
+create("UIStroke",{Color=i(60,60,70),Thickness=2,Parent=Y})
+x.SharedPaletteUI.PreviewFrame=Y
+
+local function processInput(Z,_,ah)
+if not x.ActiveColorPickerData then return end
+local ai,aj,ak=x.ActiveColorPickerData.GetHSV()
+
+local al=math.clamp((Z.Position.Y-_.AbsolutePosition.Y)/_.AbsoluteSize.Y,0,1)
+if ah then
+ai=al
+else
+local am=math.clamp((Z.Position.X-_.AbsolutePosition.X)/_.AbsoluteSize.X,0,1)
+aj,ak=am,1-al
+end
+
+x.ActiveColorPickerData.SetColor(Color3.fromHSV(ai,aj,ak),ai,aj,ak)
+end
+
+local ah,ai=false,false
+
+S.InputBegan:Connect(function(aj)
+if aj.UserInputType==l.UserInputType.MouseButton1 or aj.UserInputType==l.UserInputType.Touch then
+ah=true;processInput(aj,S,true)
+end
+end)
+
+N.InputBegan:Connect(function(aj)
+if aj.UserInputType==l.UserInputType.MouseButton1 or aj.UserInputType==l.UserInputType.Touch then
+ai=true;processInput(aj,N,false)
+end
+end)
+
+e.InputEnded:Connect(function(aj)
+if aj.UserInputType==l.UserInputType.MouseButton1 or aj.UserInputType==l.UserInputType.Touch then
+ah,ai=false,false
+end
+end)
+
+e.InputChanged:Connect(function(aj)
+if aj.UserInputType==l.UserInputType.MouseMovement or aj.UserInputType==l.UserInputType.Touch then
+if ah then processInput(aj,S,true)
+elseif ai then processInput(aj,N,false)end
+end
+end)
+
+X.FocusLost:Connect(function(aj)
+if aj and x.ActiveColorPickerData then
+local ak=X.Text:gsub("#","")
+if#ak==6 then
+local al,am,Z=tonumber(ak:sub(1,2),16),tonumber(ak:sub(3,4),16),tonumber(ak:sub(5,6),16)
+if al and am and Z then
+local _=i(al,am,Z)
+local an,ao,ap=_:ToHSV()
+x.ActiveColorPickerData.SetColor(_,an,ao,ap)
+end
+else
+local al=x.ActiveColorPickerData
+local am,an,ao=al.GetHSV()
+x.UpdateSharedPaletteVisuals(al.GetCurrentColor(),am,an,ao)
+end
+end
+end)
+
+x.TogglePaletteOff=function()
+if K.Visible then
+local aj=d:Create(K,TweenInfo.new(0.2,l.EasingStyle.Quad,l.EasingDirection.Out),{
+Size=m(0,0,0,0)
+})
+aj:Play()
+aj.Completed:Once(function()
+K.Visible=false
+J.Visible=false
+x.ActiveColorPicker=nil
+x.ActiveColorPickerData=nil
+end)
+end
+end
+
+J.InputBegan:Connect(function(aj)
+if aj.UserInputType==l.UserInputType.MouseButton1 or aj.UserInputType==l.UserInputType.Touch then
+local ak,al,am=aj.Position,K.AbsolutePosition,K.AbsoluteSize
+if ak.X<al.X or ak.X>al.X+am.X or ak.Y<al.Y or ak.Y>al.Y+am.Y then
+x.TogglePaletteOff()
+end
+end
+end)
+
+x.UpdateSharedPaletteVisuals=function(aj,ak,al,am)
+x.SharedPaletteUI.SVGradient.BackgroundColor3=Color3.fromHSV(ak,1,1)
+x.SharedPaletteUI.HueSlider.Position=m(0,0,ak,-2)
+x.SharedPaletteUI.SVSelector.Position=m(al,0,1-am,0)
+x.SharedPaletteUI.InnerCircle.BackgroundColor3=aj
+x.SharedPaletteUI.PreviewFrame.BackgroundColor3=aj
+
+local an,ao,ap=math.floor(aj.R*255),math.floor(aj.G*255),math.floor(aj.B*255)
+x.SharedPaletteUI.HexInput.Text=string.format("#%02X%02X%02X",an,ao,ap)
+end
+end
+
+if x.SharedPaletteUI.Frame.Visible and x.ActiveColorPicker==B then
+x.TogglePaletteOff()
+return
+end
+
+x.ActiveColorPicker=B
+x.ActiveColorPickerData={
+GetHSV=function()return G,H,I end,
+GetCurrentColor=function()return F end,
+SetColor=setColor
+}
+
+x.UpdateSharedPaletteVisuals(F,G,H,I)
+
+x.SharedPaletteUI.Modal.Visible=true
+x.SharedPaletteUI.Frame.Visible=true
+d:Create(x.SharedPaletteUI.Frame,TweenInfo.new(0.3,l.EasingStyle.Back,l.EasingDirection.Out),{
+Size=m(0,300,0,310)
+}):Play()
+end
+
+E.MouseButton1Click:Connect(togglePalette)
+
+local ah={Elem=B}
+function ah.SetColor(ai,aj)setColor(aj)end
+function ah.GetColor(ai)return F end
+
+x.AllElements.ColorPickers[y.Name]=ah
+
+return ah
+end
+
+function ae.AddDropdown(ah,ai)
+local aj={
+Name=ai.Name,
+Options=ai.Options or{},
+Multi=ai.Multi or false,
+Callback=ai.Callback,
+Selected=ai.Multi and{}or nil,
+Elem=nil
+}
+
+local ak=ah.Container.Parent.Parent
+
+if not ak:FindFirstChildOfClass"ImageLabel"then
+local al=k"ImageLabel"
+al.BackgroundColor3=i(48,48,48)
+al.BackgroundTransparency=1
+al.BorderColor3=i(0,0,0)
+al.BorderSizePixel=0
+al.Size=m(0,135,0,0)
+al.Visible=false
+al.ZIndex=50
+al.Image="ImageLabel_2"
+al.ImageTransparency=0.9
+al.ClipsDescendants=true
+al.Parent=ak
+
+local am=k"ScrollingFrame"
+am.Active=true
+ah:AddThemeObject(am,"BackgroundColor3","DropDownColor")
+ah:AddThemeObject(am,"BackgroundTransparency","DropDownTransparency")
+am.BorderSizePixel=0
+am.Position=m(0.0277,0,0.035,0)
+am.Size=m(0,135,0,0)
+am.ZIndex=50
+am.ScrollBarThickness=2
+am.ClipsDescendants=true
+
+am.CanvasSize=m(0,0,0,0)
+am.AutomaticCanvasSize=l.AutomaticSize.Y
+
+am.Parent=al
+
+local an=k"UICorner"
+an.CornerRadius=n(0,5)
+an.Parent=am
+
+local ao=k"UIListLayout"
+ao.SortOrder=l.SortOrder.LayoutOrder
+ao.Parent=am
+
+o.SharedDropdownState={
+Container=al,
+OptionsFrame=am,
+ActiveCloseFunc=nil,
+ClickConnection=nil
+}
+end
+
+local al=o.SharedDropdownState.Container
+local am=o.SharedDropdownState.OptionsFrame
+
+local an=k"Frame"
+aj.Elem=an
+
+local ao=k"UICorner"
+local ap=k"TextLabel"
+local x=k"TextLabel"
+local y=k"TextButton"
+local z=k"UICorner"
+local A=k"TextLabel"
+local B=k"ImageLabel"
+
+ah:AddThemeObject(an,"BackgroundColor3","BackGroundElemCol")
+ah:AddThemeObject(an,"BackgroundTransparency","BackGroundElemTran")
+an.BorderSizePixel=0
+an.Size=m(0,360,0,45)
+an.Parent=ah.Container
+
+ao.CornerRadius=n(0,12)
+ao.Parent=an
+
+local C=ai.Description and ai.Description~=''and 4 or 12.5
+
+ap.Parent=an
+ap.BackgroundTransparency=1
+ap.Position=m(0.029,0,0,C)
+ap.Size=m(0,77,0,20)
+ap.Font=l.Font.FredokaOne
+ap.Text=aj.Name
+ah:AddThemeObject(ap,"TextColor3","TabTextColor")
+ap.TextSize=16
+ap.TextXAlignment=l.TextXAlignment.Left
+
+x.Parent=an
+x.BackgroundTransparency=1
+x.Position=m(0.0289,0,0,25)
+x.Size=m(0,193,0,14)
+x.Font=l.Font.FredokaOne
+x.Text=ai.Description or""
+ah:AddThemeObject(x,"TextColor3","TabSubTtitleTextColor")
+x.TextSize=14
+x.TextXAlignment=l.TextXAlignment.Left
+
+y.Parent=an
+ah:AddThemeObject(y,"BackgroundColor3","BackGroundElemCol")
+ah:AddThemeObject(y,"BackgroundTransparency","BackGroundButtonTran")
+y.Position=m(0.576,0,0.155,0)
+y.Size=m(0,135,0,30)
+y.Text=''
+
+z.CornerRadius=n(0,5)
+z.Parent=y
+
+A.Parent=y
+A.BackgroundTransparency=1
+A.Position=m(0.038,0,-2E-2,0)
+A.Size=m(0,88,0,30)
+A.Font=l.Font.FredokaOne
+A.Text="Select..."
+ah:AddThemeObject(A,"TextColor3","TabTextColor")
+A.TextSize=14
+A.TextXAlignment=l.TextXAlignment.Left
+
+A.TextWrapped=true
+A.TextTruncate=l.TextTruncate.AtEnd
+
+B.Parent=y
+B.BackgroundTransparency=1
+B.Position=m(0.816,0,0.166,0)
+B.Size=m(0,20,0,20)
+B.Image="rbxassetid://126982255108418"
+ah:AddThemeObject(B,"ImageColor3","DropDownArrowImg")
+
+local D={}
+
+local function refreshVisuals()
+for E,F in pairs(D)do
+local G=aj.Multi and aj.Selected[E]or(aj.Selected==E)
+if G then
+o:Tween(F,{Size=m(0,2,0,22),BackgroundTransparency=0},0.2)
+else
+o:Tween(F,{Size=m(0,2,0,0),BackgroundTransparency=1},0.2)
+end
+end
+end
+
+local function closeDropdown()
+if not al.Visible then return end
+o:Tween(al,{Size=m(0,140,0,0)},0.2)
+o:Tween(am,{Size=m(0,135,0,0)},0.2)
+
+if o.SharedDropdownState.ClickConnection then
+o.SharedDropdownState.ClickConnection:Disconnect()
+o.SharedDropdownState.ClickConnection=nil
+end
+
+task.delay(0.2,function()
+if o.SharedDropdownState.ActiveCloseFunc==closeDropdown then
+al.Visible=false
+table.clear(D)
+end
+end)
+end
+
+local function handleOptionClick(E)
+if aj.Multi then
+aj.Selected[E]=not aj.Selected[E]
+
+local F=""
+for G,H in pairs(aj.Selected)do
+if H then F=F..(F==""and G or", "..G)end
+end
+A.Text=F==""and"Select..."or F
+refreshVisuals()
+else
+A.Text=E
+aj.Selected=E
+refreshVisuals()
+closeDropdown()
+end
+
+if type(aj.Callback)=="function"then
+task.spawn(function()
+pcall(aj.Callback,aj.Multi and aj.Selected or E)
+end)
+end
+end
+
+local function createOption(E)
+local F=k"TextButton"
+local G=k"TextLabel"
+local H=k"Frame"
+
+F.BackgroundTransparency=1
+F.Size=m(0,135,0,30)
+F.Text=''
+F.Parent=am
+
+D[E]=H
+
+F.MouseEnter:Connect(function()
+o:Tween(F,{BackgroundTransparency=0.95},0.3)
+local I=aj.Multi and aj.Selected[E]or(aj.Selected==E)
+if not I then
+o:Tween(H,{Size=m(0,2,0,22),BackgroundTransparency=0.5},0.3)
+end
+end)
+
+F.MouseLeave:Connect(function()
+o:Tween(F,{BackgroundTransparency=1},0.3)
+local I=aj.Multi and aj.Selected[E]or(aj.Selected==E)
+if not I then
+o:Tween(H,{BackgroundTransparency=1,Size=m(0,2,0,0)},0.3)
+end
+end)
+
+G.BackgroundTransparency=1
+G.Position=m(0.047,0,0,0)
+G.Size=m(0,124,0,30)
+G.Font=l.Font.FredokaOne
+G.Text=E
+ah:AddThemeObject(G,"TextColor3","TabTextColor")
+G.TextSize=14
+G.TextXAlignment=l.TextXAlignment.Left
+
+G.TextWrapped=true
+G.TextTruncate=l.TextTruncate.AtEnd
+
+G.Parent=F
+
+ah:AddThemeObject(H,"BackgroundColor3","DropDownFrameColor")
+H.BorderSizePixel=0
+H.Position=m(0.01,0,0,4)
+H.Size=m(0,2,0,0)
+H.Transparency=1
+H.Parent=F
+
+F.MouseButton1Click:Connect(function()handleOptionClick(E)end)
+end
+
+local function updateDropdownPosition()
+if not al.Visible then return end
+local E=y.AbsolutePosition
+local F=ak.AbsolutePosition
+
+local G=1
+local H=ak
+while H and not H:IsA"ScreenGui"do
+local I=H:FindFirstChildWhichIsA"UIScale"
+if I then G*=I.Scale end
+H=H.Parent
+end
+
+local I=(E.X-F.X)/G-4
+local J=(E.Y-F.Y+y.AbsoluteSize.Y)/G
+al.Position=m(0,I,0,J)
+end
+
+local function openDropdown()
+if o.SharedDropdownState.ActiveCloseFunc and o.SharedDropdownState.ActiveCloseFunc~=closeDropdown then
+o.SharedDropdownState.ActiveCloseFunc()
+end
+
+o.SharedDropdownState.ActiveCloseFunc=closeDropdown
+
+for E,F in pairs(am:GetChildren())do
+if F:IsA"TextButton"then F:Destroy()end
+end
+table.clear(D)
+
+for E,F in ipairs(aj.Options)do createOption(F)end
+
+updateDropdownPosition()
+al.Visible=true
+
+local E=math.min(150,#aj.Options*30)
+o:Tween(al,{Size=m(0,140,0,E+10)},0.2)
+o:Tween(am,{Size=m(0,135,0,E)},0.2)
+refreshVisuals()
+
+task.spawn(function()
+while al.Visible and o.SharedDropdownState.ActiveCloseFunc==closeDropdown do
+updateDropdownPosition()
+task.wait()
+end
+end)
+
+if o.SharedDropdownState.ClickConnection then o.SharedDropdownState.ClickConnection:Disconnect()end
+o.SharedDropdownState.ClickConnection=e.InputBegan:Connect(function(F)
+if F.UserInputType==l.UserInputType.MouseButton1 or F.UserInputType==l.UserInputType.Touch then
+local G=F.Position
+local H=G.X>=y.AbsolutePosition.X and G.X<=y.AbsolutePosition.X+y.AbsoluteSize.X and G.Y>=y.AbsolutePosition.Y and G.Y<=y.AbsolutePosition.Y+y.AbsoluteSize.Y
+local I=G.X>=al.AbsolutePosition.X and G.X<=al.AbsolutePosition.X+al.AbsoluteSize.X and G.Y>=al.AbsolutePosition.Y and G.Y<=al.AbsolutePosition.Y+al.AbsoluteSize.Y
+
+if not H and not I then closeDropdown()end
+end
+end)
+end
+
+y.MouseButton1Click:Connect(function()
+if al.Visible and o.SharedDropdownState.ActiveCloseFunc==closeDropdown then
+closeDropdown()
+else
+openDropdown()
+end
+end)
+
+aj.GetValue=function(E)return E.Selected end
+
+aj.SetValue=function(E,F)
+if E.Multi then
+table.clear(E.Selected)
+if type(F)=="table"then
+for G,H in pairs(F)do
+if H and table.find(E.Options,G)then E.Selected[G]=true end
+end
+end
+local G=""
+for H,I in pairs(E.Selected)do
+if I then G=G..(G==""and H or", "..H)end
+end
+A.Text=G==""and"Select..."or G
+else
+if table.find(E.Options,F)then
+E.Selected=F
+A.Text=F
+else
+A.Text="Select..."
+end
+end
+if o.SharedDropdownState.ActiveCloseFunc==closeDropdown then refreshVisuals()end
+if E.Callback then E.Callback(E.Selected)end
+end
+
+aj.UpdateOptions=function(E,F,G)
+E.Options=F
+if al.Visible and o.SharedDropdownState.ActiveCloseFunc==closeDropdown then
+openDropdown()
+end
+E:SetValue(G or(E.Multi and{}or nil))
+end
+
+aj.SetVisible=function(E,F)an.Visible=F end
+
+aj.Destroy=function(E)
+if o.SharedDropdownState.ActiveCloseFunc==closeDropdown then closeDropdown()end
+an:Destroy()
+end
+
+if ai.Default then aj:SetValue(ai.Default)end
+ah.AllElements.Dropdowns[ai.Name]=aj
+
+return aj
+end
+
+function o.AddLine(ah)
+local ai=k"Frame"
+ah:AddThemeObject(ai,"BackgroundColor3","BackGroundElemCol")
+ah:AddThemeObject(ai,"BackgroundTransparency","BackGroundElemTran")
+ai.Size=m(0,360,0,3)
+ai.Parent=ah.Container
+
+local aj={
+Elem=ai,
+}
+return aj
+end
+
+return ae
+end
+
+function o.SelectTab(ab,ac,ad)
+for ae,af in ipairs(ab.mainTabs)do
+if af.Container then
+af.Container.Visible=false
+end
+if af.Button then
+ab:Tween(af.Button,{BackgroundTransparency=1},0.2)
+end
+if af.Frame then
+ab:Tween(af.Frame,{BackgroundTransparency=1},0.2)
+ab:Tween(af.Frame,{Size=m(0,2,0,0)},0.2)
+end
+end
+
+if ac.Container then
+ac.Container.Visible=true
+end
+
+if ad then
+ab:Tween(ad,{BackgroundTransparency=ab.Theme.TabTransparancy},0.2)
+ab:Tween(ac.Frame,{BackgroundTransparency=0},0.2)
+ab:Tween(ac.Frame,{Size=m(0,2,0,23)},0.2)
+end
+
+ab.CurrentTab=ac
+ab.TextLabel_5.Text=ac.Name
+end
+
+local ab={}
+function o.Tween(ac,ad,ae,af)
+if not ab[af]then
+ab[af]=TweenInfo.new(af,l.EasingStyle.Quad,l.EasingDirection.Out)
+end
+local ag=d:Create(ad,ab[af],ae)
+ag:Play()
+return ag
+end
+
+function o.ChangeBackgroundTransparance(ac)
+if ac.ImageLabel.ImageTransparency<=0.05 then
+ac.ImageLabel.ImageTransparency=0.05
+ac.Theme.BackGroundTran=0.05
+else
+ac.ImageLabel.ImageTransparency=0
+ac.Theme.BackGroundTran=0
+end
+end
+
+function o.Minimaze(ac)
+if ac.Windowscd==false then
+ac.Windowscd=true
+if(ac.ImageLabel.ImageTransparency~=1)then
+local ad=ac.ImageLabel
+local ae=Vector2.new(0.5,0)
+
+local af=ae.X-ad.AnchorPoint.X
+local ag=ae.Y-ad.AnchorPoint.Y
+
+local ah=af*ad.AbsoluteSize.X
+local ai=ag*ad.AbsoluteSize.Y
+
+ad.AnchorPoint=ae
+ad.Position=ad.Position+m(0,ah,0,ai)
+if not e.TouchEnabled then
+ac.Header.BackgroundTransparency=ac.Theme.BackGroundTran
+ac.Tabs.Visible=false
+ac.Sections.Visible=false
+if ac.Sections.Size==m(0,375,0,370)then
+ac:Tween(ac.ImageLabel,{Size=m(0,395,0,40)},1)
+ac:Tween(ac.Header,{Size=m(0,390,0,40)},0)
+else
+ac:Tween(ac.ImageLabel,{Size=m(0,620,0,40)},1)
+ac.Header.Size=m(0,596,0,40)
+end
+task.wait(1)
+ac.ImageLabel.ImageTransparency=1
+ac.Windowscd=false
+else
+local aj=ac.ImageLabel
+local ak=Vector2.new(0.5,0)
+
+local al=ak.X-aj.AnchorPoint.X
+local am=ak.Y-aj.AnchorPoint.Y
+
+local an=al*aj.AbsoluteSize.X
+local ao=am*aj.AbsoluteSize.Y
+
+aj.AnchorPoint=ak
+aj.Position=aj.Position+m(0,an,0,ao)
+ac.Header.BackgroundTransparency=1
+ac.Tabs.Visible=false
+ac.Sections.Visible=false
+
+ac.TextLabel.Visible=false
+if ac.TextLabel_2 then
+ac.TextLabel_2.Visible=false
+end
+ac.version.Visible=false
+ac.close.Visible=false
+ac.ImageButton.Visible=false
+ac.ImageButton_2.Visible=false
+
+if ac.Sections.Size==m(0,375,0,370)then
+ac:Tween(ac.ImageLabel,{Size=m(0,55,0,40)},1)
+ac:Tween(ac.Header,{Size=m(0,40,0,40)},0)
+ac.ImageButton_2.Position=m(0.28,0,0.25,0)
+else
+ac:Tween(ac.ImageLabel,{Size=m(0,40,0,40)},1)
+ac.Header.Size=m(0,40,0,40)
+ac.ImageButton_2.Position=m(0.28,0,0.25,0)
+end
+task.wait(1)
+ac.ImageButton_2.Visible=true
+ac.ImageLabel.ImageTransparency=1
+ac.Header.BackgroundTransparency=ac.Theme.BackGroundTran
+ac.Windowscd=false
+end
+else
+if not e.TouchEnabled then
+ac.ImageLabel.ImageTransparency=ac.Theme.BackGroundTran
+ac.Header.BackgroundTransparency=1
+if ac.Sections.Size==m(0,375,0,370)then
+ac:Tween(ac.ImageLabel,{Size=m(0,395,0,480)},1)
+ac:Tween(ac.Header,{Size=m(0,380,0,40)},1)
+else
+ac:Tween(ac.ImageLabel,{Size=m(0,620,0,480)},1)
+ac:Tween(ac.Header,{Size=m(0,596,0,40)},1)
+end
+
+task.wait(1)
+
+local ad=ac.ImageLabel
+local ae=Vector2.new(0.5,0.5)
+
+local af=ae-ad.AnchorPoint
+
+local ag=af.X*ad.AbsoluteSize.X
+local ah=af.Y*ad.AbsoluteSize.Y
+
+ad.AnchorPoint=ae
+ad.Position=ad.Position+m(0,ag,0,ah)
+ac.Tabs.Visible=true
+ac.Sections.Visible=true
+ac.Windowscd=false
+else
+ac.ImageButton_2.Visible=false
+
+ac.ImageLabel.ImageTransparency=ac.Theme.BackGroundTran
+ac.Header.BackgroundTransparency=1
+
+
+if ac.Sections.Size==m(0,375,0,370)then
+ac:Tween(ac.ImageLabel,{Size=m(0,395,0,480)},1)
+ac:Tween(ac.Header,{Size=m(0,380,0,40)},1)
+ac.ImageButton_2.Position=m(0.76,0,0.29,0)
+else
+ac:Tween(ac.ImageLabel,{Size=m(0,620,0,480)},1)
+
+ac.ImageButton_2.Position=m(0.825,0,0.29,0)
+ac:Tween(ac.Header,{Size=m(0,596,0,40)},1)
+end
+
+task.wait(1)
+
+local ad=ac.ImageLabel
+local ae=Vector2.new(0.5,0.5)
+
+local af=ae-ad.AnchorPoint
+
+local ag=af.X*ad.AbsoluteSize.X
+local ah=af.Y*ad.AbsoluteSize.Y
+
+ad.AnchorPoint=ae
+ad.Position=ad.Position+m(0,ag,0,ah)
+
+ac.TextLabel.Visible=true
+if ac.TextLabel_2 then
+ac.TextLabel_2.Visible=true
+end
+ac.version.Visible=true
+ac.close.Visible=true
+ac.ImageButton.Visible=true
+ac.ImageButton_2.Visible=true
+
+
+ac.Tabs.Visible=true
+ac.Sections.Visible=true
+ac.Windowscd=false
+end
+end
+end
+end
+
+function o.ColumnWindow(ac)
+if ac.Windowscd==false then
+ac.Windowscd=true
+
+local ad=ac.ScrollingFrame:FindFirstChildOfClass"UIListLayout"
+
+local ae=ac.Sections.Size~=m(0,375,0,370)
+
+ac.Header.BackgroundTransparency=1
+ac.ImageLabel.ImageTransparency=ac.Theme.BackGroundTran
+ac.Frame_2.Visible=not ae
+ac.TextLabel_5.Visible=not ae
+
+ac.Tabs.Visible=false
+ac.Sections.Visible=false
+if ae then ac.WindowUser.Visible=false end
+
+ac:Tween(ac.close,{Position=ae and m(0.92,0,0.2,0)or m(0.945,0,0.2,0)},1)
+ac:Tween(ac.ImageButton,{Position=ae and m(0.854,0,0.35,0)or m(0.897,0,0.35,0)},1)
+ac:Tween(ac.ImageButton_2,{Position=ae and m(0.76,0,0.29,0)or m(0.835,0,0.29,0)},1)
+ac:Tween(ac.ImageLabel,{Size=ae and m(0,405,0,480)or m(0,620,0,480)},1)
+ac:Tween(ac.Header,{Size=ae and m(0,381,0,40)or m(0,596,0,40)},1)
+
+ac.Sections.Size=ae and m(0,375,0,370)or m(0,390,0,414)
+ac.Sections.Position=ae and m(0.02,0,0.201,0)or m(0.34,0,0.10,0)
+ac.Frame_7.Size=ae and m(0,375,0,370)or m(0,366,0,379)
+ac.Frame_7.Position=ae and m(0,2,0,5)or m(0,0,0.085,0)
+
+ac.Tabs.Size=ae and m(0,375,0,45)or m(0,185,0,414)
+ac.Tabs.Position=ae and m(0.02,0,0.12,0)or m(0.035,0,0.116,0)
+ac.ScrollingFrame.Size=ae and m(0,365,0,45)or m(0,185,0,415)
+ac.ScrollingFrame.Position=ae and m(0,10,0,0)or m(0,0,0,0)
+
+ac.ScrollingFrame.ScrollingDirection=ae and l.ScrollingDirection.X or l.ScrollingDirection.Y
+ac.ScrollingFrame.AutomaticCanvasSize=ae and l.AutomaticSize.X or l.AutomaticSize.Y
+ac.ScrollingFrame.CanvasSize=m(0,0,0,0)
+ac.ScrollingFrame.ScrollBarImageTransparency=ae and 1 or 0
+
+if ad then
+ad.FillDirection=ae and l.FillDirection.Horizontal or l.FillDirection.Vertical
+ad.Padding=ae and n(0,8)or n(0,5)
+if ae then ad.SortOrder=l.SortOrder.LayoutOrder end
+end
+
+if ac.Categories then
+for af,ag in pairs(ac.Categories)do
+if ag.Wrapper then ag.Wrapper.Visible=not ae end
+for ah,ai in pairs(ag.Tabs)do
+local aj=ai.Button or(ai.Tab and ai.Tab[1])
+if aj then
+if ae then
+aj.Parent=ac.ScrollingFrame
+else
+aj.Parent=ag.Container
+aj.Size=m(0,173,0,35)
+end
+end
+end
+end
+end
+
+for af,ag in pairs(ac.mainTabs)do
+ag.Tab[5].Position=ae and m(0,0,0,0)or m(0,0,0.023,0)
+ag.Tab[5].Size=ae and m(0,380,0,365)or m(0,385,0,370)
+
+if ag.Tab[5]:IsA"ScrollingFrame"then
+ag.Tab[5].AutomaticCanvasSize=l.AutomaticSize.Y
+ag.Tab[5].CanvasSize=m(0,0,0,0)
+end
+
+local ah=ag.Tab[5]:FindFirstChildOfClass"UIPadding"
+if ah then
+ah.PaddingLeft=n(0,10)
+ah.PaddingRight=n(0,10)
+ah.PaddingTop=n(0,10)
+ah.PaddingBottom=n(0,10)
+end
+
+if ae then
+ag.Tab[1].Parent=ac.ScrollingFrame
+ag.Tab[1].Size=m(0,130,0,35)
+ag.Tab[1].LayoutOrder=af
+
+if ag.Tab[4].Image~=""then
+ag.Tab[2].Position=m(0.28,0,0,-1)
+end
+else
+if not ag.Button or ag.Tab[1].Parent==ac.ScrollingFrame then
+ag.Tab[1].Size=m(0,180,0,35)
+end
+
+if ag.Tab[4].Image~=""then
+ag.Tab[2].Position=m(0.21,0,0,-1)
+end
+end
+end
+
+task.wait(1)
+ac.Tabs.Visible=true
+ac.Sections.Visible=true
+if not ae and ac.userinfo then
+ac.WindowUser.Visible=true
+ac.Tabs.Size=m(0,185,0,372)
+ac.ScrollingFrame.Size=m(0,185,0,358)
+end
+ac.Windowscd=false
+end
+end
+
+function o.Destroy(ac)
+if ac.AllElements and ac.AllElements.GlobalKeybindConnection then
+ac.AllElements.GlobalKeybindConnection:Disconnect()
+ac.AllElements.GlobalKeybindConnection=nil
+end
+for ad,ae in ipairs(ac.mainTabs)do
+for af,ag in ipairs(ae.Connections)do
+ag:Disconnect()
+end
+for af,ag in ipairs(ae.KeybindConnections)do
+ag:Disconnect()
+end
+end
+for ad,ae in pairs(ac.AllElements.Toggles)do
+if ae.Value==true then
+ae:SetState(false)
+end
+end
+if ac.Destroy_gui then
+ac.Destroy_gui.Visible=false
+end
+ac.AllElements.Toggles={}
+ac.ThemeObjects={}
+
+local ad=TweenInfo.new(0.8,l.EasingStyle.Quad,l.EasingDirection.Out)
+local ae=d:Create(ac.ImageLabel,ad,{ImageTransparency=1})
+ae:Play()
+ac.Tabs.Visible=false
+ac.Sections.Visible=false
+ac.Header.Visible=false
+task.wait(0.5)
+ac.UI:Destroy()
+setmetatable(ac,nil)
+table.clear(ac)
+table.remove(ac)
+end
+
+function o.ShowDestroyQ(ac)
+if not ac.Destroy_gui then
+ac:CreateDestroyGui()
+end
+
+if ac.Destroy_gui.Visible then
+ac.dTextLabel.Visible=false
+ac.dTextButton.Visible=false
+ac.dTextLabel_2.Visible=false
+ac.dTextButton_2.Visible=false
+ac:Tween(ac.dFrame_2,{Transparency=1},0.15)
+task.wait(0.15)
+ac.Destroy_gui.Visible=false
+else
+local ad
+local ae=n(0,ac.ImageLabel.Size.Y.Offset-18)
+
+if ac.ImageLabel.Size~=m(0,620,0,40)and ac.ImageLabel.Size~=m(0,620,0,480)then
+ad=n(0,ac.ImageLabel.Size.X.Offset-14)
+ac.dFrame_2.Position=m(0.18,0,0.329,0)
+else
+ad=n(0,ac.ImageLabel.Size.X.Offset-20)
+ac.dFrame_2.Position=m(0.307,0,0.329,0)
+end
+ac.Destroy_gui.Size=m(ad,ae)
+ac.Destroy_gui.Visible=true
+ac:Tween(ac.ImageLabel,{Position=m(0.5,0,0.5,0)},0.25)
+ac:Tween(ac.dFrame_2,{Transparency=ac.Theme.DestroyGFrameTransparency},0.15)
+task.wait(0.15)
+ac.dTextLabel.Visible=true
+ac.dTextButton.Visible=true
+ac.dTextLabel_2.Visible=true
+ac.dTextButton_2.Visible=true
+end
+end
+
+function o.UserInfo(ac)
+if ac.WindowUser.Visible then
+ac.userinfo=false
+ac.WindowUser.Visible=false
+ac.Tabs.Size=m(0,185,0,405)
+ac.ScrollingFrame.Size=m(0,185,0,405)
+else
+ac.WindowUser.Visible=true
+ac.Tabs.Size=m(0,185,0,372)
+ac.ScrollingFrame.Size=m(0,185,0,354)
+ac.userinfo=true
+end
+end
+
+function o.Close(ac)local ad=
+ac.ImageLabel.Size
+if ac.ImageLabel.Visible then
+ac:Tween(ac.ImageLabel,{Size=m(0,40,0,0)},0)
+ac.ImageLabel.Visible=false
+else
+if ac.Sections.Visible==false then
+ac:Tween(ac.ImageLabel,{Size=m(0,620,0,40)},0)
+elseif ac.Sections.Size==m(0,375,0,370)then
+ac:Tween(ac.ImageLabel,{Size=m(0,395,0,480)},0)
+else
+ac:Tween(ac.ImageLabel,{Size=m(0,620,0,480)},0)
+end
+ac.ImageLabel.Visible=true
+end
+end
+
+function o.TurnOffAllFunctions(ac,ad,ae)
+local af={
+["Auto Load Config"]=true,
+["Auto Save Config"]=true,Transparency=
+true,
+["User info"]=true,Search=
+true,
+["Turn off all functions if staff detected"]=true
+}
+
+for ag,ah in pairs(ac.AllElements.Toggles)do
+if not af[ag]then
+local ai=false
+
+if ad~=nil then
+for aj,ak in pairs(ad)do
+if ak==ah then
+ai=true
+break
+end
+end
+end
+
+if not ai then
+if ah.Value==true then
+ah:SetState(false)
+end
+end
+end
+end
+
+if ae then
+ae()
+end
+end
+
+function o.GetConfig(ac,ad)
+if not isfile(ad)then
+ac:Notification{
+Name="Error",
+Description="Config not found",
+Duration=10,
+Type="Error"
+}
+else
+setclipboard(readfile(ad))
+ac:Notification{
+Name="Config",
+Description="The config has been successfully copied to the clipboard",
+Duration=10,
+Type="Notification"
+}
+end
+end
+
+function o.InputConfig(ac,ad,ae)
+writefile(ad,ae)
+end
+
+function o.SaveConfig(ac,ad,ae)
+local af={
+Toggles={},Keybinds={},Dropdowns={},
+Sliders={},ColorPickers={},Inputs={}
+}
+
+for ag,ah in pairs(ac.AllElements.Toggles)do
+pcall(function()
+af.Toggles[ag]=ah:GetState()
+end)
+end
+
+for ag,ah in pairs(ac.AllElements.Keybinds)do
+pcall(function()
+local ai=ah:GetState()
+af.Keybinds[ag]=ai and ai.Name or"None"
+end)
+end
+
+for ag,ah in pairs(ac.AllElements.Sliders)do
+pcall(function()
+af.Sliders[ag]=ah:GetState()
+end)
+end
+
+for ag,ah in pairs(ac.AllElements.Dropdowns)do
+pcall(function()
+af.Dropdowns[ag]=ah:GetValue()
+end)
+end
+
+for ag,ah in pairs(ac.AllElements.Inputs)do
+pcall(function()
+af.Inputs[ag]=ah:GetState()
+end)
+end
+
+for ag,ah in pairs(ac.AllElements.ColorPickers)do
+pcall(function()
+local ai=ah:GetColor()
+if ai then
+af.ColorPickers[ag]={R=ai.R,G=ai.G,B=ai.B}
+end
+end)
+end
+
+if not isfolder(ad)then
+pcall(makefolder,ad)
+end
+
+local ag,ah=pcall(function()return c:JSONEncode(af)end)
+if ag then
+pcall(function()
+writefile(ad.."/"..ae,ah)
+end)
+end
+end
+
+function o.IsLoadConfig(ac,ad)
+if not isfile(ad)then
+return false
+end
+
+local ae,af=pcall(readfile,ad)
+if not ae or not af then return false end
+
+local ag,ah=pcall(function()
+return c:JSONDecode(af)
+end)
+
+if not ag or type(ah)~="table"or not ah.Toggles then
+return false
+end
+
+local ai=ac.AllElements.Toggles
+local aj=ah.Toggles
+
+local ak={"Load Config","Auto Load Config","Auto Load","AutoLoad"}
+
+for al,am in ipairs(ak)do
+local an=ai[am]
+local ao=aj[am]
+
+if an and ao==true then
+an:SetState(true)
+return true
+end
+end
+
+return false
+end
+
+function o.LoadConfig(ac,ad)
+if not isfile(ad)then return false end
+
+local ae,af=pcall(readfile,ad)
+if not ae then return false end
+
+local ag,ah=pcall(function()
+return c:JSONDecode(af)
+end)
+if not ag or type(ah)~="table"then return false end
+
+if ah.Inputs then
+for ai,aj in pairs(ah.Inputs)do
+local ak=ac.AllElements.Inputs[ai]
+if ak then
+if ak.SaveConfig~=true then
+pcall(function()
+ak.SetText(aj)
+end)
+end
+end
+end
+end
+
+if ah.Keybinds then
+for ai,aj in pairs(ah.Keybinds)do
+local ak=ac.AllElements.Keybinds[ai]
+if ak and aj and aj~="None"and aj~="nil"then
+local al,am=pcall(function()return l.KeyCode[aj]end)
+if al then
+pcall(function()
+ak.SetKey(am)
+end)
+end
+end
+end
+end
+
+if ah.Sliders then
+for ai,aj in pairs(ah.Sliders)do
+local ak=ac.AllElements.Sliders[ai]
+if ak then
+pcall(function()
+ak.SetValue(aj)
+end)
+end
+end
+end
+
+if ah.Dropdowns then
+for ai,aj in pairs(ah.Dropdowns)do
+local ak=ac.AllElements.Dropdowns[ai]
+if ak and ak.SetValue then
+pcall(function()
+if ak.Multi and type(aj)=="table"then
+local al={}
+for am,an in pairs(aj)do
+if type(am)=="string"then al[am]=an else al[an]=true end
+end
+ak:SetValue(al)
+else
+ak:SetValue(aj)
+end
+end)
+end
+end
+end
+
+if ah.ColorPickers then
+for ai,aj in pairs(ah.ColorPickers)do
+local ak=ac.AllElements.ColorPickers[ai]
+if ak and aj.R and aj.G and aj.B then
+pcall(function()
+ak:SetColor(j(aj.R,aj.G,aj.B))
+end)
+end
+end
+end
+
+if ah.Toggles then
+for ai,aj in pairs(ah.Toggles)do
+local ak=ac.AllElements.Toggles[ai]
+if ak then
+if ai~="Load Config"and ai~="Auto Load Config"and ai~="Auto Load"and ai~="AutoLoad"then
+pcall(function()
+ak:SetState(aj)
+end)
+end
+end
+end
+end
+
+return true
+end
+
+function o.SetSavePath(ac,ad,ae)
+ac.saveFolder=ad
+ac.saveFileName=ae
+end
+
+function o.GetConfigsList(ac)
+local ad=ac.saveFolder or"zxcursedsocute"
+if not isfolder(ad)then makefolder(ad)end
+
+local ae=listfiles(ad)
+local af={}
+for ag,ah in ipairs(ae)do
+local ai=ah:gsub(ad.."/","")
+if ai:find".json"then
+table.insert(af,ai)
+end
+end
+return af
+end
+
+function o.UpdateConfigSelection(ac,ad)
+local ae=ad:find".json"and ad or ad..".json"
+ac.saveFileName=ae
+
+writefile(ac.saveFolder.."/last_config.txt",ae)
+end
+
+function o.DeleteConfig(ac,ad,ae)
+local af=ad.."/"..ae
+if isfile(af)then
+delfile(af)
+return true
+end
+return false
+end
+
+function o.CreateDestroyGui(ac)
+ac.Destroy_gui=k"Frame"
+ac.dFrame_2=k"Frame"
+ac.dTextLabel=k"TextLabel"
+local ad=k"UICorner"
+ac.dTextLabel_2=k"TextLabel"
+ac.dTextButton=k"TextButton"
+local ae=k"UICorner"
+ac.dTextButton_2=k"TextButton"
+local af=k"UICorner"
+local ag=k"UICorner"
+
+ac.Destroy_gui.BackgroundColor3=i(0,0,0)
+ac.Destroy_gui.BackgroundTransparency=0.4
+ac.Destroy_gui.BorderColor3=i(0,0,0)
+ac.Destroy_gui.Position=m(0.017,0,0.02,0)
+ac.Destroy_gui.Size=m(0,560,0,460)
+ac.Destroy_gui.Visible=false
+ac.Destroy_gui.ZIndex=10
+ac.Destroy_gui.Parent=ac.ImageLabel
+
+ag.CornerRadius=n(0,24)
+ag.Parent=ac.Destroy_gui
+
+ac:AddThemeObject(ac.dFrame_2,"BackgroundColor3","DestroyGFrame")
+ac.dFrame_2.BorderColor3=i(0,0,0)
+ac.dFrame_2.Position=m(0.306,0,0.328,0)
+ac.dFrame_2.Size=m(0,250,0,150)
+ac.dFrame_2.Transparency=1
+ac.dFrame_2.BackgroundTransparency=ac.Theme.DestroyGFrameTransparency
+ac.dFrame_2.ZIndex=10
+ac.dFrame_2.Parent=ac.Destroy_gui
+
+local ah=k"UIPadding"
+ah.PaddingBottom=n(0,5)
+ah.PaddingLeft=n(0,5)
+ah.PaddingRight=n(0,5)
+ah.PaddingTop=n(0,5)
+ah.Parent=ac.dFrame_2
+
+ac.dTextLabel.BackgroundColor3=i(255,255,255)
+ac.dTextLabel.BackgroundTransparency=1
+ac.dTextLabel.BorderColor3=i(0,0,0)
+ac.dTextLabel.BorderSizePixel=2
+ac.dTextLabel.Position=m(0.029,0,0.035,0)
+ac.dTextLabel.Size=m(0,200,0,36)
+ac.dTextLabel.Font=l.Font.FredokaOne
+ac.dTextLabel.Text="Destroy Interface?"
+ac:AddThemeObject(ac.dTextLabel,"TextColor3","TextColor")
+ac.dTextLabel.TextSize=23
+ac.dTextLabel.TextWrapped=true
+ac.dTextLabel.Visible=false
+ac.dTextLabel.TextXAlignment=l.TextXAlignment.Left
+ac.dTextLabel.Parent=ac.dFrame_2
+
+ad.CornerRadius=n(0,12)
+ad.Parent=ac.dFrame_2
+
+ac.dTextLabel_2.BackgroundColor3=i(255,255,255)
+ac.dTextLabel_2.BackgroundTransparency=1
+ac.dTextLabel_2.BorderColor3=i(0,0,0)
+ac.dTextLabel_2.Position=m(0.03,0,0.25,0)
+ac.dTextLabel_2.Size=m(0,219,0,40)
+ac.dTextLabel_2.Font=l.Font.FredokaOne
+ac.dTextLabel_2.TextWrapped=true
+ac.dTextLabel_2.Text="This action will permamently close the GUI."
+ac:AddThemeObject(ac.dTextLabel_2,"TextColor3","SubTtitleTextColor")
+ac.dTextLabel_2.TextSize=15
+ac.dTextLabel_2.Visible=false
+ac.dTextLabel_2.TextXAlignment=l.TextXAlignment.Left
+ac.dTextLabel_2.Parent=ac.dFrame_2
+
+ac.dTextButton.BackgroundColor3=i(207,0,0)
+ac.dTextButton.BackgroundTransparency=0.4
+ac.dTextButton.BorderColor3=i(0,0,0)
+ac.dTextButton.Position=m(0.017,0,0.721,0)
+ac.dTextButton.Size=m(0,112,0,36)
+ac.dTextButton.ZIndex=10
+ac.dTextButton.Font=l.Font.FredokaOne
+ac.dTextButton.Text="Destroy"
+ac.dTextButton.TextColor3=i(255,255,255)
+ac.dTextButton.Visible=false
+ac.dTextButton.TextSize=14
+ac.dTextButton.Parent=ac.dFrame_2
+
+ac.dTextButton.MouseButton1Click:Connect(function()
+ac:Destroy()
+end)
+
+ae.CornerRadius=n(0,10)
+ae.Parent=ac.dTextButton
+
+ac:AddThemeObject(ac.dTextButton_2,"BackgroundColor3","dbtncolor")
+ac.dTextButton_2.BackgroundTransparency=0.950
+ac.dTextButton_2.BorderColor3=i(0,0,0)
+ac.dTextButton_2.Position=m(0.517,0,0.721,0)
+ac.dTextButton_2.Size=m(0,112,0,36)
+ac.dTextButton_2.ZIndex=10
+ac.dTextButton_2.Font=l.Font.FredokaOne
+ac.dTextButton_2.Text="Close"
+ac:AddThemeObject(ac.dTextButton_2,"TextColor3","TextColor")
+ac.dTextButton_2.Visible=false
+ac.dTextButton_2.TextSize=14
+ac.dTextButton_2.Parent=ac.dFrame_2
+
+ac.dTextButton_2.MouseButton1Click:Connect(function()
+ac:ShowDestroyQ()
+end)
+
+af.CornerRadius=n(0,10)
+af.Parent=ac.dTextButton_2
+end
+
+function o.SetTheme(ac,ad:string)
+if ac.CurrentThemeName==ad then return end
+
+local ae=q[ad]
+if not ae then return end
+
+ac.CurrentThemeName=ad
+ac.Theme=ae
+
+if ac.ThemeObjects then
+for af,ag in pairs(ac.ThemeObjects)do
+for ah,ai in ipairs(ag)do
+if ae[ai.ThemeKey]~=nil then
+af[ai.Property]=ae[ai.ThemeKey]
+end
+end
+end
+end
+
+for af,ag in pairs(ac.ActiveNotifications)do
+ag.notification.Image=ae.NotiImg
+ag.notification.Title.TextColor3=ae.TextColor
+ag.notification.Description.TextColor3=ae.SubTtitleTextColor
+ag.notification.CloseButton.ImageColor3=ae.TabsIconColor
+if ag.notification.Icon.Image=="rbxassetid://75930996983661"or ag.notification.Icon.Image=="rbxassetid://76158273611595"then
+ag.notification.Icon.ImageColor3=ae.TabsIconColor
+end
+end
+
+if ac.AllElements and ac.AllElements.Toggles then
+for af,ag in pairs(ac.AllElements.Toggles)do
+ag:UpdateVisuals(ag.Value,true)
+end
+end
+
+if ac.CurrentTab and ac.CurrentTab.Tab and ac.CurrentTab.Tab[1]then
+ac.CurrentTab.Tab[1].BackgroundTransparency=ae.TabTransparancy
+end
+end
+
+function o.AddCategory(ac,ad)
+local ae=ac
+ae.Categories=ae.Categories or{}
+
+local af={
+Name=ad,
+Tabs={},
+Header=nil,
+Arrow=nil,
+Container=nil,
+Wrapper=nil
+}
+
+local ag=k"Frame"
+ag.BackgroundTransparency=1
+ag.Size=m(0,173,0,0)
+ag.AutomaticSize=l.AutomaticSize.Y
+ag.Parent=ae.ScrollingFrame
+af.Wrapper=ag
+
+local ah=k"UICorner"
+ah.CornerRadius=n(0,8)
+ah.Parent=ag
+
+local ai=k"UIListLayout"
+ai.SortOrder=l.SortOrder.LayoutOrder
+ai.Parent=ag
+
+local aj=k"TextButton"
+aj.BackgroundTransparency=1
+aj.Size=m(0,173,0,30)
+aj.Text=""
+aj.Parent=ag
+
+local ak=k"TextLabel"
+ak.BackgroundTransparency=1
+ak.Position=m(0.05,0,0,0)
+ak.Size=m(0.8,0,1,0)
+ak.Font=l.Font.FredokaOne
+ak.Text=ad:upper()
+ac:AddThemeObject(ak,"TextColor3","TabTextColor")
+ak.TextSize=11
+ak.TextXAlignment=l.TextXAlignment.Left
+ak.Parent=aj
+af.Header=ak
+
+local al=k"ImageLabel"
+al.BackgroundTransparency=1
+al.Position=m(0.85,0,0.25,0)
+al.Size=m(0,15,0,15)
+al.Image="rbxassetid://126982255108418"
+ac:AddThemeObject(al,"ImageColor3","DropDownArrowImg")
+al.Rotation=0
+al.Parent=aj
+af.Arrow=al
+
+local am=k"Frame"
+ac:AddThemeObject(am,"BackgroundColor3","BackGroundElemCol")
+am.BackgroundTransparency=1
+am.ClipsDescendants=true
+am.Size=m(0,173,0,0)
+am.Parent=ag
+af.Container=am
+
+local an=k"UIListLayout"
+an.Padding=n(0,2)
+an.SortOrder=l.SortOrder.LayoutOrder
+an.Parent=am
+
+local ao=true
+
+local function GetTargetHeight()
+return(an.AbsoluteContentSize.Y/ae.ScaleFactor)
+end
+
+aj.MouseButton1Click:Connect(function()
+ao=not ao
+local ap=ao and GetTargetHeight()or 0
+local r=ao and 0 or 180
+
+ae:Tween(al,{Rotation=r},0.2)
+ae:Tween(am,{Size=m(0,173,0,ap)},0.3)
+end)
+
+function af.AddTab(ap,r,s)
+local t=ae:AddTab(r,s)
+t.Button.Parent=am
+t.Button.Size=m(0,173,0,35)
+
+if ao then
+am.Size=m(0,173,0,GetTargetHeight())
+end
+table.insert(ap.Tabs,t)
+return t
+end
+
+table.insert(ae.Categories,af)
+return af
+end
+
+return o
