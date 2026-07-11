@@ -2183,34 +2183,45 @@ end
 
 function aj.SetValue(ak,al)
 if ak.Multi then
-table.clear(ak.Selected)
+local am={}
+
 if type(al)=="table"then
-for am,an in pairs(al)do
-if an and table.find(ak.Options,am)then
-ak.Selected[am]=true
+for an,ao in pairs(al)do
+if ao and table.find(ak.Options,an)then
+am[an]=true
 end
 end
 end
 
-local am=""
-for an,ao in pairs(ak.Selected)do
-if ao then am=am..(am==""and an or", "..an)end
+ak.Selected=am
+
+local an=""
+for ao in pairs(ak.Selected)do
+an=an==""and ao or(an..", "..ao)
 end
 
 if ak._textLabel then
-ak._textLabel.Text=am==""and"Select..."or am
+ak._textLabel.Text=an~=""and an or"Select..."
 end
 else
-if table.find(ak.Options,al)then
+if al and table.find(ak.Options,al)then
 ak.Selected=al
-if ak._textLabel then ak._textLabel.Text=al end
+
+if ak._textLabel then
+ak._textLabel.Text=tostring(al)
+end
 else
 ak.Selected=nil
-if ak._textLabel then ak._textLabel.Text="Select..."end
+
+if ak._textLabel then
+ak._textLabel.Text="Select..."
+end
 end
 end
 
-if ak._refreshVisuals then ak._refreshVisuals()end
+if ak._refreshVisuals then
+ak._refreshVisuals()
+end
 
 if ai then
 task.spawn(ai,ak.Selected)
@@ -2408,8 +2419,9 @@ end)
 end
 
 local function handleOptionClick(D)
+print("CLICK",D)
 if aj.Multi then
-local E=aj.Selected
+local E=table.clone(aj.Selected)
 E[D]=not E[D]
 aj:SetValue(E)
 else
