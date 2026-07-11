@@ -1331,18 +1331,30 @@ local D={
 Value=C,
 Elem=nil,
 
+
+UpdateVisuals=function()end,
+
 SetState=function(D,E)
-if E==D.Value then return end
+if E==D.Value then
+return
+end
+
 D.Value=E
 
-if B.Callback then task.spawn(B.Callback,E)end
-
-if D.UpdateVisuals then
-D:UpdateVisuals(E,false)
+if B.Callback then
+task.spawn(B.Callback,E)
 end
+
+D:UpdateVisuals(E,false)
 end,
-GetState=function(D)return D.Value end,
-Toggle=function(D)D:SetState(not D.Value)end
+
+GetState=function(D)
+return D.Value
+end,
+
+Toggle=function(D)
+D:SetState(not D.Value)
+end
 }
 
 A.AllElements.Toggles[B.Name]=D
@@ -1353,8 +1365,7 @@ local G,H=k"TextLabel",k"TextLabel"
 local I,J=k"Frame",k"UICorner"
 local K,L=k"Frame",k"UICorner"
 
-local M=B.Description and B.Description~=""local N=
-B.Default or false
+local M=B.Description and B.Description~=""
 
 E.BorderSizePixel,E.Size,E.Text,E.Parent=0,m(0,360,0,45),"",A.Container
 F.CornerRadius,F.Parent=n(0,12),E
@@ -1383,22 +1394,26 @@ A:AddThemeObject(K,"BackgroundColor3","Togglebtn")
 
 D.Elem=E
 
-D.UpdateVisuals=function(O,P,Q)
-local R=o.Theme or A.Theme
-local S=P and m(0,32,0.12,0)or m(0,3,0.12,0)
-local T=P and R.TogleActivColor or R.ToggleButton
-local U=P and 0 or R.ToggleTran
+D.UpdateVisuals=function(N,O,P)
+local Q=o.Theme or A.Theme
+local R=O and m(0,32,0.12,0)or m(0,3,0.12,0)
+local S=O and Q.TogleActivColor or Q.ToggleButton
+local T=O and 0 or Q.ToggleTran
 
-if Q then
-K.Position=S
-I.BackgroundColor3,I.BackgroundTransparency=T,U
+if P then
+K.Position=R
+I.BackgroundColor3,I.BackgroundTransparency=S,T
 else
-o:Tween(K,{Position=S},0.2)
-o:Tween(I,{BackgroundColor3=T,BackgroundTransparency=U},0.2)
+o:Tween(K,{Position=R},0.2)
+o:Tween(I,{BackgroundColor3=S,BackgroundTransparency=T},0.2)
 end
 end
 
-E.MouseButton1Click:Connect(function()D:Toggle()end)
+local N=E.MouseButton1Click:Connect(function()
+D:Toggle()
+end)
+
+table.insert(r.Connections,N)
 
 D:UpdateVisuals(D.Value,true)
 end
