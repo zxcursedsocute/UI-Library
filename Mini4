@@ -1463,6 +1463,12 @@ if H then return end
 if G.UserInputType==l.UserInputType.Keyboard then
 for I,J in pairs(A.AllElements.Keybinds)do
 local K=J:GetState()
+print(
+G.KeyCode,
+K,
+G.KeyCode==K,
+J.Callback
+)
 if K and G.KeyCode==K and J.Callback then
 task.spawn(J.Callback)
 end
@@ -3148,7 +3154,7 @@ if ak and aj and aj~="None"and aj~="nil"then
 local al,am=pcall(function()return l.KeyCode[aj]end)
 if al then
 pcall(function()
-ak.SetKey(am)
+ak:SetKey(am)
 end)
 end
 end
@@ -3160,7 +3166,10 @@ for ai,aj in pairs(ah.Sliders)do
 local ak=ac.AllElements.Sliders[ai]
 if ak then
 pcall(function()
-ak.SetValue(aj)
+ak:SetValue(aj)
+print("Loaded:",keyStr)
+print("Current:",ak:GetState())
+print("Equal:",ak:GetState()==keyCode)
 end)
 end
 end
