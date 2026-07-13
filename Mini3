@@ -517,7 +517,7 @@ u.wTextLabel_2.TextColor3=g(200,167,0)
 u.wTextLabel_2.Text="Premium"
 else
 u.wTextLabel_2.TextColor3=g(140,140,145)
-u.wTextLabel_2.Text="User"
+u.wTextLabel_2.Text="Fremium"
 end
 
 u.wTextLabel_2.TextSize=13
