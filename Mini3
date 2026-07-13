@@ -526,15 +526,14 @@ u.wTextLabel_2.Parent=u.WindowUser
 
 I.Parent=u.WindowUser
 I.BackgroundTransparency=1
+I.Position=k(0.30,52,0,23)
 
 if J then
 I.Image="rbxassetid://127843403295538"
 I.ImageColor3=g(200,167,0)
-I.Position=k(0.30,52,0,23)
 else
 I.Image="rbxassetid://115398113982385"
 I.ImageColor3=g(140,140,145)
-I.Position=k(0.30,26,0,23)
 end
 
 I.Size=k(0,14,0,14)
