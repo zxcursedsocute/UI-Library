@@ -87,7 +87,7 @@ DropDownTransparency=0.95,
 ColorPickerColoro=g(152,152,152),
 ListFrameColor=g(40,40,40)
 }),
-["Two Time Femboy (Mary)"]=extendTheme(n,{
+["Two Time Femboy (by Mary)"]=extendTheme(n,{
 BackGroundIcon="rbxassetid://94836966125792",
 NotiImg="rbxassetid://98241085507817",
 DestroyGFrame=g(10,11,11),
