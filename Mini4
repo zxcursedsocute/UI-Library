@@ -2221,6 +2221,7 @@ local af={
 Name=ac,
 Options=ab.Options or{},
 Multi=ab.Multi or false,
+Search=ab.Search==true,
 Selected=ab.Multi and{}or nil,
 Elem=nil,
 _textLabel=nil,
@@ -2341,7 +2342,6 @@ ai.PlaceholderText="Search..."
 ai.TextXAlignment=j.TextXAlignment.Left
 ai.ClearTextOnFocus=false
 
-
 aa:AddThemeObject(ai,"BackgroundColor3","BackGroundElemCol")
 aa:AddThemeObject(ai,"BackgroundTransparency","BackGroundElemTran")
 aa:AddThemeObject(ai,"TextColor3","TabTextColor")
@@ -2396,7 +2396,7 @@ ButtonPool={}
 
 ai:GetPropertyChangedSignal"Text":Connect(function()
 local ap=m.SharedDropdownState
-if not ap.ActiveDropdown then return end
+if not ap.ActiveDropdown or not ap.ActiveDropdown.Search then return end
 
 local aq=string.lower(ai.Text)
 
@@ -2634,7 +2634,16 @@ end
 m.SharedDropdownState.ActiveCloseFunc=closeDropdown
 m.SharedDropdownState.ActiveDropdown=af
 
+if af.Search then
+aj.Visible=true
+ai.Position=k(0,0,0,38)
+ai.Size=k(1,0,1,-38)
 aj.Text=""
+else
+aj.Visible=false
+ai.Position=k(0,0,0,4)
+ai.Size=k(1,0,1,-4)
+end
 
 for D,E in ipairs(af.Options)do
 local F=getPooledOption(D)
@@ -2654,7 +2663,7 @@ updateDropdownPosition()
 ah.Visible=true
 
 local D=math.min(150,#af.Options*30)
-local E=D+42
+local E=D+(af.Search and 42 or 8)
 
 m:Tween(ah,{Size=k(0,140,0,E)},0.2)
 refreshVisuals()
