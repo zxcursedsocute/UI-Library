@@ -770,8 +770,7 @@ local p={Settings=
 "rbxassetid://77808065458415",Run=
 "rbxassetid://94022434049447",Killer=
 "rbxassetid://80624492937943",Survivor=
-"rbxassetid://76337889437039",keys="rbxassetid://83619031955390",box="rbxassetid://97261141732706",minigame="rbxassetid://92483947987410",craft="rbxassetid://79908476334048",
-machine="rbxassetid://116544501716299",event="rbxassetid://136141469398409",rank="rbxassetid://127843403295538"
+"rbxassetid://76337889437039",keys="rbxassetid://83619031955390",box="rbxassetid://97261141732706",minigame="rbxassetid://92483947987410",craft="rbxassetid://79908476334048",machine="rbxassetid://116544501716299",event="rbxassetid://136141469398409",rank="rbxassetid://127843403295538"
 }
 
 function m.AddTab(q,r:string,s:string)
