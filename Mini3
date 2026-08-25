@@ -87,20 +87,19 @@ DropDownTransparency=0.95,
 ColorPickerColoro=g(152,152,152),
 ListFrameColor=g(40,40,40)
 }),
-["Two Time Femboy (by Mary)"] = extendTheme(BaseDarkTheme, {
-  BackGroundIcon = "rbxassetid://94836966125792",
-  NotiImg = "rbxassetid://98241085507817",
-  DestroyGFrame = c3rgb(10, 11, 11),
-  DropDownColor = c3rgb(11, 11, 11)
+["Two Time Femboy (by Mary)"]=extendTheme(n,{
+BackGroundIcon="rbxassetid://94836966125792",
+NotiImg="rbxassetid://98241085507817",
+DestroyGFrame=c3rgb(10,11,11),
+DropDownColor=c3rgb(11,11,11)
 }),
-
-["Skitty (by Cozy)"] = extendTheme(BaseDarkTheme, {
-  BackGroundIcon = "rbxassetid://115751114629485",
-  NotiImg = "rbxassetid://80185678916464",
-  DestroyGFrame = Color3.fromRGB(102, 34, 102),
-  DropDownColor = Color3.fromRGB(102, 34, 102),
-  SubTtitleTextColor = c3rgb(140, 140, 140),
-  TogleActivColor = c3rgb(124, 41, 124),
+["Skitty (by Cozy)"]=extendTheme(n,{
+BackGroundIcon="rbxassetid://115751114629485",
+NotiImg="rbxassetid://80185678916464",
+DestroyGFrame=Color3.fromRGB(102,34,102),
+DropDownColor=Color3.fromRGB(102,34,102),
+SubTtitleTextColor=c3rgb(140,140,140),
+TogleActivColor=c3rgb(124,41,124),
 }),
 ["Jane Doe (by Entity)"]=extendTheme(n,{
 BackGroundIcon="rbxassetid://83231488479500",
