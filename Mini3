@@ -180,6 +180,20 @@ Sliderball=g(0,0,0),
 ColorPickerColoro=g(255,255,255),
 ListFrameColor=g(220,220,220),
 keyback="rbxassetid://105543908643429"
+}),
+["Two Time Femboy (by Mary)"]=extendTheme(n,{
+BackGroundIcon="rbxassetid://94836966125792",
+NotiImg="rbxassetid://98241085507817",
+DestroyGFrame=g(10,11,11),
+DropDownColor=g(11,11,11)
+}),
+["Skitty (by Cozy)"]=extendTheme(n,{
+BackGroundIcon="rbxassetid://115751114629485",
+NotiImg="rbxassetid://80185678916464",
+DestroyGFrame=g(102,34,102),
+DropDownColor=g(102,34,102),
+SubTtitleTextColor=g(140,140,140),
+TogleActivColor=g(124,41,124)
 })
 }
 
