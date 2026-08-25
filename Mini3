@@ -100,7 +100,7 @@ ListFrameColor=g(40,40,40)
   DestroyGFrame = Color3.fromRGB(102, 34, 102),
   DropDownColor = Color3.fromRGB(102, 34, 102),
   SubTtitleTextColor = c3rgb(140, 140, 140),
-  TogleActivColor =c3rgb(124, 41, 124),
+  TogleActivColor = c3rgb(124, 41, 124),
 }),
 ["Jane Doe (by Entity)"]=extendTheme(n,{
 BackGroundIcon="rbxassetid://83231488479500",
