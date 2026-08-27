@@ -194,19 +194,6 @@ DestroyGFrame=g(102,34,102),
 DropDownColor=g(102,34,102),
 SubTtitleTextColor=g(140,140,140),
 TogleActivColor=g(124,41,124)
-}),
-["Kill Everyone (by Jinx)"]=extendTheme(n,{
-BackGroundIcon="rbxassetid://128007502909118",
-NotiImg="rbxassetid://98241085507817",
-BackGroundElemTran=0.85,
-TabTransparancy=0.85,
-DestroyGFrame=g(54,54,54),
-versionBackgroundTransparency=0.8,
-versionTextColor=g(255,255,255),
-DropDownColor=g(255,255,255),
-DropDownTransparency=0.85,
-ColorPickerColoro=g(152,152,152),
-ListFrameColor=g(40,40,40)
 })
 }
 
