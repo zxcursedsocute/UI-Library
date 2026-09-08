@@ -1,11 +1,20 @@
 -- ============================================================
--- Refactored version
+-- LOW-INSTANCES version (на основе refactored version)
 -- - поведение и внешний вид сохранены 1:1
 -- - меньше строк за счёт хелперов create()/corner()/CreateRow()
 -- - удалён мёртвый код (неиспользуемые ImageButton_3/4/5)
 -- - фикс для SetTheme: копия темы вместо ссылки, чтобы
 --   ChangeBackgroundTransparance не мутировала общую таблицу тем
 -- - уведомления защищены от падения после Destroy()
+--
+-- Сокращение числа инстансов (визуал не меняется):
+-- - subLabel создаётся только если у элемента есть SubText (-1/элемент)
+-- - иконка таба создаётся только если иконка задана (-1/таб)
+-- - "пилюля" версии: Frame+TextLabel слиты в один TextLabel (-1)
+-- - палитра колорпикера: убраны прозрачные обёртки
+--   titleFrame / hueFrame / inputFrame (-3 на таб с палитрой)
+-- - кнопки заголовка (close/column/minimize): ImageLabel+TextButton
+--   слиты в ImageButton (-3; зона клика = размер иконки)
 -- ============================================================
 
 local cloneref = (cloneref or clonereference or function(instance) return instance end)
@@ -69,13 +78,16 @@ function Library:CreateRow(class, title, desc, nameTextSize)
 	})
 	self:AddThemeObject(nameLabel, "TextColor3", "TabTextColor")
 
-	local subLabel = create("TextLabel", {
-		Parent = row, BackgroundTransparency = 1, BorderSizePixel = 0,
-		Position = ud2(0.029, 0, 0, 25), Size = ud2(0, 193, 0, 14),
-		Font = FONT, Text = desc, TextSize = 14,
-		TextXAlignment = LEFT, Visible = hasDesc
-	})
-	self:AddThemeObject(subLabel, "TextColor3", "TabSubTtitleTextColor")
+	local subLabel
+	if hasDesc then
+		subLabel = create("TextLabel", {
+			Parent = row, BackgroundTransparency = 1, BorderSizePixel = 0,
+			Position = ud2(0.029, 0, 0, 25), Size = ud2(0, 193, 0, 14),
+			Font = FONT, Text = desc, TextSize = 14,
+			TextXAlignment = LEFT
+		})
+		self:AddThemeObject(subLabel, "TextColor3", "TabSubTtitleTextColor")
+	end
 
 	return row, nameLabel, subLabel
 end
@@ -540,55 +552,44 @@ function Library.CreateWindow(config)
 	end
 
 	if version then
-		self.version = create("Frame", {
-			AutomaticSize = enum.AutomaticSize.XY, Size = ud2(0, 0, 0, 24),
-			LayoutOrder = 3, Parent = self.TitleContainer
+		self.version = create("TextLabel", {
+			AutomaticSize = enum.AutomaticSize.X, Size = ud2(0, 0, 0, 24),
+			LayoutOrder = 3, Font = FONT, Text = version, TextSize = 14,
+			Parent = self.TitleContainer
 		})
 		self:themeObj(self.version, {
 			BackgroundColor3 = "versionBackgroundColor3",
 			BackgroundTransparency = "versionBackgroundTransparency"
 		})
+		self:AddThemeObject(self.version, "TextColor3", "versionTextColor")
 		create("UIPadding", {Parent = self.version, PaddingLeft = ud(0, 12), PaddingRight = ud(0, 12)})
 		corner(ud(0, 11), self.version)
-
-		self.versionTextLabel = create("TextLabel", {
-			BackgroundTransparency = 1, AutomaticSize = enum.AutomaticSize.XY,
-			Size = ud2(0, 0, 1, 0), Font = FONT, Text = version,
-			TextSize = 14, Parent = self.version
-		})
-		self:AddThemeObject(self.versionTextLabel, "TextColor3", "versionTextColor")
 	end
 
 	-- Кнопки заголовка: close / column / minimize
-	self.close = create("ImageLabel", {
+	self.close = create("ImageButton", {
 		BackgroundTransparency = 1, Position = ud2(0.945, 0, 0.2, 0),
 		Size = ud2(0, 24, 0, 24), Image = "rbxassetid://94538718832963",
 		Parent = self.Header
 	})
 	self:AddThemeObject(self.close, "ImageColor3", "TabsIconColor")
+	self.close.MouseButton1Click:Connect(function() self:ShowDestroyQ() end)
 
-	local btnclose = create("TextButton", {Size = ud2(1, 0, 1, 0), BackgroundTransparency = 1, Text = "", Parent = self.close})
-	btnclose.MouseButton1Click:Connect(function() self:ShowDestroyQ() end)
-
-	self.ImageButton = create("ImageLabel", {
+	self.ImageButton = create("ImageButton", {
 		BackgroundTransparency = 1, Position = ud2(0.897, 0, 0.35, 0),
 		Size = ud2(0, 16, 0, 12), Image = "rbxassetid://89738650787294",
 		Parent = self.Header
 	})
 	self:AddThemeObject(self.ImageButton, "ImageColor3", "TabsIconColor")
+	self.ImageButton.MouseButton1Click:Connect(function() self:ColumnWindow() end)
 
-	local btnclose2 = create("TextButton", {Size = ud2(1, 6, 1, 6), Position = ud2(0, -3, 0, -3), BackgroundTransparency = 1, Text = "", Parent = self.ImageButton})
-	btnclose2.MouseButton1Click:Connect(function() self:ColumnWindow() end)
-
-	self.ImageButton_2 = create("ImageLabel", {
+	self.ImageButton_2 = create("ImageButton", {
 		BackgroundTransparency = 1, Position = ud2(0.835, 0, 0.29, 0),
 		Size = ud2(0, 18, 0, 18), Image = "rbxassetid://122178947900744",
 		Parent = self.Header
 	})
 	self:AddThemeObject(self.ImageButton_2, "ImageColor3", "TabsIconColor")
-
-	local btnclose3 = create("TextButton", {Size = ud2(1, 4, 1, 4), Position = ud2(0, -2, 0, -2), BackgroundTransparency = 1, Text = "", Parent = self.ImageButton_2})
-	btnclose3.MouseButton1Click:Connect(function() self:Minimaze() end)
+	self.ImageButton_2.MouseButton1Click:Connect(function() self:Minimaze() end)
 
 	-- Табы
 	self.Tabs = create("Frame", {
@@ -788,14 +789,16 @@ function Library:AddTab(name : string, icon : string)
 	create("UIListLayout", {Parent = ScrollingFrame_2, SortOrder = enum.SortOrder.LayoutOrder, Padding = ud(0, 5)})
 	create("UIPadding", {Parent = ScrollingFrame_2, PaddingTop = ud(0, 0), PaddingLeft = ud(0, 10)})
 
-	local ImageLabel = create("ImageLabel", {
-		BackgroundColor3 = c3rgb(255, 255, 255), BackgroundTransparency = 1,
-		BorderColor3 = c3rgb(0, 0, 0), BorderSizePixel = 0,
-		Position = ud2(0, 8, 0, 6.5), Size = ud2(0, 22, 0, 22),
-		Image = icon or "", Parent = Frame_3
-	})
-	self:AddThemeObject(ImageLabel, "ImageColor3", "TabsIconColor")
-	tab.Tab[4] = ImageLabel
+	if icon and icon ~= "" then
+		local ImageLabel = create("ImageLabel", {
+			BackgroundColor3 = c3rgb(255, 255, 255), BackgroundTransparency = 1,
+			BorderColor3 = c3rgb(0, 0, 0), BorderSizePixel = 0,
+			Position = ud2(0, 8, 0, 6.5), Size = ud2(0, 22, 0, 22),
+			Image = icon, Parent = Frame_3
+		})
+		self:AddThemeObject(ImageLabel, "ImageColor3", "TabsIconColor")
+		tab.Tab[4] = ImageLabel
+	end
 
 	tab.Container = ScrollingFrame_2
 	tab.Button = Frame_3
@@ -1675,10 +1678,9 @@ function Library:AddTab(name : string, icon : string)
 					create("UIStroke", {Color = c3rgb(60, 60, 70), Thickness = 2, Parent = colorPaletteFrame})
 					tabRef.SharedPaletteUI.Frame = colorPaletteFrame
 
-					local titleFrame = create("Frame", {Parent = colorPaletteFrame, BackgroundTransparency = 1, Size = ud2(1, 0, 0, 40), ZIndex = 51})
 					local titleLabel = create("TextLabel", {
-						Parent = titleFrame, Text = "Choose a color", Font = enum.Font.GothamSemibold,
-						TextSize = 16, BackgroundTransparency = 1, Size = ud2(1, 0, 1, 0), ZIndex = 52
+						Parent = colorPaletteFrame, Text = "Choose a color", Font = enum.Font.GothamSemibold,
+						TextSize = 16, BackgroundTransparency = 1, Size = ud2(1, 0, 0, 40), ZIndex = 52
 					})
 					tabRef:AddThemeObject(titleLabel, "TextColor3", "TabTextColor")
 
@@ -1702,22 +1704,20 @@ function Library:AddTab(name : string, icon : string)
 					corner(ud(1, 0), innerCircle)
 					tabRef.SharedPaletteUI.InnerCircle = innerCircle
 
-					local hueFrame = create("Frame", {Parent = colorPaletteFrame, Size = ud2(0, 20, 0, 200), Position = ud2(0.82, 0, 0, 50), BackgroundTransparency = 1, ZIndex = 51})
-					local hueGradientFrame = create("Frame", {Parent = hueFrame, Size = ud2(1, 0, 1, 0), ZIndex = 51})
-					corner(ud(0, 8), hueGradientFrame)
+				local hueColors = {}
+				for i = 0, 6 do table.insert(hueColors, ColorSequenceKeypoint.new(i/6, Color3.fromHSV(i/6, 1, 1))) end
+				local hueBar = create("Frame", {Parent = colorPaletteFrame, Size = ud2(0, 20, 0, 200), Position = ud2(0.82, 0, 0, 50), ZIndex = 51})
+				corner(ud(0, 8), hueBar)
+				create("UIGradient", {Parent = hueBar, Rotation = 90, Color = ColorSequence.new(hueColors)})
 
-					local hueColors = {}
-					for i = 0, 6 do table.insert(hueColors, ColorSequenceKeypoint.new(i/6, Color3.fromHSV(i/6, 1, 1))) end
-					create("UIGradient", {Parent = hueGradientFrame, Rotation = 90, Color = ColorSequence.new(hueColors)})
-
-					local hueSlider = create("Frame", {Parent = hueFrame, Size = ud2(1, 0, 0, 4), BackgroundColor3 = c3new(1, 1, 1), BorderSizePixel = 0, ZIndex = 52})
+				local hueSlider = create("Frame", {Parent = hueBar, Size = ud2(1, 0, 0, 4), BackgroundColor3 = c3new(1, 1, 1), BorderSizePixel = 0, ZIndex = 52})
 					corner(ud(0, 2), hueSlider)
 					tabRef.SharedPaletteUI.HueSlider = hueSlider
 
-					local inputFrame = create("Frame", {Parent = colorPaletteFrame, BackgroundTransparency = 1, Size = ud2(1, -40, 0, 40), Position = ud2(0, 30, 0, 260), ZIndex = 51})
 
 					local hexInput = create("TextBox", {
-						Parent = inputFrame, Size = ud2(0.7, 0, 1, 0),
+						Parent = colorPaletteFrame, Position = ud2(0, 30, 0, 260),
+						Size = ud2(0.7, -28, 0, 40),
 						BackgroundColor3 = c3rgb(40, 40, 45), BackgroundTransparency = 0.5,
 						Font = enum.Font.Gotham, TextSize = 14,
 						TextXAlignment = enum.TextXAlignment.Center, ZIndex = 52
@@ -1749,9 +1749,9 @@ function Library:AddTab(name : string, icon : string)
 
 					local draggingHue, draggingSV = false, false
 
-					hueFrame.InputBegan:Connect(function(input)
+					hueBar.InputBegan:Connect(function(input)
 						if input.UserInputType == enum.UserInputType.MouseButton1 or input.UserInputType == enum.UserInputType.Touch then
-							draggingHue = true; processInput(input, hueFrame, true)
+							draggingHue = true; processInput(input, hueBar, true)
 						end
 					end)
 
@@ -1769,7 +1769,7 @@ function Library:AddTab(name : string, icon : string)
 
 					UserInputService.InputChanged:Connect(function(input)
 						if input.UserInputType == enum.UserInputType.MouseMovement or input.UserInputType == enum.UserInputType.Touch then
-							if draggingHue then processInput(input, hueFrame, true)
+							if draggingHue then processInput(input, hueBar, true)
 							elseif draggingSV then processInput(input, svGradient, false) end
 						end
 					end)
@@ -2493,7 +2493,7 @@ function Library:ColumnWindow()
 				v.Tab[1].Size = ud2(0, 130, 0, 35)
 				v.Tab[1].LayoutOrder = i
 
-				if v.Tab[4].Image ~= "" then
+				if v.Tab[4] and v.Tab[4].Image ~= "" then
 					v.Tab[2].Position = ud2(0.28, 0, 0, -1)
 				end
 			else
@@ -2501,7 +2501,7 @@ function Library:ColumnWindow()
 					v.Tab[1].Size = ud2(0, 180, 0, 35)
 				end
 
-				if v.Tab[4].Image ~= "" then
+				if v.Tab[4] and v.Tab[4].Image ~= "" then
 					v.Tab[2].Position = ud2(0.21, 0, 0, -1)
 				end
 			end
