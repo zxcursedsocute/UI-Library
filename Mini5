@@ -6,7 +6,7 @@
 -- С ВИЗУАЛЬНЫМИ КОМПРОМИССАМИ (оговорено с пользователем):
 -- - имя элемента без описания рисуется текстом самой строки
 --   (строка всегда TextButton, AutoButtonColor = false);
---   текст начинается от левого края строки вместо отступа ~10пкс,
+--   отступ ~10пкс сделан тремя пробелами в начале текста;
 --   у элементов С описанием раскладка прежняя  (-1/элемент)
 -- - заполнение слайдера — UIGradient на треке вместо
 --   отдельного фрейма-подчёркивания  (-1/слайдер)
@@ -90,7 +90,8 @@ function Library:CreateRow(class, title, desc, nameTextSize)
 		return row, nameLabel, subLabel
 	end
 
-	row.Text = title
+	-- отступ ~10пкс от левого края — тремя пробелами (дешевле, чем инстанс)
+	row.Text = "   " .. title
 	row.Font = FONT
 	row.TextSize = nameTextSize or 16
 	row.TextXAlignment = LEFT
@@ -1550,7 +1551,14 @@ function Library:AddTab(name : string, icon : string)
 
 			-- заполнение трека — градиентом на самом треке (без отдельного фрейма)
 			local fillGrad = create("UIGradient", {Parent = slidertrack, Transparency = NumberSequence.new(1)})
-			self:AddThemeObject(fillGrad, "Color", "SliderUnderLineColor")
+			-- Color градиента нельзя записать Color3'ом напрямую: прокси
+			-- конвертирует в ColorSequence при применении темы
+			local fillGradColor = setmetatable({}, {
+				__newindex = function(_, _, color)
+					fillGrad.Color = ColorSequence.new(color)
+				end
+			})
+			self:AddThemeObject(fillGradColor, "Color", "SliderUnderLineColor")
 
 			sliderObj.Elem = slider
 			sliderObj._sliderbutton = sliderbutton
