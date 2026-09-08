@@ -11,7 +11,7 @@
 -- - заполнение слайдера — UIGradient на треке вместо
 --   отдельного фрейма-подчёркивания  (-1/слайдер)
 -- - опция дропдауна: текст на самой кнопке опции вместо
---   вложенного TextLabel (клик-зона уже на ~6пкс слева)  (-1/опция)
+--   вложенного TextLabel, отступ ~6пкс двумя пробелами  (-1/опция)
 --
 -- Без изменений: скругления углов, темы, вся логика.
 -- ============================================================
@@ -2090,7 +2090,7 @@ function Library:AddTab(name : string, icon : string)
 			local function createOption(optionText)
 				local Option = create("TextButton", {
 					BackgroundTransparency = 1, Size = ud2(0, 135, 0, 30),
-					Font = FONT, Text = optionText, TextSize = 14,
+					Font = FONT, Text = "  " .. optionText, TextSize = 14,
 					TextXAlignment = LEFT, TextWrapped = true,
 					TextTruncate = enum.TextTruncate.AtEnd, Parent = SharedOptions
 				})
