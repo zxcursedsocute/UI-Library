@@ -1,3095 +1,3067 @@
--- ============================================================
--- COMPACT-INSTANCES version (на основе low-instances version)
--- Цель: ещё сильнее сократить число инстансов.
--- Все фиксы и сокращения low-версии сохранены, плюс:
---
--- С ВИЗУАЛЬНЫМИ КОМПРОМИССАМИ (оговорено с пользователем):
--- - имя элемента без описания рисуется текстом самой строки
---   (строка всегда TextButton, AutoButtonColor = false);
---   отступ ~10пкс сделан тремя пробелами в начале текста;
---   у элементов С описанием раскладка прежняя  (-1/элемент)
--- - заполнение слайдера — UIGradient на треке вместо
---   отдельного фрейма-подчёркивания  (-1/слайдер)
--- - опция дропдауна: текст на самой кнопке опции вместо
---   вложенного TextLabel, отступ ~6пкс двумя пробелами  (-1/опция)
---
--- Без изменений: скругления углов, темы, вся логика.
--- ============================================================
+local a=(cloneref or clonereference or function(a)return a end)
 
-local cloneref = (cloneref or clonereference or function(instance) return instance end)
+local b=a(game:GetService"CoreGui")
+local c=a(game:GetService"HttpService")
+local d=a(game:GetService"TweenService")
+local e=a(game:GetService"UserInputService")
+local f=a(game:GetService"TextService")
 
-local CoreGui = cloneref(game:GetService("CoreGui"))
-local HttpService = cloneref(game:GetService("HttpService"))
-local TweenService = cloneref(game:GetService("TweenService"))
-local UserInputService = cloneref(game:GetService("UserInputService"))
-local TextService = cloneref(game:GetService("TextService"))
+local g=Color3.fromRGB
+local h=Color3.new
+local i=Instance.new
+local j=Enum
+local k=UDim2.new
+local l=UDim.new
 
-local c3rgb = Color3.fromRGB
-local c3new = Color3.new
-local inst  = Instance.new
-local enum  = Enum
-local ud2   = UDim2.new
-local ud    = UDim.new
+local m=j.Font.GothamMedium
+local n=j.TextXAlignment.Left
 
-local FONT = enum.Font.GothamMedium
-local LEFT = enum.TextXAlignment.Left
+local o={}
+o.__index=o
 
-local Library = {}
-Library.__index = Library
-
--- ------------------------------------------------------------
--- Хелперы
--- ------------------------------------------------------------
-
--- Инстанс + свойства одной таблицей. Parent всегда ставится последним.
-local function create(class, props)
-	local obj = inst(class)
-	local parent = props.Parent
-	props.Parent = nil
-	for k, v in pairs(props) do obj[k] = v end
-	if parent then obj.Parent = parent end
-	return obj
+local function create(p,q)
+local r=i(p)
+local s=q.Parent
+q.Parent=nil
+for t,u in pairs(q)do r[t]=u end
+if s then r.Parent=s end
+return r
 end
 
-local function corner(radius, parent)
-	return create("UICorner", {CornerRadius = radius, Parent = parent})
+local function corner(p,q)
+return create("UICorner",{CornerRadius=p,Parent=q})
 end
 
--- Общий шаблон строки элемента 360x45 (Button/Toggle/Keybind/Input/Slider/Dropdown/ColorPicker).
--- Возвращает строку, лейбл имени и лейбл описания.
-function Library:CreateRow(class, title, desc, nameTextSize)
-	local hasDesc = desc ~= ""
+function o.CreateRow(p,q,r,s,t)
+local u=s~=""
 
-	-- всегда TextButton: если описания нет, имя рисуется текстом самой строки
-	-- (экономит 1 TextLabel на элемент); AutoButtonColor выключен, чтобы
-	-- клик по строке не затемнял фон
-	local row = create(class, {
-		BorderSizePixel = 0, AutoButtonColor = false,
-		Size = ud2(0, 360, 0, 45), Text = "",
-		Parent = self.Container
-	})
-	self:themeObj(row, {BackgroundColor3 = "BackGroundElemCol", BackgroundTransparency = "BackGroundElemTran"})
-	corner(ud(0, 12), row)
+local v=create(q,{
+BorderSizePixel=0,AutoButtonColor=false,
+Size=k(0,360,0,45),Text="",
+Parent=p.Container
+})
+p:themeObj(v,{BackgroundColor3="BackGroundElemCol",BackgroundTransparency="BackGroundElemTran"})
+corner(l(0,12),v)
 
-	if hasDesc then
-		local nameLabel = create("TextLabel", {
-			Parent = row, BackgroundTransparency = 1, BorderSizePixel = 0,
-			Position = ud2(0.029, 0, 0, 4),
-			Size = ud2(0, 77, 0, 20), Font = FONT, Text = title,
-			TextSize = nameTextSize or 16, TextXAlignment = LEFT
-		})
-		self:AddThemeObject(nameLabel, "TextColor3", "TabTextColor")
+if u then
+local w=create("TextLabel",{
+Parent=v,BackgroundTransparency=1,BorderSizePixel=0,
+Position=k(0.029,0,0,4),
+Size=k(0,77,0,20),Font=m,Text=r,
+TextSize=t or 16,TextXAlignment=n
+})
+p:AddThemeObject(w,"TextColor3","TabTextColor")
 
-		local subLabel = create("TextLabel", {
-			Parent = row, BackgroundTransparency = 1, BorderSizePixel = 0,
-			Position = ud2(0.029, 0, 0, 25), Size = ud2(0, 193, 0, 14),
-			Font = FONT, Text = desc, TextSize = 14,
-			TextXAlignment = LEFT
-		})
-		self:AddThemeObject(subLabel, "TextColor3", "TabSubTtitleTextColor")
-		return row, nameLabel, subLabel
-	end
-
-	-- отступ ~10пкс от левого края — тремя пробелами (дешевле, чем инстанс)
-	row.Text = "   " .. title
-	row.Font = FONT
-	row.TextSize = nameTextSize or 16
-	row.TextXAlignment = LEFT
-	self:AddThemeObject(row, "TextColor3", "TabTextColor")
-	return row, row
+local x=create("TextLabel",{
+Parent=v,BackgroundTransparency=1,BorderSizePixel=0,
+Position=k(0.029,0,0,25),Size=k(0,193,0,14),
+Font=m,Text=s,TextSize=14,
+TextXAlignment=n
+})
+p:AddThemeObject(x,"TextColor3","TabSubTtitleTextColor")
+return v,w,x
 end
 
--- Регистрация отложенного рендера элемента
--- Прозрачность градиента-заполнения слайдера: непрозрачно до p, дальше прозрачно
+
+v.Text="   "..r
+v.Font=m
+v.TextSize=t or 16
+v.TextXAlignment=n
+p:AddThemeObject(v,"TextColor3","TabTextColor")
+return v,v
+end
+
+
+
 local function fillSequence(p)
-	if p <= 0 then return NumberSequence.new(1) end
-	if p >= 1 then return NumberSequence.new(0) end
-	return NumberSequence.new({
-		NumberSequenceKeypoint.new(0, 0),
-		NumberSequenceKeypoint.new(p, 0),
-		NumberSequenceKeypoint.new(math.min(p + 0.001, 1), 1),
-		NumberSequenceKeypoint.new(1, 1)
-	})
+if p<=0 then return NumberSequence.new(1)end
+if p>=1 then return NumberSequence.new(0)end
+return NumberSequence.new{
+NumberSequenceKeypoint.new(0,0),
+NumberSequenceKeypoint.new(p,0),
+NumberSequenceKeypoint.new(math.min(p+0.001,1),1),
+NumberSequenceKeypoint.new(1,1)
+}
 end
 
-local function register(tab, controller, renderFunc)
-	controller._renderFunc = renderFunc
-	table.insert(tab.RenderQueue, renderFunc)
-	if tab.IsLoaded then renderFunc() end
-	return controller
+local function register(p,q,r)
+q._renderFunc=r
+table.insert(p.RenderQueue,r)
+if p.IsLoaded then r()end
+return q
 end
 
--- ------------------------------------------------------------
--- Темы
--- ------------------------------------------------------------
 
-local function extendTheme(base, overrides)
-	local theme = {}
-	for k, v in base do theme[k] = v end
-	for k, v in pairs(overrides) do theme[k] = v end
-	return theme
+
+
+
+local function extendTheme(p,q)
+local r={}
+for s,t in p do r[s]=t end
+for s,t in pairs(q)do r[s]=t end
+return r
 end
 
-local BaseDarkTheme = {
-	BackGroundIcon = "rbxassetid://71126967316056",
-	TextColor = c3rgb(255, 255, 255),
-	SubTtitleTextColor = c3rgb(125, 125, 125),
-	Notisubtitlecolor = c3rgb(199, 199, 199),
-	HeaderColor = c3rgb(61, 63, 65),
-	headerlinecolor = c3rgb(255, 255, 255),
-	headerlinetrans = 1,
-	TabsScrollingBarFrameColor = c3rgb(255, 255, 255),
-	NotiImg = "rbxassetid://116797594577574",
-	NotiTitleColor = c3rgb(255, 255, 255),
-	BackGroundTran = 0,
-	DestroyGFrame = c3rgb(61, 63, 65),
-	DestroyGFrameTransparency = 0,
-	dbtntran = 0.95,
-	TabTransparancy = 0.95,
-	dbtncolor = c3rgb(255, 255, 255),
-	versionBackgroundColor3 = c3rgb(255, 255, 255),
-	versionBackgroundTransparency = 0,
-	versionTextColor = c3rgb(0, 0, 0),
-	IOSdraglineColor = c3rgb(255, 255, 255),
-	TabTextColor = c3rgb(255, 255, 255),
-	TabColor = c3rgb(255, 255, 255),
-	TabSubTtitleTextColor = c3rgb(199, 199, 199),
-	TogleActivColor = c3rgb(28, 96, 255),
-	DropDownArrowImg = c3rgb(255, 255, 255),
-	TabsIconColor = c3rgb(255, 255, 255),
-	InputTextColor = c3rgb(175, 175, 175),
-	BackGroundElemTran = 0.95,
-	BackGroundElemCol = c3rgb(255, 255, 255),
-	BackGroundButtonTran = 0.95,
-	ActionBackColor = c3rgb(255, 255, 255),
-	ToggleButton = c3rgb(255, 255, 255),
-	ToggleTran = 0.9,
-	SectionsScrollingBarFrameColor = c3rgb(255, 255, 255),
-	DropDownColor = c3rgb(61, 63, 65),
-	DropDownTransparency = 0,
-	DropDownFrameColor = c3rgb(255, 255, 255),
-	SliderUnderLineColor = c3rgb(28, 96, 255),
-	Togglebtn = c3rgb(255, 255, 255),
-	Sliderball = c3rgb(255, 255, 255),
-	ColorPickerColoro = c3rgb(61, 63, 65),
-	ListFrameColor = c3rgb(66, 66, 66),
-	keyback = "rbxassetid://120882935753706"
+local p={
+BackGroundIcon="rbxassetid://71126967316056",
+TextColor=g(255,255,255),
+SubTtitleTextColor=g(125,125,125),
+Notisubtitlecolor=g(199,199,199),
+HeaderColor=g(61,63,65),
+headerlinecolor=g(255,255,255),
+headerlinetrans=1,
+TabsScrollingBarFrameColor=g(255,255,255),
+NotiImg="rbxassetid://116797594577574",
+NotiTitleColor=g(255,255,255),
+BackGroundTran=0,
+DestroyGFrame=g(61,63,65),
+DestroyGFrameTransparency=0,
+dbtntran=0.95,
+TabTransparancy=0.95,
+dbtncolor=g(255,255,255),
+versionBackgroundColor3=g(255,255,255),
+versionBackgroundTransparency=0,
+versionTextColor=g(0,0,0),
+IOSdraglineColor=g(255,255,255),
+TabTextColor=g(255,255,255),
+TabColor=g(255,255,255),
+TabSubTtitleTextColor=g(199,199,199),
+TogleActivColor=g(28,96,255),
+DropDownArrowImg=g(255,255,255),
+TabsIconColor=g(255,255,255),
+InputTextColor=g(175,175,175),
+BackGroundElemTran=0.95,
+BackGroundElemCol=g(255,255,255),
+BackGroundButtonTran=0.95,
+ActionBackColor=g(255,255,255),
+ToggleButton=g(255,255,255),
+ToggleTran=0.9,
+SectionsScrollingBarFrameColor=g(255,255,255),
+DropDownColor=g(61,63,65),
+DropDownTransparency=0,
+DropDownFrameColor=g(255,255,255),
+SliderUnderLineColor=g(28,96,255),
+Togglebtn=g(255,255,255),
+Sliderball=g(255,255,255),
+ColorPickerColoro=g(61,63,65),
+ListFrameColor=g(66,66,66),
+keyback="rbxassetid://120882935753706"
 }
 
-local Themes = {
-	["Darkness"] = BaseDarkTheme,
+local q={Darkness=
+p,
 
-	["Forest 2021"] = extendTheme(BaseDarkTheme, {
-		BackGroundIcon = "rbxassetid://101614984726336", HeaderColor = c3rgb(0, 0, 0),
-		headerlinecolor = c3rgb(229, 229, 229), NotiImg = "rbxassetid://129831795524094",
-		DestroyGFrame = c3rgb(54, 54, 54), versionBackgroundTransparency = 0.8,
-		versionTextColor = c3rgb(255, 255, 255), DropDownColor = c3rgb(255, 255, 255),
-		DropDownTransparency = 0.95, ColorPickerColoro = c3rgb(152, 152, 152),
-		ListFrameColor = c3rgb(40, 40, 40)
-	}),
+["Forest 2021"]=extendTheme(p,{
+BackGroundIcon="rbxassetid://101614984726336",HeaderColor=g(0,0,0),
+headerlinecolor=g(229,229,229),NotiImg="rbxassetid://129831795524094",
+DestroyGFrame=g(54,54,54),versionBackgroundTransparency=0.8,
+versionTextColor=g(255,255,255),DropDownColor=g(255,255,255),
+DropDownTransparency=0.95,ColorPickerColoro=g(152,152,152),
+ListFrameColor=g(40,40,40)
+}),
 
-	["Two Time Femboy (Mary)"] = extendTheme(BaseDarkTheme, {
-		BackGroundIcon = "rbxassetid://94836966125792", NotiImg = "rbxassetid://98241085507817",
-		DestroyGFrame = c3rgb(10, 11, 11), DropDownColor = c3rgb(11, 11, 11)
-	}),
+["Two Time Femboy (Mary)"]=extendTheme(p,{
+BackGroundIcon="rbxassetid://94836966125792",NotiImg="rbxassetid://98241085507817",
+DestroyGFrame=g(10,11,11),DropDownColor=g(11,11,11)
+}),
 
-	["Jane Doe (by Entity)"] = extendTheme(BaseDarkTheme, {
-		BackGroundIcon = "rbxassetid://83231488479500", NotiImg = "rbxassetid://116972706357235",
-		DestroyGFrame = c3rgb(102, 34, 102), DropDownColor = c3rgb(102, 34, 102),
-		SubTtitleTextColor = c3rgb(140, 140, 140), TogleActivColor = c3rgb(139, 46, 139)
-	}),
+["Jane Doe (by Entity)"]=extendTheme(p,{
+BackGroundIcon="rbxassetid://83231488479500",NotiImg="rbxassetid://116972706357235",
+DestroyGFrame=g(102,34,102),DropDownColor=g(102,34,102),
+SubTtitleTextColor=g(140,140,140),TogleActivColor=g(139,46,139)
+}),Dark=
 
-	["Dark"] = extendTheme(BaseDarkTheme, {
-		BackGroundIcon = "rbxassetid://124703424830654", HeaderColor = c3rgb(26, 26, 26),
-		NotiImg = "rbxassetid://101518186301089", DestroyGFrame = c3rgb(22, 22, 22),
-		DropDownColor = c3rgb(47, 47, 47), ColorPickerColoro = c3rgb(47, 47, 47),
-		ListFrameColor = c3rgb(40, 40, 40)
-	}),
+extendTheme(p,{
+BackGroundIcon="rbxassetid://124703424830654",HeaderColor=g(26,26,26),
+NotiImg="rbxassetid://101518186301089",DestroyGFrame=g(22,22,22),
+DropDownColor=g(47,47,47),ColorPickerColoro=g(47,47,47),
+ListFrameColor=g(40,40,40)
+}),Black=
 
-	["Black"] = extendTheme(BaseDarkTheme, {
-		BackGroundIcon = "rbxassetid://135546341015171", SubTtitleTextColor = c3rgb(199, 199, 199),
-		HeaderColor = c3rgb(0, 0, 0), headerlinecolor = c3rgb(165, 165, 165),
-		NotiImg = "rbxassetid://121010433723211", DestroyGFrame = c3rgb(0, 0, 0),
-		dbtntran = 0.9, TabSubTtitleTextColor = c3rgb(203, 203, 203),
-		TogleActivColor = c3rgb(0, 0, 0), InputTextColor = c3rgb(255, 255, 255),
-		DropDownColor = c3rgb(0, 0, 0), SliderUnderLineColor = c3rgb(0, 0, 0),
-		ColorPickerColoro = c3rgb(0, 0, 0), ListFrameColor = c3rgb(18, 18, 18),
-		keyback = "rbxassetid://89724657821038"
-	}),
+extendTheme(p,{
+BackGroundIcon="rbxassetid://135546341015171",SubTtitleTextColor=g(199,199,199),
+HeaderColor=g(0,0,0),headerlinecolor=g(165,165,165),
+NotiImg="rbxassetid://121010433723211",DestroyGFrame=g(0,0,0),
+dbtntran=0.9,TabSubTtitleTextColor=g(203,203,203),
+TogleActivColor=g(0,0,0),InputTextColor=g(255,255,255),
+DropDownColor=g(0,0,0),SliderUnderLineColor=g(0,0,0),
+ColorPickerColoro=g(0,0,0),ListFrameColor=g(18,18,18),
+keyback="rbxassetid://89724657821038"
+}),Cursed=
 
-	["Cursed"] = extendTheme(BaseDarkTheme, {
-		BackGroundIcon = "rbxassetid://139069464889319", HeaderColor = c3rgb(16, 17, 31),
-		NotiImg = "rbxassetid://133419353491012", DestroyGFrame = c3rgb(22, 23, 42),
-		versionBackgroundColor3 = c3rgb(224, 206, 255), IOSdraglineColor = c3rgb(63, 59, 126),
-		TogleActivColor = c3rgb(63, 59, 126), DropDownArrowImg = c3rgb(69, 65, 140),
-		DropDownColor = c3rgb(16, 17, 31), DropDownFrameColor = c3rgb(63, 59, 126),
-		SliderUnderLineColor = c3rgb(63, 59, 126), ColorPickerColoro = c3rgb(16, 17, 31),
-		ListFrameColor = c3rgb(16, 17, 31), keyback = "rbxassetid://128602859619396"
-	}),
+extendTheme(p,{
+BackGroundIcon="rbxassetid://139069464889319",HeaderColor=g(16,17,31),
+NotiImg="rbxassetid://133419353491012",DestroyGFrame=g(22,23,42),
+versionBackgroundColor3=g(224,206,255),IOSdraglineColor=g(63,59,126),
+TogleActivColor=g(63,59,126),DropDownArrowImg=g(69,65,140),
+DropDownColor=g(16,17,31),DropDownFrameColor=g(63,59,126),
+SliderUnderLineColor=g(63,59,126),ColorPickerColoro=g(16,17,31),
+ListFrameColor=g(16,17,31),keyback="rbxassetid://128602859619396"
+}),White=
 
-	["White"] = extendTheme(BaseDarkTheme, {
-		BackGroundIcon = "rbxassetid://85154344778026", TextColor = c3rgb(0, 0, 0),
-		SubTtitleTextColor = c3rgb(49, 49, 49), Notisubtitlecolor = c3rgb(67, 67, 67),
-		HeaderColor = c3rgb(255, 255, 255), headerlinecolor = c3rgb(165, 165, 165),
-		TabsScrollingBarFrameColor = c3rgb(0, 0, 0), NotiImg = "rbxassetid://103895576341932",
-		NotiTitleColor = c3rgb(0, 0, 0), DestroyGFrame = c3rgb(255, 255, 255),
-		dbtntran = 0.8, dbtncolor = c3rgb(0, 0, 0),
-		versionBackgroundColor3 = c3rgb(0, 0, 0), versionTextColor = c3rgb(255, 255, 255),
-		IOSdraglineColor = c3rgb(0, 0, 0), TabTextColor = c3rgb(0, 0, 0),
-		TabColor = c3rgb(0, 0, 0), TabSubTtitleTextColor = c3rgb(67, 67, 67),
-		TogleActivColor = c3rgb(103, 103, 103), DropDownArrowImg = c3rgb(0, 0, 0),
-		TabsIconColor = c3rgb(0, 0, 0), InputTextColor = c3rgb(67, 67, 67),
-		BackGroundElemTran = 0.9, BackGroundElemCol = c3rgb(0, 0, 0),
-		ActionBackColor = c3rgb(33, 33, 33), ToggleButton = c3rgb(0, 0, 0),
-		BackGroundButtonTran = 0.9, SectionsScrollingBarFrameColor = c3rgb(0, 0, 0),
-		DropDownColor = c3rgb(202, 202, 202), DropDownFrameColor = c3rgb(0, 0, 0),
-		SliderUnderLineColor = c3rgb(0, 0, 0), Togglebtn = c3rgb(0, 0, 0),
-		Sliderball = c3rgb(0, 0, 0), ColorPickerColoro = c3rgb(255, 255, 255),
-		ListFrameColor = c3rgb(220, 220, 220), keyback = "rbxassetid://105543908643429"
-	}),
+extendTheme(p,{
+BackGroundIcon="rbxassetid://85154344778026",TextColor=g(0,0,0),
+SubTtitleTextColor=g(49,49,49),Notisubtitlecolor=g(67,67,67),
+HeaderColor=g(255,255,255),headerlinecolor=g(165,165,165),
+TabsScrollingBarFrameColor=g(0,0,0),NotiImg="rbxassetid://103895576341932",
+NotiTitleColor=g(0,0,0),DestroyGFrame=g(255,255,255),
+dbtntran=0.8,dbtncolor=g(0,0,0),
+versionBackgroundColor3=g(0,0,0),versionTextColor=g(255,255,255),
+IOSdraglineColor=g(0,0,0),TabTextColor=g(0,0,0),
+TabColor=g(0,0,0),TabSubTtitleTextColor=g(67,67,67),
+TogleActivColor=g(103,103,103),DropDownArrowImg=g(0,0,0),
+TabsIconColor=g(0,0,0),InputTextColor=g(67,67,67),
+BackGroundElemTran=0.9,BackGroundElemCol=g(0,0,0),
+ActionBackColor=g(33,33,33),ToggleButton=g(0,0,0),
+BackGroundButtonTran=0.9,SectionsScrollingBarFrameColor=g(0,0,0),
+DropDownColor=g(202,202,202),DropDownFrameColor=g(0,0,0),
+SliderUnderLineColor=g(0,0,0),Togglebtn=g(0,0,0),
+Sliderball=g(0,0,0),ColorPickerColoro=g(255,255,255),
+ListFrameColor=g(220,220,220),keyback="rbxassetid://105543908643429"
+}),
 
-	["Skitty (by Cozy)"] = extendTheme(BaseDarkTheme, {
-		BackGroundIcon = "rbxassetid://115751114629485", NotiImg = "rbxassetid://80185678916464",
-		DestroyGFrame = c3rgb(102, 34, 102), DropDownColor = c3rgb(102, 34, 102),
-		SubTtitleTextColor = c3rgb(140, 140, 140), TogleActivColor = c3rgb(124, 41, 124)
-	})
+["Skitty (by Cozy)"]=extendTheme(p,{
+BackGroundIcon="rbxassetid://115751114629485",NotiImg="rbxassetid://80185678916464",
+DestroyGFrame=g(102,34,102),DropDownColor=g(102,34,102),
+SubTtitleTextColor=g(140,140,140),TogleActivColor=g(124,41,124)
+})
 }
 
--- ------------------------------------------------------------
--- Темизация
--- ------------------------------------------------------------
 
-function Library:AddThemeObject(instance : Instance, property : string, themeKey : string)
-	if not self.ThemeObjects then
-		self.ThemeObjects = setmetatable({}, {__mode = "k"})
-	end
 
-	if not self.ThemeObjects[instance] then
-		self.ThemeObjects[instance] = {}
-	end
 
-	table.insert(self.ThemeObjects[instance], {Property = property, ThemeKey = themeKey})
 
-	if self.Theme and self.Theme[themeKey] ~= nil then
-		instance[property] = self.Theme[themeKey]
-	end
+function o.AddThemeObject(r,s:Instance,t:string,u:string)
+if not r.ThemeObjects then
+r.ThemeObjects=setmetatable({},{__mode="k"})
 end
 
--- Несколько тем-привязок одним вызовом
-function Library:themeObj(object, bindings)
-	for property, themeKey in pairs(bindings) do
-		self:AddThemeObject(object, property, themeKey)
-	end
+if not r.ThemeObjects[s]then
+r.ThemeObjects[s]={}
 end
 
--- ------------------------------------------------------------
--- Уведомления
--- ------------------------------------------------------------
+table.insert(r.ThemeObjects[s],{Property=t,ThemeKey=u})
 
-local TypeIcons = {
-	Notification = "rbxassetid://75930996983661",
-	Warn = "rbxassetid://85045950898455",
-	Error = "rbxassetid://71852580046993"
+if r.Theme and r.Theme[u]~=nil then
+s[t]=r.Theme[u]
+end
+end
+
+
+function o.themeObj(r,s,t)
+for u,v in pairs(t)do
+r:AddThemeObject(s,u,v)
+end
+end
+
+
+
+
+
+local r={
+Notification="rbxassetid://75930996983661",
+Warn="rbxassetid://85045950898455",
+Error="rbxassetid://71852580046993"
 }
 
-function Library:CreateNotificationTemplate()
-	local template = create("ImageLabel", {
-		BackgroundTransparency = 1, BorderSizePixel = 0,
-		Size = ud2(0, 360, 0, 75), Visible = false
-	})
-	corner(ud(0, 6), template)
+function o.CreateNotificationTemplate(s)
+local t=create("ImageLabel",{
+BackgroundTransparency=1,BorderSizePixel=0,
+Size=k(0,360,0,75),Visible=false
+})
+corner(l(0,6),t)
 
-	create("ImageLabel", {
-		Name = "Icon", Parent = template, BackgroundTransparency = 1,
-		Position = ud2(0.04, 0, 0.24, 0), Size = ud2(0, 18, 0, 18)
-	})
+create("ImageLabel",{
+Name="Icon",Parent=t,BackgroundTransparency=1,
+Position=k(0.04,0,0.24,0),Size=k(0,18,0,18)
+})
 
-	create("TextLabel", {
-		Name = "Description", Parent = template, BackgroundTransparency = 1,
-		Position = ud2(0.04, 0, 0.47, 0), Size = ud2(0, 321, 0, 23),
-		Font = FONT, TextSize = 14, TextXAlignment = LEFT
-	})
+create("TextLabel",{
+Name="Description",Parent=t,BackgroundTransparency=1,
+Position=k(0.04,0,0.47,0),Size=k(0,321,0,23),
+Font=m,TextSize=14,TextXAlignment=n
+})
 
-	create("TextLabel", {
-		Name = "Title", Parent = template, BackgroundTransparency = 1,
-		Position = ud2(0.11, 0, 0.19, 0), Size = ud2(0, 200, 0, 24),
-		Font = FONT, TextSize = 18, TextXAlignment = LEFT
-	})
+create("TextLabel",{
+Name="Title",Parent=t,BackgroundTransparency=1,
+Position=k(0.11,0,0.19,0),Size=k(0,200,0,24),
+Font=m,TextSize=18,TextXAlignment=n
+})
 
-	create("ImageButton", {
-		Name = "CloseButton", Parent = template, BackgroundTransparency = 1,
-		Position = ud2(0.91, 0, 0.21, 0), Size = ud2(0, 14, 0, 14),
-		Image = "rbxassetid://134899599114088"
-	})
+create("ImageButton",{
+Name="CloseButton",Parent=t,BackgroundTransparency=1,
+Position=k(0.91,0,0.21,0),Size=k(0,14,0,14),
+Image="rbxassetid://134899599114088"
+})
 
-	self.NotificationTemplate = template
+s.NotificationTemplate=t
 end
 
-function Library:Notification(config)
-	self.NotificationCounter = (self.NotificationCounter or 0) + 1
-	local notificationId = self.NotificationCounter
-	self.ActiveNotifications = self.ActiveNotifications or {}
+function o.Notification(s,t)
+s.NotificationCounter=(s.NotificationCounter or 0)+1
+local u=s.NotificationCounter
+s.ActiveNotifications=s.ActiveNotifications or{}
 
-	local title = config.Name or "Notification"
-	local description = config.Description or ""
-	local duration = config.Duration or 5
-	local notiType = config.Type or "Notification"
+local v=t.Name or"Notification"
+local w=t.Description or""
+local x=t.Duration or 5
+local y=t.Type or"Notification"
 
-	local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled and not UserInputService.MouseEnabled
-	local targetX = isMobile and 0.55 or 0.8
-	local startY = isMobile and 0.75 or 0.9
-	local offsetMulti = isMobile and 0.2 or 0.08
-	local width = isMobile and 280 or 360
+local z=e.TouchEnabled and not e.KeyboardEnabled and not e.MouseEnabled
+local A=z and 0.55 or 0.8
+local B=z and 0.75 or 0.9
+local C=z and 0.2 or 0.08
+local D=z and 280 or 360
 
-	if not self.NotificationTemplate then
-		self:CreateNotificationTemplate()
-	end
-
-	local Notification = self.NotificationTemplate:Clone()
-
-	local img = TypeIcons[notiType]
-	if notiType == 'Notification' then
-		Notification.Icon.ImageColor3 = self.Theme.TabsIconColor
-	end
-
-	if not img then return end
-
-	Notification.Name = notiType
-	Notification.Parent = self.UI
-	Notification.Size = ud2(0, width, 0, 75)
-	Notification.Position = ud2(1.2, 0, startY, 0)
-	Notification.Visible = true
-	Notification.Image = self.Theme.NotiImg
-
-	Notification.Icon.Image = img
-	Notification.Title.Text = title
-	Notification.Description.Text = description
-	Notification.Title.TextColor3 = self.Theme.TextColor
-	Notification.Description.TextColor3 = self.Theme.Notisubtitlecolor
-	Notification.CloseButton.ImageColor3 = self.Theme.TabsIconColor
-
-	Notification.CloseButton.MouseButton1Click:Connect(function()
-		if self and self.CloseNotification then
-			self:CloseNotification(notificationId)
-		end
-	end)
-
-	self.ActiveNotifications[notificationId] = {
-		notification = Notification,
-		targetX = targetX,
-		targetY = startY,
-		multi = offsetMulti
-	}
-
-	self:Tween(Notification, {Position = ud2(targetX, 0, startY, 0)}, 0.3)
-
-	for id, notifData in pairs(self.ActiveNotifications) do
-		if id ~= notificationId then
-			local newY = notifData.notification.Position.Y.Scale - offsetMulti
-			notifData.targetY = newY
-			self:Tween(notifData.notification, {Position = ud2(targetX, 0, newY, 0)}, 0.3)
-		end
-	end
-
-	task.delay(duration, function()
-		-- guard: окно могло быть уничтожено (Destroy) к моменту срабатывания
-		if self.ActiveNotifications then
-			self:CloseNotification(notificationId)
-		end
-	end)
+if not s.NotificationTemplate then
+s:CreateNotificationTemplate()
 end
 
-function Library:CloseNotification(notificationId)
-	if not self.ActiveNotifications then return end
+local E=s.NotificationTemplate:Clone()
 
-	local data = self.ActiveNotifications[notificationId]
-	if not data then return end
-
-	local notification = data.notification
-	self.ActiveNotifications[notificationId] = nil
-
-	-- инстанс уже уничтожен — просто убираем из списка
-	if not notification.Parent then
-		return
-	end
-
-	self:Tween(notification, {
-		Position = ud2(1.2, 0, notification.Position.Y.Scale, 0)
-	}, 0.3).Completed:Once(function()
-		notification:Destroy()
-	end)
-
-	local activeList = {}
-	for id, notifData in pairs(self.ActiveNotifications) do
-		table.insert(activeList, {id = id, data = notifData})
-	end
-	table.sort(activeList, function(a, b) return a.id < b.id end)
-
-	local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled and not UserInputService.MouseEnabled
-	local currentY = isMobile and 0.75 or 0.9
-
-	for i = #activeList, 1, -1 do
-		local item = activeList[i]
-		self:Tween(item.data.notification, {Position = ud2(item.data.targetX, 0, currentY, 0)}, 0.3)
-		currentY = currentY - item.data.multi
-	end
+local F=r[y]
+if y=='Notification'then
+E.Icon.ImageColor3=s.Theme.TabsIconColor
 end
 
--- ------------------------------------------------------------
--- Окно
--- ------------------------------------------------------------
+if not F then return end
 
-function Library.CreateWindow(config)
-	local title = config.Name or "Default Title"
-	local subtitle = config.Description
-	local size = config.Size or 620
-	local version = config.Version
+E.Name=y
+E.Parent=s.UI
+E.Size=k(0,D,0,75)
+E.Position=k(1.2,0,B,0)
+E.Visible=true
+E.Image=s.Theme.NotiImg
 
-	local self = setmetatable({}, Library)
+E.Icon.Image=F
+E.Title.Text=v
+E.Description.Text=w
+E.Title.TextColor3=s.Theme.TextColor
+E.Description.TextColor3=s.Theme.Notisubtitlecolor
+E.CloseButton.ImageColor3=s.Theme.TabsIconColor
 
-	self.CurrentThemeName = config.Theme or "Cursed"
-	self.Theme = extendTheme(Themes[self.CurrentThemeName], {})
-
-	self.mainTabs = {}
-	self.CurrentTab = nil
-	self.Notipos = 0.9
-	self.ThemeObjects = {}
-
-	self.AllElements = {
-		Toggles = {}, Keybinds = {}, Dropdowns = {},
-		Sliders = {}, ColorPickers = {}, Inputs = {}
-	}
-	self.Windowscd = false
-	self.userinfo = true
-	self.saveFolder = nil
-	self.saveFileName = nil
-	self.ActiveNotifications = {}
-
-	self.UI = create("ScreenGui", {
-		ZIndexBehavior = enum.ZIndexBehavior.Sibling,
-		Parent = gethui and gethui() or CoreGui
-	})
-
-	self.ImageLabel = create("ImageLabel", {
-		BackgroundColor3 = c3rgb(255, 255, 255), BackgroundTransparency = 1,
-		BorderColor3 = c3rgb(0, 0, 0), AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = ud2(0.5, 0, 0.5, 0), Size = ud2(0, 10, 0, 10),
-		Active = true, ImageTransparency = 0, Parent = self.UI
-	})
-	self:AddThemeObject(self.ImageLabel, "Image", "BackGroundIcon")
-
-	self.ScaleFactor = 1
-	if UserInputService.touchEnabled then
-		create("UIScale", {Scale = 0.75, Parent = self.ImageLabel})
-		self.ScaleFactor = 0.75
-	end
-
-	-- Drag
-	local dragging = false
-	local dragInput = nil
-	local dragStart = Vector3.new()
-	local startPos = ud2(0, 0, 0, 0)
-
-	self.ImageLabel.InputBegan:Connect(function(input)
-		if input.UserInputType == enum.UserInputType.MouseButton1 or input.UserInputType == enum.UserInputType.Touch then
-			if Library.IsInteractingWithUI then
-				Library.IsInteractingWithUI = false
-				return
-			end
-
-			dragging = true
-			dragInput = input
-			dragStart = input.Position
-			startPos = self.ImageLabel.Position
-
-			local connection
-			connection = input.Changed:Connect(function()
-				if input.UserInputState == enum.UserInputState.End then
-					dragging = false
-					dragInput = nil
-					if connection then
-						connection:Disconnect()
-					end
-				end
-			end)
-		end
-	end)
-
-	UserInputService.InputChanged:Connect(function(input)
-		if dragging then
-			local isTouch = (input == dragInput)
-			local isMouse = (dragInput.UserInputType == enum.UserInputType.MouseButton1 and input.UserInputType == enum.UserInputType.MouseMovement)
-
-			if isTouch or isMouse then
-				local delta = input.Position - dragStart
-				local scale = self.ScaleFactor or 1
-
-				self.ImageLabel.Position = ud2(
-					startPos.X.Scale,
-					startPos.X.Offset + (delta.X / scale),
-					startPos.Y.Scale,
-					startPos.Y.Offset + (delta.Y / scale)
-				)
-			end
-		end
-	end)
-
-	-- Header
-	self.Header = create("Frame", {
-		BackgroundTransparency = 1, Position = ud2(0.02, 0, 0.025, 0),
-		Size = ud2(0, size - 24, 0, 40), Parent = self.ImageLabel
-	})
-	self:AddThemeObject(self.Header, "BackgroundColor3", "HeaderColor")
-	corner(ud(0, 12), self.Header)
-
-	self.TitleContainer = create("Frame", {
-		BackgroundTransparency = 1, Position = ud2(0, 10, 0, 0),
-		Size = ud2(0.7, 0, 1, 0), Parent = self.Header
-	})
-
-	create("UIListLayout", {
-		Parent = self.TitleContainer, FillDirection = enum.FillDirection.Horizontal,
-		VerticalAlignment = enum.VerticalAlignment.Center, Padding = ud(0, 10),
-		SortOrder = enum.SortOrder.LayoutOrder
-	})
-
-	self.TextLabel = create("TextLabel", {
-		BackgroundTransparency = 1, AutomaticSize = enum.AutomaticSize.XY,
-		Position = ud2(0, 0, 0, 10), Size = ud2(0, 0, 0, 40),
-		Font = FONT, Text = title, TextSize = 16, LayoutOrder = 1,
-		Parent = self.TitleContainer
-	})
-	self:AddThemeObject(self.TextLabel, "TextColor3", "TextColor")
-
-	if subtitle then
-		self.TextLabel_2 = create("TextLabel", {
-			BackgroundTransparency = 1, AutomaticSize = enum.AutomaticSize.XY,
-			Size = ud2(0, 0, 0, 40), Font = FONT, Text = subtitle,
-			TextSize = 14, LayoutOrder = 2, Parent = self.TitleContainer
-		})
-		self:AddThemeObject(self.TextLabel_2, "TextColor3", "SubTtitleTextColor")
-	end
-
-	if version then
-		self.version = create("TextLabel", {
-			AutomaticSize = enum.AutomaticSize.X, Size = ud2(0, 0, 0, 24),
-			LayoutOrder = 3, Font = FONT, Text = version, TextSize = 14,
-			Parent = self.TitleContainer
-		})
-		self:themeObj(self.version, {
-			BackgroundColor3 = "versionBackgroundColor3",
-			BackgroundTransparency = "versionBackgroundTransparency"
-		})
-		self:AddThemeObject(self.version, "TextColor3", "versionTextColor")
-		create("UIPadding", {Parent = self.version, PaddingLeft = ud(0, 12), PaddingRight = ud(0, 12)})
-		corner(ud(0, 11), self.version)
-	end
-
-	-- Кнопки заголовка: close / column / minimize
-	self.close = create("ImageButton", {
-		BackgroundTransparency = 1, Position = ud2(0.945, 0, 0.2, 0),
-		Size = ud2(0, 24, 0, 24), Image = "rbxassetid://94538718832963",
-		Parent = self.Header
-	})
-	self:AddThemeObject(self.close, "ImageColor3", "TabsIconColor")
-	self.close.MouseButton1Click:Connect(function() self:ShowDestroyQ() end)
-
-	self.ImageButton = create("ImageButton", {
-		BackgroundTransparency = 1, Position = ud2(0.897, 0, 0.35, 0),
-		Size = ud2(0, 16, 0, 12), Image = "rbxassetid://89738650787294",
-		Parent = self.Header
-	})
-	self:AddThemeObject(self.ImageButton, "ImageColor3", "TabsIconColor")
-	self.ImageButton.MouseButton1Click:Connect(function() self:ColumnWindow() end)
-
-	self.ImageButton_2 = create("ImageButton", {
-		BackgroundTransparency = 1, Position = ud2(0.835, 0, 0.29, 0),
-		Size = ud2(0, 18, 0, 18), Image = "rbxassetid://122178947900744",
-		Parent = self.Header
-	})
-	self:AddThemeObject(self.ImageButton_2, "ImageColor3", "TabsIconColor")
-	self.ImageButton_2.MouseButton1Click:Connect(function() self:Minimaze() end)
-
-	-- Табы
-	self.Tabs = create("Frame", {
-		BackgroundColor3 = c3rgb(255, 255, 255), BackgroundTransparency = 1,
-		BorderColor3 = c3rgb(0, 0, 0), Position = ud2(0.035, 0, 0.115, 0),
-		Size = ud2(0, 185, 0, 372), Parent = self.ImageLabel
-	})
-	self.Frame_2 = inst("Frame")
-
-	self.ScrollingFrame = create("ScrollingFrame", {
-		Active = true, BackgroundColor3 = c3rgb(255, 255, 255),
-		BackgroundTransparency = 1, BorderColor3 = c3rgb(0, 0, 0),
-		BorderSizePixel = 0, Position = ud2(0, 0, 0, 0),
-		Size = ud2(0, 190, 0, 357), ScrollBarThickness = 2,
-		CanvasSize = ud2(0, 0, 0, 0), AutomaticCanvasSize = enum.AutomaticSize.Y,
-		Parent = self.Tabs
-	})
-	self:AddThemeObject(self.ScrollingFrame, "ScrollBarImageColor3", "TabsScrollingBarFrameColor")
-
-	create("UIListLayout", {Parent = self.ScrollingFrame, SortOrder = enum.SortOrder.LayoutOrder, Padding = ud(0, 5)})
-
-	-- Панель пользователя
-	self.WindowUser = create("Frame", {
-		BorderColor3 = c3rgb(0, 0, 0), BackgroundTransparency = 0.95,
-		Position = ud2(0, 0, 0.975, 0), Size = ud2(0, 180, 0, 45),
-		Parent = self.Tabs
-	})
-	self:AddThemeObject(self.WindowUser, "BackgroundColor3", "versionBackgroundColor3")
-	corner(ud(0.35, 0), self.WindowUser)
-
-	local userAvatar = create("ImageLabel", {
-		BackgroundColor3 = c3rgb(255, 255, 255), BorderColor3 = c3rgb(0, 0, 0),
-		Position = ud2(0.05, 0, 0, 8), Size = ud2(0, 30, 0, 30),
-		Image = "rbxassetid://128203179498740", Parent = self.WindowUser
-	})
-	corner(ud(0, 100), userAvatar)
-
-	self.wTextLabel = create("TextLabel", {
-		BackgroundColor3 = c3rgb(255, 255, 255), BackgroundTransparency = 1,
-		BorderColor3 = c3rgb(0, 0, 0), Position = ud2(0.27, 0, 0, 6),
-		Size = ud2(0, 131, 0, 15), Font = FONT, TextSize = 15,
-		Text = "Anonymous", TextXAlignment = LEFT, Parent = self.WindowUser
-	})
-	self:AddThemeObject(self.wTextLabel, "TextColor3", "TextColor")
-
-	self.wTextLabel_2 = create("TextLabel", {
-		BackgroundColor3 = c3rgb(255, 255, 255), BackgroundTransparency = 1,
-		BorderColor3 = c3rgb(0, 0, 0), Position = ud2(0.27, 0, 0, 22),
-		Size = ud2(0, 131, 0, 15), Font = FONT, TextColor3 = c3rgb(200, 167, 0),
-		Text = "Premium", TextSize = 13, TextXAlignment = LEFT,
-		Parent = self.WindowUser
-	})
-
-	create("ImageLabel", {
-		BackgroundTransparency = 1, Image = "rbxassetid://127843403295538",
-		ImageColor3 = c3rgb(200, 167, 0), Position = ud2(0.30, 52, 0, 23),
-		Size = ud2(0, 14, 0, 14), Parent = self.WindowUser
-	})
-
-	-- Секции
-	self.Sections = create("Frame", {
-		BackgroundColor3 = c3rgb(255, 255, 255), BackgroundTransparency = 1,
-		BorderColor3 = c3rgb(0, 0, 0), BorderSizePixel = 0,
-		Position = ud2(0.345, 0, 0.1, 0), Size = ud2(0, 390, 0, 414),
-		Parent = self.ImageLabel
-	})
-
-	self.TextLabel_5 = create("TextLabel", {
-		BackgroundColor3 = c3rgb(255, 255, 255), BackgroundTransparency = 1,
-		BorderColor3 = c3rgb(0, 0, 0), Position = ud2(0.0191, 0, 0.0144, 0),
-		Size = ud2(0, 192, 0, 29), Font = FONT, Text = "", TextSize = 24,
-		TextWrapped = true, TextXAlignment = LEFT, Parent = self.Sections
-	})
-	self:AddThemeObject(self.TextLabel_5, "TextColor3", "TextColor")
-
-	self.Frame_7 = create("Frame", {
-		BackgroundColor3 = c3rgb(255, 255, 255), BackgroundTransparency = 1,
-		BorderColor3 = c3rgb(0, 0, 0), BorderSizePixel = 0,
-		Position = ud2(0, 0, 0.084, 0), Size = ud2(0, 366, 0, 379),
-		Parent = self.Sections
-	})
-
-	-- Интро-анимация
-	self.Tabs.Visible = false
-	self.Sections.Visible = false
-	self.Header.Visible = false
-
-	self:Tween(self.ImageLabel, {Size = ud2(0, size, 0, 480)}, 0.9)
-	task.wait(0.9)
-
-	self.Tabs.Visible = true
-	self.Sections.Visible = true
-	self.Header.Visible = true
-
-	return self
+E.CloseButton.MouseButton1Click:Connect(function()
+if s and s.CloseNotification then
+s:CloseNotification(u)
 end
+end)
 
--- ------------------------------------------------------------
--- Табы и элементы
--- ------------------------------------------------------------
-
-local TAB_ICONS = {
-	["Settings"]  = "rbxassetid://121074539743502",
-	["Visual"]    = "rbxassetid://92250291747112",
-	["Player"]    = "rbxassetid://92793433656183",
-	["Combat"]    = "rbxassetid://73787033062338",
-	["Generator"] = "rbxassetid://88963434013027",
-	["AutoFarm"]  = "rbxassetid://119088300179156",
-	["Animation"] = "rbxassetid://126672101469278",
-	["Items"]     = "rbxassetid://100873317961037",
-	["Teleport"]  = "rbxassetid://93236186125909",
-	["Badge"]     = "rbxassetid://119734718512317",
-	["Quests"]    = "rbxassetid://88588775334975",
-	["Main"]      = "rbxassetid://102448859836734",
-	["Halloween"] = "rbxassetid://115053236948532",
-	["Misc"]      = "rbxassetid://137583062645541",
-	["Block"]     = "rbxassetid://94027029642332",
-	["Aim"]       = "rbxassetid://130183131122604",
-	["Fun"]       = "rbxassetid://137362629704355",
-	["Fish"]      = "rbxassetid://105045060721724",
-	["WebHook"]   = "rbxassetid://95301251075575",
-	["Heart"]     = "rbxassetid://111088001331743",
-	["Shop"]      = "rbxassetid://82363507426406",
-	["Boat"]      = "rbxassetid://103950075513303",
-	["Trade"]     = "rbxassetid://128997687956087",
-	["Text"]      = "rbxassetid://140272486271785",
-	["Music"]     = "rbxassetid://95074569695751",
-	["Skin"]      = "rbxassetid://77808065458415",
-	["Run"]       = "rbxassetid://94022434049447",
-	["Killer"]    = "rbxassetid://80624492937943",
-	["Survivor"]  = "rbxassetid://76337889437039"
+s.ActiveNotifications[u]={
+notification=E,
+targetX=A,
+targetY=B,
+multi=C
 }
 
-function Library:AddTab(name : string, icon : string)
-	local tab = {
-		Name = name, Elements = {}, Container = nil, Button = nil, Frame = nil,
-		Tab = {}, Connections = {}, KeybindConnections = {}, RenderQueue = {}, IsLoaded = false
-	}
-	setmetatable(tab, {__index = self})
-
-	local Frame_3 = create("TextButton", {
-		BackgroundColor3 = c3rgb(255, 255, 255), BackgroundTransparency = 1,
-		BorderColor3 = c3rgb(0, 0, 0), BorderSizePixel = 0,
-		Size = ud2(0, 180, 0, 36), Text = "", Parent = self.ScrollingFrame
-	})
-	local Frame_4 -- индикатор слева от таба; объявлен заранее, т.к. используется в замыканиях ниже
-	self:AddThemeObject(Frame_3, "BackgroundColor3", "TabColor")
-	table.insert(tab.Tab, Frame_3)
-	corner(ud(0, 12), Frame_3)
-
-	Frame_3.MouseEnter:Connect(function()
-		self:Tween(Frame_3, {BackgroundTransparency = self.Theme.TabTransparancy}, 0.3)
-		self:Tween(Frame_4, {Size = ud2(0, 2, 0, 23), BackgroundTransparency = 0}, 0.3)
-	end)
-
-	Frame_3.MouseLeave:Connect(function()
-		if self.CurrentTab ~= tab then
-			self:Tween(Frame_3, {BackgroundTransparency = 1}, 0.3)
-			self:Tween(Frame_4, {BackgroundTransparency = 1, Size = ud2(0, 2, 0, 0)}, 0.3)
-		end
-	end)
-
-	Frame_3.MouseButton1Click:Connect(function()
-		self:SelectTab(tab, Frame_3)
-	end)
-
-	icon = TAB_ICONS[icon] or icon
-
-	local TextLabel_3 = create("TextLabel", {
-		BackgroundColor3 = c3rgb(255, 255, 255), BackgroundTransparency = 1,
-		BorderColor3 = c3rgb(0, 0, 0), BorderSizePixel = 0,
-		Position = ud2((icon and icon ~= "") and 0.22 or 0.05, 0, 0, 0),
-		Size = ud2(0, 52, 0, 35), Font = FONT, Text = name,
-		TextSize = 14, TextXAlignment = LEFT, Parent = Frame_3
-	})
-	self:AddThemeObject(TextLabel_3, "TextColor3", "TabTextColor")
-	table.insert(tab.Tab, TextLabel_3)
-
-	Frame_4 = create("Frame", {
-		BackgroundTransparency = 1, BorderColor3 = c3rgb(0, 0, 0),
-		BorderSizePixel = 0, Position = ud2(0, 1, 0.171, 0),
-		Size = ud2(0, 2, 0, 0), Parent = Frame_3
-	})
-	self:AddThemeObject(Frame_4, "BackgroundColor3", "TabTextColor")
-
-	local ScrollingFrame_2 = create("ScrollingFrame", {
-		Active = true, BackgroundColor3 = c3rgb(255, 255, 255),
-		BackgroundTransparency = 1, BorderColor3 = c3rgb(0, 0, 0),
-		BorderSizePixel = 0, Position = ud2(0, 0, 0.023, 0),
-		Size = ud2(0, 385, 0, 372), CanvasSize = ud2(0, 0, 0, 0),
-		AutomaticCanvasSize = enum.AutomaticSize.Y, ScrollBarThickness = 2,
-		Visible = false, Parent = self.Frame_7
-	})
-	self:AddThemeObject(ScrollingFrame_2, "ScrollBarImageColor3", "SectionsScrollingBarFrameColor")
-	tab.Tab[5] = ScrollingFrame_2
-
-	create("UIListLayout", {Parent = ScrollingFrame_2, SortOrder = enum.SortOrder.LayoutOrder, Padding = ud(0, 5)})
-	create("UIPadding", {Parent = ScrollingFrame_2, PaddingTop = ud(0, 0), PaddingLeft = ud(0, 10)})
-
-	if icon and icon ~= "" then
-		local ImageLabel = create("ImageLabel", {
-			BackgroundColor3 = c3rgb(255, 255, 255), BackgroundTransparency = 1,
-			BorderColor3 = c3rgb(0, 0, 0), BorderSizePixel = 0,
-			Position = ud2(0, 8, 0, 6.5), Size = ud2(0, 22, 0, 22),
-			Image = icon, Parent = Frame_3
-		})
-		self:AddThemeObject(ImageLabel, "ImageColor3", "TabsIconColor")
-		tab.Tab[4] = ImageLabel
-	end
-
-	tab.Container = ScrollingFrame_2
-	tab.Button = Frame_3
-	tab.Frame = Frame_4
-
-	table.insert(self.mainTabs, tab)
-
-	if #self.mainTabs == 1 then
-		self:SelectTab(tab, Frame_3)
-	end
-
-	-- ==================== AddList ====================
-	function tab:AddList(config)
-		local Config = {
-			Name = config.Name,
-			Elems = config.Elems or {}
-		}
-
-		local listController = {
-			Elem = nil, IsOpen = false, IsLoaded = false, RenderQueue = {}
-		}
-
-		for _, v in pairs(Config.Elems) do
-			if v and v._renderFunc then
-				local idx = table.find(tab.RenderQueue, v._renderFunc)
-				if idx then
-					table.remove(tab.RenderQueue, idx)
-					table.insert(listController.RenderQueue, v._renderFunc)
-				end
-			end
-		end
-
-		local renderFunc = function()
-			local ListWrapper = create("Frame", {
-				BackgroundTransparency = 0.95, Size = ud2(0, 360, 0, 0),
-				AutomaticSize = enum.AutomaticSize.Y, Parent = self.Container
-			})
-			self:AddThemeObject(ListWrapper, "BackgroundColor3", "ListFrameColor")
-			corner(ud(0, 10), ListWrapper)
-			create("UIListLayout", {Parent = ListWrapper, SortOrder = enum.SortOrder.LayoutOrder})
-
-			local List = create("TextButton", {
-				Size = ud2(0, 360, 0, 35), Text = "", LayoutOrder = 1,
-				Parent = ListWrapper
-			})
-			self:themeObj(List, {BackgroundColor3 = "BackGroundElemCol", BackgroundTransparency = "BackGroundElemTran"})
-			corner(ud(0, 10), List)
-
-			local listName = create("TextLabel", {
-				BackgroundTransparency = 1, Position = ud2(0.03, 0, 0, 0),
-				Size = ud2(0.7, 0, 1, 0), Font = FONT, Text = Config.Name,
-				TextSize = 16, TextXAlignment = LEFT, Parent = List
-			})
-			self:AddThemeObject(listName, "TextColor3", "TabTextColor")
-
-			local ImageLabel = create("ImageLabel", {
-				BackgroundTransparency = 1, Position = ud2(0.9, 0, 0.2, 0),
-				Rotation = -180, Size = ud2(0, 20, 0, 20),
-				Image = "rbxassetid://126982255108418", Parent = List
-			})
-			self:AddThemeObject(ImageLabel, "ImageColor3", "DropDownArrowImg")
-
-			local BackFrame = create("Frame", {
-				BackgroundTransparency = 1, ClipsDescendants = true,
-				Size = ud2(0, 360, 0, 0), Visible = false,
-				LayoutOrder = 2, Parent = ListWrapper
-			})
-			local ItemsLayout = create("UIListLayout", {Parent = BackFrame, Padding = ud(0, 5), SortOrder = enum.SortOrder.LayoutOrder})
-			local Padding = create("UIPadding", {Parent = BackFrame, PaddingTop = ud(0, 5)})
-
-			for _, v in pairs(Config.Elems) do
-				if v and v.Elem then
-					v.Elem.Parent = BackFrame
-					v.Elem.Visible = true
-				end
-			end
-
-			listController.Elem = ListWrapper
-
-			List.MouseButton1Click:Connect(function()
-				local justLoaded = false
-
-				if not listController.IsLoaded then
-					listController.IsLoaded = true
-					justLoaded = true
-
-					for _, rFunc in ipairs(listController.RenderQueue) do
-						rFunc()
-					end
-
-					for _, v in pairs(Config.Elems) do
-						if v and v.Elem then
-							v.Elem.Parent = BackFrame
-							v.Elem.Visible = true
-						end
-					end
-				end
-
-				listController.IsOpen = not listController.IsOpen
-				self:Tween(ImageLabel, {Rotation = listController.IsOpen and 0 or -180}, 0.3)
-
-				if listController.IsOpen then
-					BackFrame.Visible = true
-					if justLoaded then task.wait() end
-
-					local correctContentHeight = ItemsLayout.AbsoluteContentSize.Y / (self.ScaleFactor or 1)
-					local targetHeight = correctContentHeight + Padding.PaddingTop.Offset + Padding.PaddingBottom.Offset
-					self:Tween(BackFrame, {Size = ud2(0, 360, 0, targetHeight)}, 0.4)
-				else
-					self:Tween(BackFrame, {Size = ud2(0, 360, 0, 0)}, 0.3)
-					task.delay(0.3, function()
-						if not listController.IsOpen then
-							BackFrame.Visible = false
-						end
-					end)
-				end
-			end)
-		end
-
-		return register(tab, listController, renderFunc)
-	end
-
-	-- ==================== AddDiscordInvite ====================
-	function tab:AddDiscordInvite(config)
-		local discordController = {Elem = nil}
-
-		local renderFunc = function()
-			local inv = config.Invite or ""
-			local code = inv:match("discord%.gg/([%w-]+)") or inv:match("discord%.com/invite/([%w-]+)") or inv
-
-			local Widget = create("Frame", {
-				Size = ud2(0, 360, 0, 110), Parent = self.Container
-			})
-			corner(ud(0, 10), Widget)
-			self:themeObj(Widget, {BackgroundColor3 = "BackGroundElemCol", BackgroundTransparency = "BackGroundElemTran"})
-
-			local Icon = create("ImageLabel", {
-				Size = ud2(0, 50, 0, 50), Position = ud2(0, 12, 0, 12),
-				BackgroundColor3 = c3rgb(43, 45, 49),
-				Image = config.Icon or "rbxassetid://93164175094440", Parent = Widget
-			})
-			corner(ud(0, 12), Icon)
-
-			local Name = create("TextLabel", {
-				Position = ud2(0, 75, 0, 15), Size = ud2(0, 270, 0, 20),
-				BackgroundTransparency = 1, Font = FONT, Text = "Loading Discord...",
-				TextSize = 16, TextXAlignment = LEFT, Parent = Widget
-			})
-			self:AddThemeObject(Name, "TextColor3", "TabTextColor")
-
-			local Status = create("TextLabel", {
-				Position = ud2(0, 75, 0, 38), Size = ud2(0, 270, 0, 15),
-				BackgroundTransparency = 1, Font = FONT, Text = "Connecting...",
-				TextSize = 13, TextXAlignment = LEFT, RichText = true, Parent = Widget
-			})
-			self:AddThemeObject(Status, "TextColor3", "TabSubTtitleTextColor")
-
-			local Btn = create("TextButton", {
-				Size = ud2(1, -24, 0, 30), Position = ud2(0, 12, 0, 70),
-				BackgroundColor3 = c3rgb(36, 128, 70), Font = FONT,
-				Text = "Copy Invite Link", TextColor3 = c3rgb(255, 255, 255),
-				TextSize = 14, Parent = Widget
-			})
-			corner(ud(0, 8), Btn)
-
-			Btn.MouseButton1Click:Connect(function()
-				if setclipboard then
-					setclipboard("https://discord.gg/" .. code)
-					Btn.Text = "Copied to Clipboard!"
-					task.wait(2)
-					Btn.Text = "Copy Invite Link"
-				end
-			end)
-
-			task.spawn(function()
-				local req = (syn and syn.request) or (http and http.request) or http_request or request
-				if not req then return end
-				local res = req({Url = "https://discord.com/api/v9/invites/" .. code .. "?with_counts=true", Method = "GET"})
-				if res.StatusCode == 200 then
-					local data = HttpService:JSONDecode(res.Body)
-					Name.Text = data.guild.name
-					Status.Text = ("<font color='#23a559'>●</font> %s Online  <font color='#80848e'>●</font> %s Members"):format(data.approximate_presence_count or 0, data.approximate_member_count or 0)
-				else
-					Name.Text = "Invalid Invite"
-					Status.Text = "Could not fetch server data"
-				end
-			end)
-
-			discordController.Elem = Widget
-		end
-
-		return register(tab, discordController, renderFunc)
-	end
-
-	-- ==================== AddParagraph ====================
-	function tab:AddParagraph(title, subtitle, backColor, color)
-		local paragraphController = {
-			Element = nil, Elem = nil,
-			Title = title or "", Subtitle = subtitle or "",
-			IsDestroyed = false
-		}
-
-		local renderFunc = function()
-			if paragraphController.IsDestroyed then return end
-
-			local Paragraph = create("Frame", {BorderSizePixel = 0, Parent = self.Container})
-			if typeof(backColor) == "Color3" then
-				Paragraph.BackgroundColor3 = backColor
-			else
-				self:themeObj(Paragraph, {BackgroundColor3 = "BackGroundElemCol", BackgroundTransparency = "BackGroundElemTran"})
-			end
-			corner(ud(0, 12), Paragraph)
-
-			local TitleLabel = create("TextLabel", {
-				BackgroundTransparency = 1, Size = ud2(0, 328, 0, 20),
-				Font = FONT, Text = paragraphController.Title,
-				TextSize = 16, TextXAlignment = LEFT, Parent = Paragraph
-			})
-
-			local ContentLabel = create("TextLabel", {
-				BackgroundTransparency = 1, Font = FONT,
-				Text = paragraphController.Subtitle, TextSize = 14,
-				TextWrapped = true, TextXAlignment = LEFT,
-				TextYAlignment = enum.TextYAlignment.Top, Parent = Paragraph
-			})
-
-			if typeof(color) == "Color3" then
-				TitleLabel.TextColor3 = color
-				ContentLabel.TextColor3 = color
-			else
-				self:AddThemeObject(TitleLabel, "TextColor3", "TabTextColor")
-				self:AddThemeObject(ContentLabel, "TextColor3", "TabSubTtitleTextColor")
-			end
-
-			paragraphController.Element = Paragraph
-			paragraphController.Elem = Paragraph
-			paragraphController._TitleLabel = TitleLabel
-			paragraphController._ContentLabel = ContentLabel
-
-			paragraphController.RecalcSizes = function()
-				local contentText = paragraphController._ContentLabel.Text
-				local hasSubtitle = contentText ~= ""
-
-				if hasSubtitle then
-					local textSizeVec = TextService:GetTextSize(contentText, paragraphController._ContentLabel.TextSize, paragraphController._ContentLabel.Font, Vector2.new(328, 10000))
-					local contentHeight = math.max(16, math.ceil(textSizeVec.Y))
-
-					paragraphController._ContentLabel.Visible = true
-					paragraphController._ContentLabel.Position = ud2(0.027, 0, 0, 28)
-					paragraphController._ContentLabel.Size = ud2(0, 328, 0, contentHeight + 4)
-
-					paragraphController._TitleLabel.Position = ud2(0.027, 0, 0, 5)
-					paragraphController.Elem.Size = ud2(0, 360, 0, 33 + contentHeight)
-				else
-					paragraphController._ContentLabel.Visible = false
-					paragraphController.Elem.Size = ud2(0, 360, 0, 40)
-					paragraphController._TitleLabel.Position = ud2(0.027, 0, 0, 10)
-				end
-			end
-
-			paragraphController.RecalcSizes()
-		end
-
-		paragraphController.Update = function(objSelf, newTitle, newSubtitle)
-			if newTitle then objSelf.Title = newTitle end
-			if newSubtitle ~= nil then objSelf.Subtitle = newSubtitle end
-
-			if objSelf.Elem then
-				objSelf._TitleLabel.Text = objSelf.Title
-				objSelf._ContentLabel.Text = objSelf.Subtitle
-				objSelf.RecalcSizes()
-			end
-		end
-
-		paragraphController.Destroy = function(objSelf)
-			objSelf.IsDestroyed = true
-			if objSelf.Element then
-				objSelf.Element:Destroy()
-				objSelf.Element = nil
-				objSelf.Elem = nil
-			end
-		end
-
-		return register(tab, paragraphController, renderFunc)
-	end
-
-	-- ==================== AddImage ====================
-	function tab:AddImage(config)
-		local imageController = {Elem = nil}
-
-		local renderFunc = function()
-			local ImageButton = create("ImageLabel", {
-				Name = "CustomImage", BackgroundTransparency = 1,
-				Size = config.Size or ud2(0, 80, 0, 80),
-				Image = config.Image or "", Parent = self.Container
-			})
-
-			if config.CornerRadius then
-				corner(config.CornerRadius, ImageButton)
-			end
-
-			imageController.Elem = ImageButton
-		end
-
-		return register(tab, imageController, renderFunc)
-	end
-
-	-- ==================== AddSection ====================
-	function tab:AddSection(title)
-		local sectionController = {Elem = nil}
-
-		local renderFunc = function()
-			local TextLabel = create("TextLabel", {
-				BackgroundTransparency = 1, BorderSizePixel = 0,
-				Size = ud2(0, 193, 0, 21), Font = FONT, Text = title,
-				TextSize = 18, TextXAlignment = LEFT, Parent = self.Container
-			})
-			self:AddThemeObject(TextLabel, "TextColor3", "TabTextColor")
-
-			sectionController.Elem = TextLabel
-		end
-
-		return register(tab, sectionController, renderFunc)
-	end
-
-	-- ==================== AddButton ====================
-	function tab:AddButton(config)
-		local buttonController = {Elem = nil}
-		local desc = config.Description or ""
-
-		local renderFunc = function()
-			local Button = self:CreateRow("TextButton", config.Name, desc)
-
-			Button.MouseButton1Click:Connect(function()
-				if config.Callback then
-					task.spawn(config.Callback)
-				end
-				if config.DestroyOnClick then
-					Button:Destroy()
-				end
-			end)
-
-			local ImageLabel = create("ImageLabel", {
-				BackgroundTransparency = 1, BorderSizePixel = 0,
-				Position = ud2(0.841, 0, 0.244, 0), Size = ud2(0, 25, 0, 23),
-				Image = "rbxassetid://140083176080437", Parent = Button
-			})
-			self:AddThemeObject(ImageLabel, "ImageColor3", "DropDownArrowImg")
-
-			buttonController.Elem = Button
-		end
-
-		return register(tab, buttonController, renderFunc)
-	end
-
-	-- ==================== AddToggle ====================
-	function tab:AddToggle(config)
-		local toggleController = {
-			Value = config.Default or false,
-			Elem = nil,
-			UpdateVisuals = function() end,
-
-			SetState = function(ctrl, state)
-				if state == ctrl.Value then return end
-				ctrl.Value = state
-				if config.Callback then
-					task.spawn(config.Callback, state)
-				end
-				ctrl:UpdateVisuals(state, false)
-			end,
-
-			GetState = function(ctrl)
-				return ctrl.Value
-			end,
-
-			Toggle = function(ctrl)
-				ctrl:SetState(not ctrl.Value)
-			end
-		}
-
-		self.AllElements.Toggles[config.Name] = toggleController
-
-		local renderFunc = function()
-			local Toggle = self:CreateRow("TextButton", config.Name, config.Description or "", 15)
-
-			local sliderbutton = create("Frame", {
-				BackgroundColor3 = self.Theme.ToggleButton,
-				BackgroundTransparency = self.Theme.ToggleTran,
-				BorderSizePixel = 0, Position = ud2(0.8, 0, 0.206, 0),
-				Size = ud2(0, 54, 0, 25), Parent = Toggle
-			})
-			corner(ud(0, 12), sliderbutton)
-
-			local Frame = create("Frame", {
-				BorderSizePixel = 0, Position = ud2(0, 3, 0.12, 0),
-				Size = ud2(0, 19, 0, 19), Parent = sliderbutton
-			})
-			corner(ud(0, 35), Frame)
-			self:AddThemeObject(Frame, "BackgroundColor3", "Togglebtn")
-
-			toggleController.Elem = Toggle
-
-			toggleController.UpdateVisuals = function(ctrl, state, instant)
-				local currentTheme = Library.Theme or self.Theme
-				local targetPos = state and ud2(0, 32, 0.12, 0) or ud2(0, 3, 0.12, 0)
-				local targetColor = state and currentTheme.TogleActivColor or currentTheme.ToggleButton
-				local targetTran = state and 0 or currentTheme.ToggleTran
-
-				if instant then
-					Frame.Position = targetPos
-					sliderbutton.BackgroundColor3, sliderbutton.BackgroundTransparency = targetColor, targetTran
-				else
-					Library:Tween(Frame, {Position = targetPos}, 0.2)
-					Library:Tween(sliderbutton, {BackgroundColor3 = targetColor, BackgroundTransparency = targetTran}, 0.2)
-				end
-			end
-
-			local clickConnection = Toggle.MouseButton1Click:Connect(function()
-				toggleController:Toggle()
-			end)
-			table.insert(tab.Connections, clickConnection)
-
-			toggleController:UpdateVisuals(toggleController.Value, true)
-		end
-
-		return register(tab, toggleController, renderFunc)
-	end
-
-	-- ==================== AddKeybind ====================
-	function tab:AddKeybind(config)
-		if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
-			return nil
-		end
-
-		local currentKey = (typeof(config.Default) == "EnumItem") and config.Default or nil
-		local keybindName = config.Name or "Keybind"
-		local desc = config.Description or ""
-
-		local keybindObj = {
-			Name = keybindName,
-			Elem = nil,
-			Callback = config.Callback,
-			GetState = function()
-				return currentKey
-			end
-		}
-
-		function keybindObj:SetKey(newKey)
-			currentKey = newKey
-			if self._bindButton then
-				self._bindButton.Text = (typeof(newKey) == "EnumItem" and newKey.Name) or "None"
-			end
-		end
-
-		if self.AllElements and self.AllElements.Keybinds then
-			self.AllElements.Keybinds[keybindName] = keybindObj
-		end
-
-		if not self.AllElements.GlobalKeybindConnection then
-			self.AllElements.GlobalKeybindConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
-				if gameProcessed then return end
-
-				if input.UserInputType == enum.UserInputType.Keyboard then
-					for _, kbObj in pairs(self.AllElements.Keybinds) do
-						local key = kbObj:GetState()
-						if key and input.KeyCode == key and kbObj.Callback then
-							task.spawn(kbObj.Callback)
-						end
-					end
-				end
-			end)
-		end
-
-		local renderFunc = function()
-			local container = self:CreateRow("TextButton", keybindName, desc)
-
-			local bindButton = create("TextButton", {
-				Position = ud2(0.672, 0, 0.221, 0), Size = ud2(0, 100, 0, 25),
-				Font = FONT, TextSize = 14, Parent = container
-			})
-			self:themeObj(bindButton, {
-				BackgroundColor3 = "BackGroundElemCol",
-				BackgroundTransparency = "BackGroundButtonTran",
-				TextColor3 = "TabTextColor"
-			})
-			corner(ud(0, 5), bindButton)
-
-			keybindObj.Elem = container
-			keybindObj._bindButton = bindButton
-
-			bindButton.Text = (typeof(currentKey) == "EnumItem" and currentKey.Name) or "None"
-
-			local BlacklistedKeys = {
-				[enum.KeyCode.Unknown] = true, [enum.KeyCode.W] = true,
-				[enum.KeyCode.A] = true, [enum.KeyCode.S] = true,
-				[enum.KeyCode.D] = true, [enum.KeyCode.Escape] = true,
-				[enum.KeyCode.Space] = true, [enum.KeyCode.Backspace] = true
-			}
-
-			local selectConnection
-			selectConnection = bindButton.MouseButton1Click:Connect(function()
-				bindButton.Text = "..."
-				local connection
-
-				connection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
-					task.wait()
-					if gameProcessed and input.UserInputType == enum.UserInputType.Keyboard then return end
-
-					if input.UserInputType == enum.UserInputType.Keyboard then
-						if not BlacklistedKeys[input.KeyCode] then
-							keybindObj:SetKey(input.KeyCode)
-						else
-							keybindObj:SetKey(nil)
-						end
-						connection:Disconnect()
-					elseif input.UserInputType == enum.UserInputType.MouseButton1 or input.UserInputType == enum.UserInputType.MouseButton2 then
-						keybindObj:SetKey(nil)
-						connection:Disconnect()
-					end
-				end)
-			end)
-			table.insert(tab.Connections, selectConnection)
-		end
-
-		return register(tab, keybindObj, renderFunc)
-	end
-
-	-- ==================== AddInput ====================
-	function tab:AddInput(config)
-		local internalFullText = config.Default or "Default"
-		local inputName = config.Name or "Input"
-		local desc = config.Description or ""
-
-		local InputObj = {
-			Name = inputName,
-			Elem = nil,
-			SaveConfig = config.SaveConfig or false,
-			Callback = config.Callback,
-			GetState = function()
-				return internalFullText
-			end
-		}
-
-		InputObj.SetText = function(text)
-			internalFullText = text
-
-			if InputObj._textBox then
-				InputObj._textBox.Text = (config.SaveUserText and #text > 18) and (string.sub(text, 1, 15) .. "...") or text
-			end
-
-			if config.Callback then
-				task.spawn(config.Callback, text)
-			end
-		end
-
-		if self.AllElements and self.AllElements.Inputs then
-			self.AllElements.Inputs[inputName] = InputObj
-		end
-
-		local renderFunc = function()
-			local input = self:CreateRow("TextButton", inputName, desc)
-
-			local displayText = (config.SaveUserText and #internalFullText > 18) and (string.sub(internalFullText, 1, 15) .. "...") or internalFullText
-			local TextBox = create("TextBox", {
-				BorderSizePixel = 0, Position = ud2(0.575, 0, 0.15, 0),
-				Size = ud2(0, 135, 0, 30), Font = FONT, Text = displayText,
-				TextSize = 14, Parent = input
-			})
-			self:themeObj(TextBox, {
-				BackgroundColor3 = "BackGroundElemCol",
-				BackgroundTransparency = "BackGroundButtonTran",
-				TextColor3 = "InputTextColor"
-			})
-			corner(ud(0, 5), TextBox)
-
-			InputObj.Elem = input
-			InputObj._textBox = TextBox
-
-			TextBox.FocusLost:Connect(function()
-				internalFullText = TextBox.Text
-				if config.SaveUserText then
-					if #internalFullText > 18 then
-						TextBox.Text = string.sub(internalFullText, 1, 15) .. "..."
-					end
-				else
-					task.defer(function() TextBox.Text = config.Default or "Default" end)
-				end
-				if config.Callback then
-					task.spawn(config.Callback, internalFullText)
-				end
-			end)
-		end
-
-		return register(tab, InputObj, renderFunc)
-	end
-
-	-- ==================== AddSlider ====================
-	function tab:AddSlider(config)
-		local minVal = config.Min or 0
-		local maxVal = config.Max or 100
-		local sliderName = config.Name or "Slider"
-		local desc = config.Description or ""
-
-		local defaultValue = config.Default
-		if defaultValue == nil then
-			defaultValue = minVal
-		end
-
-		-- Общее состояние слайдеров (один обработчик на всю библиотеку)
-		if not Library.SharedSliderState then
-			Library.SharedSliderState = {
-				ActiveMoveFunc = nil,
-				ActiveReleaseFunc = nil
-			}
-
-			UserInputService.InputChanged:Connect(function(input)
-				local state = Library.SharedSliderState
-				local moveFunc = state and state.ActiveMoveFunc
-
-				if moveFunc and (input.UserInputType == enum.UserInputType.MouseMovement or input.UserInputType == enum.UserInputType.Touch) then
-					moveFunc(input)
-				end
-			end)
-
-			UserInputService.InputEnded:Connect(function(input)
-				if input.UserInputType ~= enum.UserInputType.MouseButton1 and input.UserInputType ~= enum.UserInputType.Touch then
-					return
-				end
-
-				local state = Library.SharedSliderState
-				if state.ActiveReleaseFunc then
-					state.ActiveReleaseFunc()
-				end
-				state.ActiveMoveFunc = nil
-				state.ActiveReleaseFunc = nil
-
-				if Library then
-					Library.IsInteractingWithUI = false
-				end
-			end)
-		end
-
-		local sliderObj = {
-			Elem = nil,
-			Name = sliderName,
-			Value = math.clamp(defaultValue, minVal, maxVal)
-		}
-
-		-- Как в оригинале: целые числа при большом диапазоне
-		local useIntegerDisplay = maxVal > 10
-
-		local function getDisplayValue(rawValue)
-			if useIntegerDisplay then
-				return math.floor(rawValue + 0.5)
-			end
-			return math.floor(rawValue * 10 + 0.5) / 10
-		end
-
-		local function getPercent(rawValue)
-			local range = maxVal - minVal
-			if range <= 0 then return 0 end
-			return math.clamp((rawValue - minVal) / range, 0, 1)
-		end
-
-		function sliderObj:GetValue()
-			return self.Value
-		end
-
-		-- silent = true: значение/обновляются, но Callback не вызывается
-		function sliderObj:SetValue(newValue, silent)
-			newValue = tonumber(newValue) or minVal
-			newValue = math.clamp(newValue, minVal, maxVal)
-
-			self.Value = newValue
-
-			local displayValue = getDisplayValue(newValue)
-			local percent = getPercent(newValue)
-
-			if self._sliderbutton then
-				self._fillGrad.Transparency = fillSequence(percent)
-				self._sliderball.Position = ud2(percent, 0, 0.5, 0)
-
-				if useIntegerDisplay then
-					self._slideramount.Text = tostring(displayValue)
-				else
-					self._slideramount.Text = string.format("%.1f", displayValue)
-				end
-			end
-
-			if not silent and config.Callback then
-				task.spawn(config.Callback, displayValue)
-			end
-		end
-
-		if self.AllElements and self.AllElements.Sliders then
-			self.AllElements.Sliders[sliderName] = sliderObj
-		end
-
-		-- Callback на стартовом значении — как в оригинале
-		sliderObj:SetValue(sliderObj.Value)
-
-		local renderFunc = function()
-			local slider = self:CreateRow("TextButton", sliderName, desc)
-			slider.Active = true
-
-			local sliderbutton = create("Frame", {
-				BackgroundTransparency = 1, Position = ud2(0.671, 0, 0.244, 0),
-				Size = ud2(0, 100, 0, 22), Active = true, Parent = slider
-			})
-
-			local slidertrack = create("Frame", {
-				BackgroundColor3 = c3rgb(255, 255, 255), BorderSizePixel = 0,
-				Position = ud2(0, 0, 0.455, 0), Size = ud2(1, 0, 0, 2),
-				Parent = sliderbutton
-			})
-
-			local sliderball = create("Frame", {
-				BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
-				Position = ud2(0, 0, 0.5, 0), Size = ud2(0, 15, 0, 15),
-				ZIndex = 2, Parent = sliderbutton
-			})
-			corner(ud(1, 0), sliderball)
-			self:AddThemeObject(sliderball, "BackgroundColor3", "Sliderball")
-
-			local slideramount = create("TextLabel", {
-				BackgroundTransparency = 1, Position = ud2(0, -35, 0.075, 0),
-				Size = ud2(0, 21, 0, 18), Font = FONT, TextSize = 14,
-				Parent = sliderbutton
-			})
-			self:AddThemeObject(slideramount, "TextColor3", "TabTextColor")
-
-			-- заполнение трека — градиентом на самом треке (без отдельного фрейма)
-			local fillGrad = create("UIGradient", {Parent = slidertrack, Transparency = NumberSequence.new(1)})
-			-- Color градиента нельзя записать Color3'ом напрямую: прокси
-			-- конвертирует в ColorSequence при применении темы
-			local fillGradColor = setmetatable({}, {
-				__newindex = function(_, _, color)
-					fillGrad.Color = ColorSequence.new(color)
-				end
-			})
-			self:AddThemeObject(fillGradColor, "Color", "SliderUnderLineColor")
-
-			sliderObj.Elem = slider
-			sliderObj._sliderbutton = sliderbutton
-			sliderObj._fillGrad = fillGrad
-			sliderObj._sliderball = sliderball
-			sliderObj._slideramount = slideramount
-
-			-- Стартовое состояние
-			local currentPercent = getPercent(sliderObj.Value)
-			local currentDisplayValue = getDisplayValue(sliderObj.Value)
-
-			fillGrad.Transparency = fillSequence(currentPercent)
-			sliderball.Position = ud2(currentPercent, 0, 0.5, 0)
-
-			if useIntegerDisplay then
-				slideramount.Text = tostring(currentDisplayValue)
-			else
-				slideramount.Text = string.format("%.1f", currentDisplayValue)
-			end
-
-			local function moveSlider(input)
-				local width = sliderbutton.AbsoluteSize.X
-				if width <= 0 then return end
-
-				local percent = math.clamp((input.Position.X - sliderbutton.AbsolutePosition.X) / width, 0, 1)
-				-- silent = true: без Callback во время перетаскивания
-				sliderObj:SetValue(minVal + percent * (maxVal - minVal), true)
-			end
-
-			sliderbutton.InputBegan:Connect(function(input)
-				if input.UserInputType ~= enum.UserInputType.MouseButton1 and input.UserInputType ~= enum.UserInputType.Touch then
-					return
-				end
-
-				if Library then
-					Library.IsInteractingWithUI = true
-				end
-
-				local state = Library.SharedSliderState
-				state.ActiveMoveFunc = moveSlider
-
-				-- Callback только при отпускании
-				state.ActiveReleaseFunc = function()
-					local finalValue = sliderObj:GetValue()
-					local displayValue = getDisplayValue(finalValue)
-					if config.Callback then
-						task.spawn(config.Callback, displayValue)
-					end
-				end
-
-				moveSlider(input)
-			end)
-		end
-
-		return register(tab, sliderObj, renderFunc)
-	end
-
-	-- ==================== AddColorPicker ====================
-	function tab:AddColorPicker(config)
-		local tabRef = self
-		local colorName = config.Name or "ColorPicker"
-		local desc = config.Description or ""
-		local defaultColor = config.Default or c3new(1, 1, 1)
-		local callback = config.Callback
-
-		local currentColor = defaultColor
-		local hue, saturation, value = currentColor:ToHSV()
-
-		local colorPickerObj = {
-			Elem = nil,
-			Name = colorName,
-			Description = desc,
-			GetColor = function() return currentColor end
-		}
-
-		function colorPickerObj:SetColor(color, newH, newS, newV)
-			if not color then return end
-			currentColor = color
-
-			if newH and newS and newV then
-				hue, saturation, value = newH, newS, newV
-			else
-				local extH, extS, extV = color:ToHSV()
-				hue = (extS == 0 or extV == 0) and hue or extH
-				saturation = extS
-				value = extV
-			end
-
-			if self._colorButton then
-				self._colorButton.BackgroundColor3 = color
-			end
-
-			if tabRef.ActiveColorPickerData and tabRef.ActiveColorPickerData.Controller == self and tabRef.UpdateSharedPaletteVisuals then
-				tabRef.UpdateSharedPaletteVisuals(currentColor, hue, saturation, value)
-			end
-
-			if callback then
-				task.spawn(callback, color)
-			end
-		end
-
-		if tabRef.AllElements and tabRef.AllElements.ColorPickers then
-			tabRef.AllElements.ColorPickers[colorName] = colorPickerObj
-		end
-
-		colorPickerObj:SetColor(defaultColor)
-
-		local renderFunc = function()
-			local ColorPick = tabRef:CreateRow("TextButton", colorName, desc)
-
-			local colorButton = create("TextButton", {
-				BackgroundColor3 = currentColor, BorderSizePixel = 0,
-				Position = ud2(0.802, 0, 0.206, 0), Size = ud2(0, 54, 0, 25),
-				Text = "", ZIndex = 2, Parent = ColorPick
-			})
-			corner(ud(0, 5), colorButton)
-
-			colorPickerObj.Elem = ColorPick
-			colorPickerObj._colorButton = colorButton
-
-			local function togglePalette()
-				if not tabRef.SharedPaletteUI then
-					tabRef.SharedPaletteUI = {}
-
-					local modalBackground = create("TextButton", {
-						Parent = tabRef.ImageLabel, Text = "", AutoButtonColor = false,
-						BackgroundColor3 = c3rgb(0, 0, 0), BackgroundTransparency = 0.5,
-						Size = ud2(0.966, 0, 0.96, 0), Position = ud2(0, 10, 0, 10),
-						ZIndex = 40, Visible = false
-					})
-					corner(ud(0, 24), modalBackground)
-					tabRef.SharedPaletteUI.Modal = modalBackground
-
-					local colorPaletteFrame = create("Frame", {
-						Parent = tabRef.ImageLabel, BorderSizePixel = 0, ZIndex = 50,
-						Visible = false, Size = ud2(0, 0, 0, 0),
-						Position = ud2(0.5, 0, 0.5, 0), AnchorPoint = Vector2.new(0.5, 0.5)
-					})
-					tabRef:AddThemeObject(colorPaletteFrame, "BackgroundColor3", "ColorPickerColoro")
-					corner(ud(0, 12), colorPaletteFrame)
-					create("UIStroke", {Color = c3rgb(60, 60, 70), Thickness = 2, Parent = colorPaletteFrame})
-					tabRef.SharedPaletteUI.Frame = colorPaletteFrame
-
-					local titleLabel = create("TextLabel", {
-						Parent = colorPaletteFrame, Text = "Choose a color", Font = enum.Font.GothamSemibold,
-						TextSize = 16, BackgroundTransparency = 1, Size = ud2(1, 0, 0, 40), ZIndex = 52
-					})
-					tabRef:AddThemeObject(titleLabel, "TextColor3", "TabTextColor")
-
-					local svGradient = create("Frame", {Parent = colorPaletteFrame, Size = ud2(0, 200, 0, 200), Position = ud2(0.435, -100, 0, 50), ZIndex = 51})
-					corner(ud(0, 8), svGradient)
-					tabRef.SharedPaletteUI.SVGradient = svGradient
-
-					local whiteOverlay = create("Frame", {Parent = svGradient, Size = ud2(1, 0, 1, 0), BackgroundColor3 = c3new(1, 1, 1), ZIndex = 51})
-					corner(ud(0, 8), whiteOverlay)
-					create("UIGradient", {Parent = whiteOverlay, Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(1, 1)})})
-
-					local blackOverlay = create("Frame", {Parent = svGradient, Size = ud2(1, 0, 1, 0), BackgroundColor3 = c3new(0, 0, 0), ZIndex = 51})
-					corner(ud(0, 8), blackOverlay)
-					create("UIGradient", {Parent = blackOverlay, Rotation = 90, Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(1, 0)})})
-
-					local svSelector = create("Frame", {Parent = svGradient, Size = ud2(0, 14, 0, 14), AnchorPoint = Vector2.new(0.5, 0.5), BackgroundTransparency = 1, BorderSizePixel = 2, BorderColor3 = c3new(1, 1, 1), ZIndex = 52})
-					corner(ud(1, 0), svSelector)
-					tabRef.SharedPaletteUI.SVSelector = svSelector
-
-					local innerCircle = create("Frame", {Parent = svSelector, Size = ud2(0, 6, 0, 6), AnchorPoint = Vector2.new(0.5, 0.5), Position = ud2(0.5, 0, 0.5, 0), ZIndex = 53})
-					corner(ud(1, 0), innerCircle)
-					tabRef.SharedPaletteUI.InnerCircle = innerCircle
-
-				local hueColors = {}
-				for i = 0, 6 do table.insert(hueColors, ColorSequenceKeypoint.new(i/6, Color3.fromHSV(i/6, 1, 1))) end
-				local hueBar = create("Frame", {Parent = colorPaletteFrame, Size = ud2(0, 20, 0, 200), Position = ud2(0.82, 0, 0, 50), ZIndex = 51})
-				corner(ud(0, 8), hueBar)
-				create("UIGradient", {Parent = hueBar, Rotation = 90, Color = ColorSequence.new(hueColors)})
-
-				local hueSlider = create("Frame", {Parent = hueBar, Size = ud2(1, 0, 0, 4), BackgroundColor3 = c3new(1, 1, 1), BorderSizePixel = 0, ZIndex = 52})
-					corner(ud(0, 2), hueSlider)
-					tabRef.SharedPaletteUI.HueSlider = hueSlider
-
-
-					local hexInput = create("TextBox", {
-						Parent = colorPaletteFrame, Position = ud2(0, 30, 0, 260),
-						Size = ud2(0.7, -28, 0, 40),
-						BackgroundColor3 = c3rgb(40, 40, 45), BackgroundTransparency = 0.5,
-						Font = enum.Font.Gotham, TextSize = 14,
-						TextXAlignment = enum.TextXAlignment.Center, ZIndex = 52
-					})
-					tabRef:AddThemeObject(hexInput, "TextColor3", "TabTextColor")
-					corner(ud(0, 6), hexInput)
-					create("UIStroke", {Color = c3rgb(60, 60, 70), Thickness = 1, Parent = hexInput})
-					tabRef.SharedPaletteUI.HexInput = hexInput
-
-					local previewFrame = create("Frame", {Parent = colorPaletteFrame, Size = ud2(0, 40, 0, 40), Position = ud2(0.76, 0, 0, 260), ZIndex = 51})
-					corner(ud(0, 8), previewFrame)
-					create("UIStroke", {Color = c3rgb(60, 60, 70), Thickness = 2, Parent = previewFrame})
-					tabRef.SharedPaletteUI.PreviewFrame = previewFrame
-
-					local function processInput(input, frame, isHueMode)
-						if not tabRef.ActiveColorPickerData then return end
-						local h, s, v = tabRef.ActiveColorPickerData.GetHSV()
-
-						local y = math.clamp((input.Position.Y - frame.AbsolutePosition.Y) / frame.AbsoluteSize.Y, 0, 1)
-						if isHueMode then
-							h = y
-						else
-							local x = math.clamp((input.Position.X - frame.AbsolutePosition.X) / frame.AbsoluteSize.X, 0, 1)
-							s, v = x, 1 - y
-						end
-
-						tabRef.ActiveColorPickerData.SetColor(Color3.fromHSV(h, s, v), h, s, v)
-					end
-
-					local draggingHue, draggingSV = false, false
-
-					hueBar.InputBegan:Connect(function(input)
-						if input.UserInputType == enum.UserInputType.MouseButton1 or input.UserInputType == enum.UserInputType.Touch then
-							draggingHue = true; processInput(input, hueBar, true)
-						end
-					end)
-
-					svGradient.InputBegan:Connect(function(input)
-						if input.UserInputType == enum.UserInputType.MouseButton1 or input.UserInputType == enum.UserInputType.Touch then
-							draggingSV = true; processInput(input, svGradient, false)
-						end
-					end)
-
-					UserInputService.InputEnded:Connect(function(input)
-						if input.UserInputType == enum.UserInputType.MouseButton1 or input.UserInputType == enum.UserInputType.Touch then
-							draggingHue, draggingSV = false, false
-						end
-					end)
-
-					UserInputService.InputChanged:Connect(function(input)
-						if input.UserInputType == enum.UserInputType.MouseMovement or input.UserInputType == enum.UserInputType.Touch then
-							if draggingHue then processInput(input, hueBar, true)
-							elseif draggingSV then processInput(input, svGradient, false) end
-						end
-					end)
-
-					hexInput.FocusLost:Connect(function(enterPressed)
-						if enterPressed and tabRef.ActiveColorPickerData then
-							local hex = hexInput.Text:gsub("#", "")
-							if #hex == 6 then
-								local r, g, b = tonumber(hex:sub(1, 2), 16), tonumber(hex:sub(3, 4), 16), tonumber(hex:sub(5, 6), 16)
-								if r and g and b then
-									local c = c3rgb(r, g, b)
-									local h, s, v = c:ToHSV()
-									tabRef.ActiveColorPickerData.SetColor(c, h, s, v)
-								end
-							else
-								local d = tabRef.ActiveColorPickerData
-								local h, s, v = d.GetHSV()
-								tabRef.UpdateSharedPaletteVisuals(d.GetCurrentColor(), h, s, v)
-							end
-						end
-					end)
-
-					tabRef.TogglePaletteOff = function()
-						if colorPaletteFrame.Visible then
-							self:Tween(colorPaletteFrame, {
-								Size = ud2(0, 0, 0, 0)
-							}, 0.2).Completed:Once(function()
-								colorPaletteFrame.Visible = false
-								modalBackground.Visible = false
-								tabRef.ActiveColorPicker = nil
-								tabRef.ActiveColorPickerData = nil
-							end)
-						end
-					end
-
-					modalBackground.InputBegan:Connect(function(input)
-						if input.UserInputType == enum.UserInputType.MouseButton1 or input.UserInputType == enum.UserInputType.Touch then
-							local pos, absPos, absSize = input.Position, colorPaletteFrame.AbsolutePosition, colorPaletteFrame.AbsoluteSize
-							if pos.X < absPos.X or pos.X > absPos.X + absSize.X or pos.Y < absPos.Y or pos.Y > absPos.Y + absSize.Y then
-								tabRef.TogglePaletteOff()
-							end
-						end
-					end)
-
-					tabRef.UpdateSharedPaletteVisuals = function(cColor, cHue, cSat, cVal)
-						tabRef.SharedPaletteUI.SVGradient.BackgroundColor3 = Color3.fromHSV(cHue, 1, 1)
-						tabRef.SharedPaletteUI.HueSlider.Position = ud2(0, 0, cHue, -2)
-						tabRef.SharedPaletteUI.SVSelector.Position = ud2(cSat, 0, 1 - cVal, 0)
-						tabRef.SharedPaletteUI.InnerCircle.BackgroundColor3 = cColor
-						tabRef.SharedPaletteUI.PreviewFrame.BackgroundColor3 = cColor
-
-						local r, g, b = math.floor(cColor.R * 255), math.floor(cColor.G * 255), math.floor(cColor.B * 255)
-						tabRef.SharedPaletteUI.HexInput.Text = string.format("#%02X%02X%02X", r, g, b)
-					end
-				end
-
-				if tabRef.SharedPaletteUI.Frame.Visible and tabRef.ActiveColorPicker == ColorPick then
-					tabRef.TogglePaletteOff()
-					return
-				end
-
-				tabRef.ActiveColorPicker = ColorPick
-				tabRef.ActiveColorPickerData = {
-					Controller = colorPickerObj,
-					GetHSV = function() return hue, saturation, value end,
-					GetCurrentColor = function() return currentColor end,
-					SetColor = function(c, h, s, v) colorPickerObj:SetColor(c, h, s, v) end
-				}
-
-				tabRef.UpdateSharedPaletteVisuals(currentColor, hue, saturation, value)
-
-				tabRef.SharedPaletteUI.Modal.Visible = true
-				tabRef.SharedPaletteUI.Frame.Visible = true
-				self:Tween(tabRef.SharedPaletteUI.Frame, {
-					Size = ud2(0, 300, 0, 310)
-				}, 0.3)
-			end
-
-			colorButton.MouseButton1Click:Connect(togglePalette)
-		end
-
-		return register(tab, colorPickerObj, renderFunc)
-	end
-
-	-- ==================== AddDropdown ====================
-	function tab:AddDropdown(config)
-		local dropdownName = config.Name or "Dropdown"
-		local desc = config.Description or ""
-		local callback = config.Callback
-
-		local dropdownObj = {
-			Name = dropdownName,
-			Options = config.Options or {},
-			Multi = config.Multi or false,
-			Selected = config.Multi and {} or nil,
-			Elem = nil,
-			_textLabel = nil,
-			_refreshVisuals = nil,
-			_closeDropdown = nil,
-			_openDropdown = nil,
-			_isDropdownOpen = nil
-		}
-
-		function dropdownObj:GetValue()
-			return self.Selected
-		end
-
-		function dropdownObj:SetValue(value)
-			if self.Multi then
-				local newSelected = {}
-
-				if type(value) == "table" then
-					for option, selected in pairs(value) do
-						if selected and table.find(self.Options, option) then
-							newSelected[option] = true
-						end
-					end
-				end
-
-				self.Selected = newSelected
-
-				local selectedText = ""
-				for option in pairs(self.Selected) do
-					selectedText = selectedText == "" and option or (selectedText .. ", " .. option)
-				end
-
-				if self._textLabel then
-					self._textLabel.Text = selectedText ~= "" and selectedText or "Select..."
-				end
-			else
-				if value and table.find(self.Options, value) then
-					self.Selected = value
-					if self._textLabel then
-						self._textLabel.Text = tostring(value)
-					end
-				else
-					self.Selected = nil
-					if self._textLabel then
-						self._textLabel.Text = "Select..."
-					end
-				end
-			end
-
-			if self._refreshVisuals then
-				self._refreshVisuals()
-			end
-
-			if callback then
-				task.spawn(callback, self.Selected)
-			end
-		end
-
-		function dropdownObj:UpdateOptions(newOptions, newDefault)
-			self.Options = newOptions
-
-			if self._isDropdownOpen and self._isDropdownOpen() then
-				self._openDropdown()
-			end
-
-			self:SetValue(newDefault or (self.Multi and {} or nil))
-		end
-
-		function dropdownObj:SetVisible(visible)
-			if self.Elem then self.Elem.Visible = visible end
-		end
-
-		function dropdownObj:Destroy()
-			if self._closeDropdown then self._closeDropdown() end
-			if self.Elem then self.Elem:Destroy() end
-		end
-
-		if self.AllElements and self.AllElements.Dropdowns then
-			self.AllElements.Dropdowns[dropdownName] = dropdownObj
-		end
-
-		if config.Default then
-			dropdownObj:SetValue(config.Default)
-		end
-
-		local renderFunc = function()
-			local guiRoot = self.Container.Parent.Parent
-
-			-- Общий контейнер списка на всю библиотеку
-			if not Library.SharedDropdownState then
-				local SharedContainer = create("ImageLabel", {
-					Name = "SharedDropdownContainer", BackgroundColor3 = c3rgb(48, 48, 48),
-					BackgroundTransparency = 1, BorderColor3 = c3rgb(0, 0, 0),
-					BorderSizePixel = 0, Size = ud2(0, 135, 0, 0),
-					Visible = false, ZIndex = 50, Image = "ImageLabel_2",
-					ImageTransparency = 0.9, ClipsDescendants = true, Parent = guiRoot
-				})
-
-				local SharedOptions = create("ScrollingFrame", {
-					Active = true, BorderSizePixel = 0,
-					Position = ud2(0.0277, 0, 0.035, 0), Size = ud2(0, 135, 0, 0),
-					ZIndex = 50, ScrollBarThickness = 2, ClipsDescendants = true,
-					CanvasSize = ud2(0, 0, 0, 0), AutomaticCanvasSize = enum.AutomaticSize.Y,
-					Parent = SharedContainer
-				})
-				self:themeObj(SharedOptions, {BackgroundColor3 = "DropDownColor", BackgroundTransparency = "DropDownTransparency"})
-				corner(ud(0, 5), SharedOptions)
-				create("UIListLayout", {Parent = SharedOptions, SortOrder = enum.SortOrder.LayoutOrder})
-
-				Library.SharedDropdownState = {
-					Container = SharedContainer,
-					OptionsFrame = SharedOptions,
-					ActiveCloseFunc = nil,
-					ClickConnection = nil
-				}
-			end
-
-			local SharedContainer = Library.SharedDropdownState.Container
-			local SharedOptions = Library.SharedDropdownState.OptionsFrame
-
-			local Dropdown = self:CreateRow("TextButton", dropdownName, desc)
-
-			local Select = create("TextButton", {
-				Position = ud2(0.576, 0, 0.155, 0), Size = ud2(0, 135, 0, 30),
-				Text = "", Parent = Dropdown
-			})
-			self:themeObj(Select, {BackgroundColor3 = "BackGroundElemCol", BackgroundTransparency = "BackGroundButtonTran"})
-			corner(ud(0, 5), Select)
-
-			local TextLabel = create("TextLabel", {
-				BackgroundTransparency = 1, Position = ud2(0.038, 0, -0.02, 0),
-				Size = ud2(0, 88, 0, 30), Font = FONT, TextSize = 14,
-				TextXAlignment = LEFT, TextWrapped = true,
-				TextTruncate = enum.TextTruncate.AtEnd, Parent = Select
-			})
-			self:AddThemeObject(TextLabel, "TextColor3", "TabTextColor")
-
-			local ImageLabel = create("ImageLabel", {
-				BackgroundTransparency = 1, Position = ud2(0.816, 0, 0.166, 0),
-				Size = ud2(0, 20, 0, 20), Image = "rbxassetid://126982255108418",
-				Parent = Select
-			})
-			self:AddThemeObject(ImageLabel, "ImageColor3", "DropDownArrowImg")
-
-			dropdownObj.Elem = Dropdown
-			dropdownObj._textLabel = TextLabel
-
-			local selectedText = ""
-			if dropdownObj.Multi then
-				for opt, sel in pairs(dropdownObj.Selected) do
-					if sel then selectedText = selectedText .. (selectedText == "" and opt or ", " .. opt) end
-				end
-				TextLabel.Text = selectedText == "" and "Select..." or selectedText
-			else
-				TextLabel.Text = dropdownObj.Selected and tostring(dropdownObj.Selected) or "Select..."
-			end
-
-			local optionElements = {}
-
-			local function refreshVisuals()
-				for optText, frameInd in pairs(optionElements) do
-					local isSelected = dropdownObj.Multi and dropdownObj.Selected[optText] or (dropdownObj.Selected == optText)
-					if isSelected then
-						Library:Tween(frameInd, {Size = ud2(0, 2, 0, 22), BackgroundTransparency = 0}, 0.2)
-					else
-						Library:Tween(frameInd, {Size = ud2(0, 2, 0, 0), BackgroundTransparency = 1}, 0.2)
-					end
-				end
-			end
-
-			local function closeDropdown()
-				if not SharedContainer.Visible then return end
-				Library:Tween(SharedContainer, {Size = ud2(0, 140, 0, 0)}, 0.2)
-				Library:Tween(SharedOptions, {Size = ud2(0, 135, 0, 0)}, 0.2)
-
-				if Library.SharedDropdownState.ClickConnection then
-					Library.SharedDropdownState.ClickConnection:Disconnect()
-					Library.SharedDropdownState.ClickConnection = nil
-				end
-
-				task.delay(0.2, function()
-					if Library.SharedDropdownState.ActiveCloseFunc == closeDropdown then
-						SharedContainer.Visible = false
-						table.clear(optionElements)
-					end
-				end)
-			end
-
-			local function handleOptionClick(option)
-				if dropdownObj.Multi then
-					local current = table.clone(dropdownObj.Selected)
-					current[option] = not current[option]
-					dropdownObj:SetValue(current)
-				else
-					dropdownObj:SetValue(option)
-					closeDropdown()
-				end
-			end
-
-			local function createOption(optionText)
-				local Option = create("TextButton", {
-					BackgroundTransparency = 1, Size = ud2(0, 135, 0, 30),
-					Font = FONT, Text = "  " .. optionText, TextSize = 14,
-					TextXAlignment = LEFT, TextWrapped = true,
-					TextTruncate = enum.TextTruncate.AtEnd, Parent = SharedOptions
-				})
-				self:AddThemeObject(Option, "TextColor3", "TabTextColor")
-
-				local Frame = create("Frame", {
-					BorderSizePixel = 0, Position = ud2(0.01, 0, 0, 4),
-					Size = ud2(0, 2, 0, 0), Transparency = 1, Parent = Option
-				})
-				self:AddThemeObject(Frame, "BackgroundColor3", "DropDownFrameColor")
-
-				optionElements[optionText] = Frame
-
-				Option.MouseEnter:Connect(function()
-					Library:Tween(Option, {BackgroundTransparency = 0.95}, 0.3)
-					local isSelected = dropdownObj.Multi and dropdownObj.Selected[optionText] or (dropdownObj.Selected == optionText)
-					if not isSelected then
-						Library:Tween(Frame, {Size = ud2(0, 2, 0, 22), BackgroundTransparency = 0.5}, 0.3)
-					end
-				end)
-
-				Option.MouseLeave:Connect(function()
-					Library:Tween(Option, {BackgroundTransparency = 1}, 0.3)
-					local isSelected = dropdownObj.Multi and dropdownObj.Selected[optionText] or (dropdownObj.Selected == optionText)
-					if not isSelected then
-						Library:Tween(Frame, {BackgroundTransparency = 1, Size = ud2(0, 2, 0, 0)}, 0.3)
-					end
-				end)
-
-
-				Option.MouseButton1Click:Connect(function() handleOptionClick(optionText) end)
-			end
-
-			local function updateDropdownPosition()
-				if not SharedContainer.Visible then return end
-				local absolutePos = Select.AbsolutePosition
-				local containerPos = guiRoot.AbsolutePosition
-
-				local currentScale = 1
-				local ancestor = guiRoot
-				while ancestor and not ancestor:IsA("ScreenGui") do
-					local uiScale = ancestor:FindFirstChildWhichIsA("UIScale")
-					if uiScale then currentScale *= uiScale.Scale end
-					ancestor = ancestor.Parent
-				end
-
-				local x = (absolutePos.X - containerPos.X) / currentScale - 4
-				local y = (absolutePos.Y - containerPos.Y + Select.AbsoluteSize.Y) / currentScale
-				SharedContainer.Position = ud2(0, x, 0, y)
-			end
-
-			local function openDropdown()
-				if Library.SharedDropdownState.ActiveCloseFunc and Library.SharedDropdownState.ActiveCloseFunc ~= closeDropdown then
-					Library.SharedDropdownState.ActiveCloseFunc()
-				end
-
-				Library.SharedDropdownState.ActiveCloseFunc = closeDropdown
-
-				for _, child in pairs(SharedOptions:GetChildren()) do
-					if child:IsA("TextButton") then child:Destroy() end
-				end
-				table.clear(optionElements)
-
-				for _, option in ipairs(dropdownObj.Options) do createOption(option) end
-
-				updateDropdownPosition()
-				SharedContainer.Visible = true
-
-				local height = math.min(150, #dropdownObj.Options * 30)
-				Library:Tween(SharedContainer, {Size = ud2(0, 140, 0, height + 10)}, 0.2)
-				Library:Tween(SharedOptions, {Size = ud2(0, 135, 0, height)}, 0.2)
-				refreshVisuals()
-
-				task.spawn(function()
-					while SharedContainer.Visible and Library.SharedDropdownState.ActiveCloseFunc == closeDropdown do
-						updateDropdownPosition()
-						task.wait()
-					end
-				end)
-
-				if Library.SharedDropdownState.ClickConnection then Library.SharedDropdownState.ClickConnection:Disconnect() end
-				Library.SharedDropdownState.ClickConnection = UserInputService.InputBegan:Connect(function(input)
-					if input.UserInputType == enum.UserInputType.MouseButton1 or input.UserInputType == enum.UserInputType.Touch then
-						local pos = input.Position
-						local inSelect = pos.X >= Select.AbsolutePosition.X and pos.X <= Select.AbsolutePosition.X + Select.AbsoluteSize.X and pos.Y >= Select.AbsolutePosition.Y and pos.Y <= Select.AbsolutePosition.Y + Select.AbsoluteSize.Y
-						local inOptions = pos.X >= SharedContainer.AbsolutePosition.X and pos.X <= SharedContainer.AbsolutePosition.X + SharedContainer.AbsoluteSize.X and pos.Y >= SharedContainer.AbsolutePosition.Y and pos.Y <= SharedContainer.AbsolutePosition.Y + SharedContainer.AbsoluteSize.Y
-
-						if not inSelect and not inOptions then closeDropdown() end
-					end
-				end)
-			end
-
-			Select.MouseButton1Click:Connect(function()
-				if SharedContainer.Visible and Library.SharedDropdownState.ActiveCloseFunc == closeDropdown then
-					closeDropdown()
-				else
-					openDropdown()
-				end
-			end)
-
-			dropdownObj._refreshVisuals = function()
-				if Library.SharedDropdownState.ActiveCloseFunc == closeDropdown then refreshVisuals() end
-			end
-			dropdownObj._closeDropdown = function()
-				if Library.SharedDropdownState.ActiveCloseFunc == closeDropdown then closeDropdown() end
-			end
-			dropdownObj._openDropdown = openDropdown
-			dropdownObj._isDropdownOpen = function()
-				return SharedContainer.Visible and Library.SharedDropdownState.ActiveCloseFunc == closeDropdown
-			end
-		end
-
-		return register(tab, dropdownObj, renderFunc)
-	end
-
-	-- ==================== AddLine ====================
-	function tab:AddLine()
-		local lineObj = {Elem = nil}
-
-		local renderFunc = function()
-			local Line = create("Frame", {Size = ud2(0, 360, 0, 3), Parent = self.Container})
-			self:themeObj(Line, {BackgroundColor3 = "BackGroundElemCol", BackgroundTransparency = "BackGroundElemTran"})
-			lineObj.Elem = Line
-		end
-
-		return register(tab, lineObj, renderFunc)
-	end
-
-	return tab
+s:Tween(E,{Position=k(A,0,B,0)},0.3)
+
+for G,H in pairs(s.ActiveNotifications)do
+if G~=u then
+local I=H.notification.Position.Y.Scale-C
+H.targetY=I
+s:Tween(H.notification,{Position=k(A,0,I,0)},0.3)
+end
 end
 
--- ------------------------------------------------------------
--- Выбор таба / твины
--- ------------------------------------------------------------
+task.delay(x,function()
 
-function Library:SelectTab(tab, button)
-	for _, t in ipairs(self.mainTabs) do
-		if t.Container then t.Container.Visible = false end
-		if t.Button then self:Tween(t.Button, {BackgroundTransparency = 1}, 0.2) end
-		if t.Frame then
-			self:Tween(t.Frame, {BackgroundTransparency = 1, Size = ud2(0, 2, 0, 0)}, 0.2)
-		end
-	end
-
-	if not tab.IsLoaded then
-		for _, renderElement in ipairs(tab.RenderQueue) do
-			renderElement()
-		end
-		tab.IsLoaded = true
-	end
-
-	if tab.Container then tab.Container.Visible = true end
-
-	if button then
-		self:Tween(button, {BackgroundTransparency = self.Theme.TabTransparancy}, 0.2)
-		self:Tween(tab.Frame, {BackgroundTransparency = 0, Size = ud2(0, 2, 0, 23)}, 0.2)
-	end
-
-	self.CurrentTab = tab
-	self.TextLabel_5.Text = tab.Name
+if s.ActiveNotifications then
+s:CloseNotification(u)
+end
+end)
 end
 
-local TweenCache = {}
-local ActiveTweens = setmetatable({}, {__mode = "k"})
+function o.CloseNotification(s,t)
+if not s.ActiveNotifications then return end
 
-function Library:Tween(instance, properties, duration)
-	duration = duration or 0.3
+local u=s.ActiveNotifications[t]
+if not u then return end
 
-	local info = TweenCache[duration]
-	if not info then
-		info = TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-		TweenCache[duration] = info
-	end
+local v=u.notification
+s.ActiveNotifications[t]=nil
 
-	local objectTweens = ActiveTweens[instance]
-	if not objectTweens then
-		objectTweens = {}
-		ActiveTweens[instance] = objectTweens
-	end
 
-	for property in pairs(properties) do
-		local oldTween = objectTweens[property]
-		if oldTween then
-			oldTween:Cancel()
-		end
-	end
-
-	local tween = TweenService:Create(instance, info, properties)
-
-	for property in pairs(properties) do
-		objectTweens[property] = tween
-	end
-
-	tween.Completed:Once(function()
-		for property in pairs(properties) do
-			if objectTweens[property] == tween then
-				objectTweens[property] = nil
-			end
-		end
-
-		if next(objectTweens) == nil then
-			ActiveTweens[instance] = nil
-		end
-	end)
-
-	tween:Play()
-	return tween
+if not v.Parent then
+return
 end
 
--- ------------------------------------------------------------
--- Состояния окна
--- ------------------------------------------------------------
+s:Tween(v,{
+Position=k(1.2,0,v.Position.Y.Scale,0)
+},0.3).Completed:Once(function()
+v:Destroy()
+end)
 
-function Library:ChangeBackgroundTransparance()
-	if self.ImageLabel.ImageTransparency <= 0.05 then
-		self.ImageLabel.ImageTransparency = 0.05
-		self.Theme.BackGroundTran = 0.05
-	else
-		self.ImageLabel.ImageTransparency = 0
-		self.Theme.BackGroundTran = 0
-	end
+local w={}
+for x,y in pairs(s.ActiveNotifications)do
+table.insert(w,{id=x,data=y})
+end
+table.sort(w,function(x,y)return x.id<y.id end)
+
+local x=e.TouchEnabled and not e.KeyboardEnabled and not e.MouseEnabled
+local y=x and 0.75 or 0.9
+
+for z=#w,1,-1 do
+local A=w[z]
+s:Tween(A.data.notification,{Position=k(A.data.targetX,0,y,0)},0.3)
+y=y-A.data.multi
+end
 end
 
--- Сдвиг позиции при смене AnchorPoint (чтобы окно визуально не прыгало)
-local function reanchor(gui, newAnchor)
-	local delta = newAnchor - gui.AnchorPoint
-	gui.AnchorPoint = newAnchor
-	gui.Position = gui.Position + ud2(0, delta.X * gui.AbsoluteSize.X, 0, delta.Y * gui.AbsoluteSize.Y)
+
+
+
+
+function o.CreateWindow(s)
+local t=s.Name or"Default Title"
+local u=s.Description
+local v=s.Size or 620
+local w=s.Version
+
+local x=setmetatable({},o)
+
+x.CurrentThemeName=s.Theme or"Cursed"
+x.Theme=extendTheme(q[x.CurrentThemeName],{})
+
+x.mainTabs={}
+x.CurrentTab=nil
+x.Notipos=0.9
+x.ThemeObjects={}
+
+x.AllElements={
+Toggles={},Keybinds={},Dropdowns={},
+Sliders={},ColorPickers={},Inputs={}
+}
+x.Windowscd=false
+x.userinfo=true
+x.saveFolder=nil
+x.saveFileName=nil
+x.ActiveNotifications={}
+
+x.UI=create("ScreenGui",{
+ZIndexBehavior=j.ZIndexBehavior.Sibling,
+Parent=gethui and gethui()or b
+})
+
+x.ImageLabel=create("ImageLabel",{
+BackgroundColor3=g(255,255,255),BackgroundTransparency=1,
+BorderColor3=g(0,0,0),AnchorPoint=Vector2.new(0.5,0.5),
+Position=k(0.5,0,0.5,0),Size=k(0,10,0,10),
+Active=true,ImageTransparency=0,Parent=x.UI
+})
+x:AddThemeObject(x.ImageLabel,"Image","BackGroundIcon")
+
+x.ScaleFactor=1
+if e.touchEnabled then
+create("UIScale",{Scale=0.75,Parent=x.ImageLabel})
+x.ScaleFactor=0.75
 end
 
-function Library:Minimaze()
-	if self.Windowscd == false then
-		self.Windowscd = true
-		if(self.ImageLabel.ImageTransparency ~= 1) then
-			reanchor(self.ImageLabel, Vector2.new(0.5, 0))
-			if not UserInputService.TouchEnabled then
-				self.Header.BackgroundTransparency = self.Theme.BackGroundTran
-				self.Tabs.Visible = false
-				self.Sections.Visible = false
-				if self.Sections.Size == ud2(0, 375,0, 370) then
-					self:Tween(self.ImageLabel,{Size = ud2(0, 395,0, 40)},1)
-					self:Tween(self.Header,{Size = ud2(0, 390,0, 40)},0)
-				else
-					self:Tween(self.ImageLabel,{Size = ud2(0, 620, 0, 40)},1)
-					self.Header.Size = ud2(0, 620 - 24, 0, 40)
-				end
-				task.wait(1)
-				self.ImageLabel.ImageTransparency = 1
-				self.Windowscd = false
-			else
-				reanchor(self.ImageLabel, Vector2.new(0.5, 0))
-				self.Header.BackgroundTransparency = 1
-				self.Tabs.Visible = false
-				self.Sections.Visible = false
 
-				self.TextLabel.Visible = false
-				if self.TextLabel_2 then
-					self.TextLabel_2.Visible = false
-				end
-				self.version.Visible = false
-				self.close.Visible = false
-				self.ImageButton.Visible = false
-				self.ImageButton_2.Visible = false
+local y=false
+local z
+local A=Vector3.new()
+local B=k(0,0,0,0)
 
-				if self.Sections.Size == ud2(0, 375,0, 370) then
-					self:Tween(self.ImageLabel,{Size = ud2(0, 55,0, 40)},1)
-					self:Tween(self.Header,{Size = ud2(0, 40,0, 40)},0)
-					self.ImageButton_2.Position = ud2(0.28, 0,0.25, 0)
-				else
-					self:Tween(self.ImageLabel,{Size = ud2(0, 40, 0, 40)},1)
-					self.Header.Size = ud2(0, 64 - 24, 0, 40)
-					self.ImageButton_2.Position = ud2(0.28, 0,0.25, 0)
-				end
-				task.wait(1)
-				self.ImageButton_2.Visible = true
-				self.ImageLabel.ImageTransparency = 1
-				self.Header.BackgroundTransparency = self.Theme.BackGroundTran
-				self.Windowscd = false
-			end
-		else
-			if not UserInputService.TouchEnabled then
-				self.ImageLabel.ImageTransparency = self.Theme.BackGroundTran
-				self.Header.BackgroundTransparency = 1
-				if self.Sections.Size == ud2(0, 375,0, 370) then
-					self:Tween(self.ImageLabel,{Size = ud2(0, 395,0, 480)},1)
-					self:Tween(self.Header,{Size = ud2(0, 380,0, 40)},1)
-				else
-					self:Tween(self.ImageLabel,{Size = ud2(0, 620, 0, 480)},1)
-					self:Tween(self.Header,{Size = ud2(0, 620 - 24, 0, 40)},1)
-				end
-
-				task.wait(1)
-
-				reanchor(self.ImageLabel, Vector2.new(0.5, 0.5))
-				self.Tabs.Visible = true
-				self.Sections.Visible = true
-				self.Windowscd = false
-			else
-				self.ImageButton_2.Visible = false
-
-				self.ImageLabel.ImageTransparency = self.Theme.BackGroundTran
-				self.Header.BackgroundTransparency = 1
-
-				if self.Sections.Size == ud2(0, 375,0, 370) then
-					self:Tween(self.ImageLabel,{Size = ud2(0, 395,0, 480)},1)
-					self:Tween(self.Header,{Size = ud2(0, 380,0, 40)},1)
-					self.ImageButton_2.Position = ud2(0.76, 0,0.29, 0)
-				else
-					self:Tween(self.ImageLabel,{Size = ud2(0, 620, 0, 480)},1)
-
-					self.ImageButton_2.Position = ud2(0.825, 0,0.29, 0)
-					self:Tween(self.Header,{Size = ud2(0, 620 - 24, 0, 40)},1)
-				end
-
-				task.wait(1)
-
-				reanchor(self.ImageLabel, Vector2.new(0.5, 0.5))
-
-				self.TextLabel.Visible = true
-				if self.TextLabel_2 then
-					self.TextLabel_2.Visible = true
-				end
-				self.version.Visible = true
-				self.close.Visible = true
-				self.ImageButton.Visible = true
-				self.ImageButton_2.Visible = true
-
-				self.Tabs.Visible = true
-				self.Sections.Visible = true
-				self.Windowscd = false
-			end
-		end
-	end
+x.ImageLabel.InputBegan:Connect(function(C)
+if C.UserInputType==j.UserInputType.MouseButton1 or C.UserInputType==j.UserInputType.Touch then
+if o.IsInteractingWithUI then
+o.IsInteractingWithUI=false
+return
 end
 
-function Library:ColumnWindow()
-	if self.Windowscd == false then
-		self.Windowscd = true
+y=true
+z=C
+A=C.Position
+B=x.ImageLabel.Position
 
-		local TabListLayout = self.ScrollingFrame:FindFirstChildOfClass("UIListLayout")
+local D
+D=C.Changed:Connect(function()
+if C.UserInputState==j.UserInputState.End then
+y=false
+z=nil
+if D then
+D:Disconnect()
+end
+end
+end)
+end
+end)
 
-		local isCompact = self.Sections.Size ~= ud2(0, 375, 0, 370)
+e.InputChanged:Connect(function(C)
+if y then
+local D=(C==z)
+local E=(z.UserInputType==j.UserInputType.MouseButton1 and C.UserInputType==j.UserInputType.MouseMovement)
 
-		self.Header.BackgroundTransparency = 1
-		self.ImageLabel.ImageTransparency = self.Theme.BackGroundTran
-		self.Frame_2.Visible = not isCompact
-		self.TextLabel_5.Visible = not isCompact
+if D or E then
+local F=C.Position-A
+local G=x.ScaleFactor or 1
 
-		self.Tabs.Visible = false
-		self.Sections.Visible = false
-		if isCompact then self.WindowUser.Visible = false end
+x.ImageLabel.Position=k(
+B.X.Scale,
+B.X.Offset+(F.X/G),
+B.Y.Scale,
+B.Y.Offset+(F.Y/G)
+)
+end
+end
+end)
 
-		if isCompact and self.version then
-			self.version.Visible = false
-		end
 
-		self:Tween(self.close, {Position = isCompact and ud2(0.92, 0, 0.2, 0) or ud2(0.945, 0, 0.2, 0)}, 1)
-		self:Tween(self.ImageButton, {Position = isCompact and ud2(0.854, 0, 0.35, 0) or ud2(0.897, 0, 0.35, 0)}, 1)
-		self:Tween(self.ImageButton_2, {Position = isCompact and ud2(0.76, 0, 0.29, 0) or ud2(0.835, 0, 0.29, 0)}, 1)
-		self:Tween(self.ImageLabel, {Size = isCompact and ud2(0, 405, 0, 480) or ud2(0, 620, 0, 480)}, 1)
-		self:Tween(self.Header, {Size = isCompact and ud2(0, 381, 0, 40) or ud2(0, 596, 0, 40)}, 1)
+x.Header=create("Frame",{
+BackgroundTransparency=1,Position=k(0.02,0,0.025,0),
+Size=k(0,v-24,0,40),Parent=x.ImageLabel
+})
+x:AddThemeObject(x.Header,"BackgroundColor3","HeaderColor")
+corner(l(0,12),x.Header)
 
-		self.Sections.Size = isCompact and ud2(0, 375, 0, 370) or ud2(0, 390, 0, 414)
-		self.Sections.Position = isCompact and ud2(0.02, 0, 0.201, 0) or ud2(0.34, 0, 0.1, 0)
-		self.Frame_7.Size = isCompact and ud2(0, 375, 0, 370) or ud2(0, 366, 0, 379)
-		self.Frame_7.Position = isCompact and ud2(0, 2, 0, 5) or ud2(0, 0, 0.085, 0)
+x.TitleContainer=create("Frame",{
+BackgroundTransparency=1,Position=k(0,10,0,0),
+Size=k(0.7,0,1,0),Parent=x.Header
+})
 
-		self.Tabs.Size = isCompact and ud2(0, 375, 0, 45) or ud2(0, 185, 0, 414)
-		self.Tabs.Position = isCompact and ud2(0.02, 0, 0.12, 0) or ud2(0.035, 0, 0.116, 0)
-		self.ScrollingFrame.Size = isCompact and ud2(0, 365, 0, 45) or ud2(0, 185, 0, 415)
-		self.ScrollingFrame.Position = isCompact and ud2(0, 10, 0, 0) or ud2(0, 0, 0, 0)
+create("UIListLayout",{
+Parent=x.TitleContainer,FillDirection=j.FillDirection.Horizontal,
+VerticalAlignment=j.VerticalAlignment.Center,Padding=l(0,10),
+SortOrder=j.SortOrder.LayoutOrder
+})
 
-		self.ScrollingFrame.ScrollingDirection = isCompact and enum.ScrollingDirection.X or enum.ScrollingDirection.Y
-		self.ScrollingFrame.AutomaticCanvasSize = isCompact and enum.AutomaticSize.X or enum.AutomaticSize.Y
-		self.ScrollingFrame.CanvasSize = ud2(0, 0, 0, 0)
-		self.ScrollingFrame.ScrollBarImageTransparency = isCompact and 1 or 0
+x.TextLabel=create("TextLabel",{
+BackgroundTransparency=1,AutomaticSize=j.AutomaticSize.XY,
+Position=k(0,0,0,10),Size=k(0,0,0,40),
+Font=m,Text=t,TextSize=16,LayoutOrder=1,
+Parent=x.TitleContainer
+})
+x:AddThemeObject(x.TextLabel,"TextColor3","TextColor")
 
-		if TabListLayout then
-			TabListLayout.FillDirection = isCompact and enum.FillDirection.Horizontal or enum.FillDirection.Vertical
-			TabListLayout.Padding = isCompact and ud(0, 8) or ud(0, 5)
-			if isCompact then TabListLayout.SortOrder = enum.SortOrder.LayoutOrder end
-		end
-
-		if self.Categories then
-			for _, category in pairs(self.Categories) do
-				if category.Wrapper then category.Wrapper.Visible = not isCompact end
-				for _, tab in pairs(category.Tabs) do
-					local btn = tab.Button or (tab.Tab and tab.Tab[1])
-					if btn then
-						if isCompact then
-							btn.Parent = self.ScrollingFrame
-						else
-							btn.Parent = category.Container
-							btn.Size = ud2(0, 173, 0, 35)
-						end
-					end
-				end
-			end
-		end
-
-		for i, v in pairs(self.mainTabs) do
-			v.Tab[5].Position = isCompact and ud2(0, 0, 0, 0) or ud2(0, 0, 0.023, 0)
-			v.Tab[5].Size = isCompact and ud2(0, 380, 0, 365) or ud2(0, 385, 0, 370)
-
-			if v.Tab[5]:IsA("ScrollingFrame") then
-				v.Tab[5].AutomaticCanvasSize = enum.AutomaticSize.Y
-				v.Tab[5].CanvasSize = ud2(0, 0, 0, 0)
-			end
-
-			local elemPadding = v.Tab[5]:FindFirstChildOfClass("UIPadding")
-			if elemPadding then
-				elemPadding.PaddingLeft = ud(0, 10)
-				elemPadding.PaddingRight = ud(0, 10)
-				elemPadding.PaddingTop = ud(0, 10)
-				elemPadding.PaddingBottom = ud(0, 10)
-			end
-
-			if isCompact then
-				v.Tab[1].Parent = self.ScrollingFrame
-				v.Tab[1].Size = ud2(0, 130, 0, 35)
-				v.Tab[1].LayoutOrder = i
-
-				if v.Tab[4] and v.Tab[4].Image ~= "" then
-					v.Tab[2].Position = ud2(0.28, 0, 0, -1)
-				end
-			else
-				if not v.Button or v.Tab[1].Parent == self.ScrollingFrame then
-					v.Tab[1].Size = ud2(0, 180, 0, 35)
-				end
-
-				if v.Tab[4] and v.Tab[4].Image ~= "" then
-					v.Tab[2].Position = ud2(0.21, 0, 0, -1)
-				end
-			end
-		end
-
-		task.wait(1)
-		self.Tabs.Visible = true
-		self.Sections.Visible = true
-
-		if not isCompact and self.version then
-			self.version.Visible = true
-		end
-
-		if not isCompact and self.userinfo then
-			self.WindowUser.Visible = true
-			self.Tabs.Size = ud2(0, 185, 0, 372)
-			self.ScrollingFrame.Size = ud2(0, 185, 0, 358)
-		end
-		self.Windowscd = false
-	end
+if u then
+x.TextLabel_2=create("TextLabel",{
+BackgroundTransparency=1,AutomaticSize=j.AutomaticSize.XY,
+Size=k(0,0,0,40),Font=m,Text=u,
+TextSize=14,LayoutOrder=2,Parent=x.TitleContainer
+})
+x:AddThemeObject(x.TextLabel_2,"TextColor3","SubTtitleTextColor")
 end
 
--- ------------------------------------------------------------
--- Destroy / диалог / видимость
--- ------------------------------------------------------------
-
-function Library:Destroy()
-	if self.AllElements and self.AllElements.GlobalKeybindConnection then
-		self.AllElements.GlobalKeybindConnection:Disconnect()
-		self.AllElements.GlobalKeybindConnection = nil
-	end
-	for _, tab in ipairs(self.mainTabs) do
-		for _, connection in ipairs(tab.Connections) do
-			connection:Disconnect()
-		end
-		for _, connection in ipairs(tab.KeybindConnections) do
-			connection:Disconnect()
-		end
-	end
-	for name, controller in pairs(self.AllElements.Toggles) do
-		if controller.Value == true then
-			controller:SetState(false)
-		end
-	end
-	if self.Destroy_gui then
-		self.Destroy_gui.Visible = false
-	end
-	self.AllElements.Toggles = {}
-	self.ThemeObjects = {}
-
-	self:Tween(self.ImageLabel, {ImageTransparency = 1}, 0.8)
-	self.Tabs.Visible = false
-	self.Sections.Visible = false
-	self.Header.Visible = false
-	task.wait(0.5)
-	self.UI:Destroy()
-	setmetatable(self, nil)
-	table.clear(self)
+if w then
+x.version=create("TextLabel",{
+AutomaticSize=j.AutomaticSize.X,Size=k(0,0,0,24),
+LayoutOrder=3,Font=m,Text=w,TextSize=14,
+Parent=x.TitleContainer
+})
+x:themeObj(x.version,{
+BackgroundColor3="versionBackgroundColor3",
+BackgroundTransparency="versionBackgroundTransparency"
+})
+x:AddThemeObject(x.version,"TextColor3","versionTextColor")
+create("UIPadding",{Parent=x.version,PaddingLeft=l(0,12),PaddingRight=l(0,12)})
+corner(l(0,11),x.version)
 end
 
-function Library:ShowDestroyQ()
-	if not self.Destroy_gui then
-		self:CreateDestroyGui()
-	end
 
-	if self.Destroy_gui.Visible then
-		self.dTextLabel.Visible = false
-		self.dTextButton.Visible = false
-		self.dTextLabel_2.Visible = false
-		self.dTextButton_2.Visible = false
-		self:Tween(self.dFrame_2,{Transparency = 1},0.15)
-		task.wait(0.15)
-		self.Destroy_gui.Visible = false
-	else
-		local newX
-		local newY = ud(0, self.ImageLabel.Size.Y.Offset - 18)
+x.close=create("ImageButton",{
+BackgroundTransparency=1,Position=k(0.945,0,0.2,0),
+Size=k(0,24,0,24),Image="rbxassetid://94538718832963",
+Parent=x.Header
+})
+x:AddThemeObject(x.close,"ImageColor3","TabsIconColor")
+x.close.MouseButton1Click:Connect(function()x:ShowDestroyQ()end)
 
-		if self.ImageLabel.Size ~= ud2(0, 620, 0, 40) and self.ImageLabel.Size ~= ud2(0, 620, 0, 480) then
-			newX = ud(0, self.ImageLabel.Size.X.Offset - 14)
-			self.dFrame_2.Position = ud2(0.18, 0,0.329, 0)
-		else
-			newX = ud(0, self.ImageLabel.Size.X.Offset - 20)
-			self.dFrame_2.Position = ud2(0.307, 0,0.329, 0)
-		end
-		self.Destroy_gui.Size = ud2(newX, newY)
-		self.Destroy_gui.Visible = true
-		self:Tween(self.ImageLabel,{Position = ud2(0.5, 0, 0.5, 0)},0.25)
-		self:Tween(self.dFrame_2,{Transparency = self.Theme.DestroyGFrameTransparency},0.15)
-		task.wait(0.15)
-		self.dTextLabel.Visible = true
-		self.dTextButton.Visible = true
-		self.dTextLabel_2.Visible = true
-		self.dTextButton_2.Visible = true
-	end
+x.ImageButton=create("ImageButton",{
+BackgroundTransparency=1,Position=k(0.897,0,0.35,0),
+Size=k(0,16,0,12),Image="rbxassetid://89738650787294",
+Parent=x.Header
+})
+x:AddThemeObject(x.ImageButton,"ImageColor3","TabsIconColor")
+x.ImageButton.MouseButton1Click:Connect(function()x:ColumnWindow()end)
+
+x.ImageButton_2=create("ImageButton",{
+BackgroundTransparency=1,Position=k(0.835,0,0.29,0),
+Size=k(0,18,0,18),Image="rbxassetid://122178947900744",
+Parent=x.Header
+})
+x:AddThemeObject(x.ImageButton_2,"ImageColor3","TabsIconColor")
+x.ImageButton_2.MouseButton1Click:Connect(function()x:Minimaze()end)
+
+
+x.Tabs=create("Frame",{
+BackgroundColor3=g(255,255,255),BackgroundTransparency=1,
+BorderColor3=g(0,0,0),Position=k(0.035,0,0.115,0),
+Size=k(0,185,0,372),Parent=x.ImageLabel
+})
+x.Frame_2=i"Frame"
+
+x.ScrollingFrame=create("ScrollingFrame",{
+Active=true,BackgroundColor3=g(255,255,255),
+BackgroundTransparency=1,BorderColor3=g(0,0,0),
+BorderSizePixel=0,Position=k(0,0,0,0),
+Size=k(0,190,0,357),ScrollBarThickness=2,
+CanvasSize=k(0,0,0,0),AutomaticCanvasSize=j.AutomaticSize.Y,
+Parent=x.Tabs
+})
+x:AddThemeObject(x.ScrollingFrame,"ScrollBarImageColor3","TabsScrollingBarFrameColor")
+
+create("UIListLayout",{Parent=x.ScrollingFrame,SortOrder=j.SortOrder.LayoutOrder,Padding=l(0,5)})
+
+
+x.WindowUser=create("Frame",{
+BorderColor3=g(0,0,0),BackgroundTransparency=0.95,
+Position=k(0,0,0.975,0),Size=k(0,180,0,45),
+Parent=x.Tabs
+})
+x:AddThemeObject(x.WindowUser,"BackgroundColor3","versionBackgroundColor3")
+corner(l(0.35,0),x.WindowUser)
+
+local C=create("ImageLabel",{
+BackgroundColor3=g(255,255,255),BorderColor3=g(0,0,0),
+Position=k(0.05,0,0,8),Size=k(0,30,0,30),
+Image="rbxassetid://128203179498740",Parent=x.WindowUser
+})
+corner(l(0,100),C)
+
+x.wTextLabel=create("TextLabel",{
+BackgroundColor3=g(255,255,255),BackgroundTransparency=1,
+BorderColor3=g(0,0,0),Position=k(0.27,0,0,6),
+Size=k(0,131,0,15),Font=m,TextSize=15,
+Text="Anonymous",TextXAlignment=n,Parent=x.WindowUser
+})
+x:AddThemeObject(x.wTextLabel,"TextColor3","TextColor")
+
+x.wTextLabel_2=create("TextLabel",{
+BackgroundColor3=g(255,255,255),BackgroundTransparency=1,
+BorderColor3=g(0,0,0),Position=k(0.27,0,0,22),
+Size=k(0,131,0,15),Font=m,TextColor3=g(200,167,0),
+Text="Premium",TextSize=13,TextXAlignment=n,
+Parent=x.WindowUser
+})
+
+create("ImageLabel",{
+BackgroundTransparency=1,Image="rbxassetid://127843403295538",
+ImageColor3=g(200,167,0),Position=k(0.30,52,0,23),
+Size=k(0,14,0,14),Parent=x.WindowUser
+})
+
+
+x.Sections=create("Frame",{
+BackgroundColor3=g(255,255,255),BackgroundTransparency=1,
+BorderColor3=g(0,0,0),BorderSizePixel=0,
+Position=k(0.345,0,0.1,0),Size=k(0,390,0,414),
+Parent=x.ImageLabel
+})
+
+x.TextLabel_5=create("TextLabel",{
+BackgroundColor3=g(255,255,255),BackgroundTransparency=1,
+BorderColor3=g(0,0,0),Position=k(0.0191,0,0.0144,0),
+Size=k(0,192,0,29),Font=m,Text="",TextSize=24,
+TextWrapped=true,TextXAlignment=n,Parent=x.Sections
+})
+x:AddThemeObject(x.TextLabel_5,"TextColor3","TextColor")
+
+x.Frame_7=create("Frame",{
+BackgroundColor3=g(255,255,255),BackgroundTransparency=1,
+BorderColor3=g(0,0,0),BorderSizePixel=0,
+Position=k(0,0,0.084,0),Size=k(0,366,0,379),
+Parent=x.Sections
+})
+
+
+x.Tabs.Visible=false
+x.Sections.Visible=false
+x.Header.Visible=false
+
+x:Tween(x.ImageLabel,{Size=k(0,v,0,480)},0.9)
+task.wait(0.9)
+
+x.Tabs.Visible=true
+x.Sections.Visible=true
+x.Header.Visible=true
+
+return x
 end
 
-function Library:UserInfo()
-	if self.WindowUser.Visible then
-		self.userinfo = false
-		self.WindowUser.Visible = false
-		self.Tabs.Size = ud2(0, 185,0, 405)
-		self.ScrollingFrame.Size = ud2(0, 185,0, 405)
-	else
-		self.WindowUser.Visible = true
-		self.Tabs.Size = ud2(0, 185,0, 372)
-		self.ScrollingFrame.Size = ud2(0, 185,0, 354)
-		self.userinfo = true
-	end
+
+
+
+
+local s={Settings=
+"rbxassetid://121074539743502",Visual=
+"rbxassetid://92250291747112",Player=
+"rbxassetid://92793433656183",Combat=
+"rbxassetid://73787033062338",Generator=
+"rbxassetid://88963434013027",AutoFarm=
+"rbxassetid://119088300179156",Animation=
+"rbxassetid://126672101469278",Items=
+"rbxassetid://100873317961037",Teleport=
+"rbxassetid://93236186125909",Badge=
+"rbxassetid://119734718512317",Quests=
+"rbxassetid://88588775334975",Main=
+"rbxassetid://102448859836734",Halloween=
+"rbxassetid://115053236948532",Misc=
+"rbxassetid://137583062645541",Block=
+"rbxassetid://94027029642332",Aim=
+"rbxassetid://130183131122604",Fun=
+"rbxassetid://137362629704355",Fish=
+"rbxassetid://105045060721724",WebHook=
+"rbxassetid://95301251075575",Heart=
+"rbxassetid://111088001331743",Shop=
+"rbxassetid://82363507426406",Boat=
+"rbxassetid://103950075513303",Trade=
+"rbxassetid://128997687956087",Text=
+"rbxassetid://140272486271785",Music=
+"rbxassetid://95074569695751",Skin=
+"rbxassetid://77808065458415",Run=
+"rbxassetid://94022434049447",Killer=
+"rbxassetid://80624492937943",Survivor=
+"rbxassetid://76337889437039"
+}
+
+function o.AddTab(t,u:string,v:string)
+local w={
+Name=u,Elements={},Container=nil,Button=nil,Frame=nil,
+Tab={},Connections={},KeybindConnections={},RenderQueue={},IsLoaded=false
+}
+setmetatable(w,{__index=t})
+
+local x=create("TextButton",{
+BackgroundColor3=g(255,255,255),BackgroundTransparency=1,
+BorderColor3=g(0,0,0),BorderSizePixel=0,
+Size=k(0,180,0,36),Text="",Parent=t.ScrollingFrame
+})
+local y
+t:AddThemeObject(x,"BackgroundColor3","TabColor")
+table.insert(w.Tab,x)
+corner(l(0,12),x)
+
+x.MouseEnter:Connect(function()
+t:Tween(x,{BackgroundTransparency=t.Theme.TabTransparancy},0.3)
+t:Tween(y,{Size=k(0,2,0,23),BackgroundTransparency=0},0.3)
+end)
+
+x.MouseLeave:Connect(function()
+if t.CurrentTab~=w then
+t:Tween(x,{BackgroundTransparency=1},0.3)
+t:Tween(y,{BackgroundTransparency=1,Size=k(0,2,0,0)},0.3)
+end
+end)
+
+x.MouseButton1Click:Connect(function()
+t:SelectTab(w,x)
+end)
+
+v=s[v]or v
+
+local z=create("TextLabel",{
+BackgroundColor3=g(255,255,255),BackgroundTransparency=1,
+BorderColor3=g(0,0,0),BorderSizePixel=0,
+Position=k((v and v~="")and 0.22 or 0.05,0,0,0),
+Size=k(0,52,0,35),Font=m,Text=u,
+TextSize=14,TextXAlignment=n,Parent=x
+})
+t:AddThemeObject(z,"TextColor3","TabTextColor")
+table.insert(w.Tab,z)
+
+y=create("Frame",{
+BackgroundTransparency=1,BorderColor3=g(0,0,0),
+BorderSizePixel=0,Position=k(0,1,0.171,0),
+Size=k(0,2,0,0),Parent=x
+})
+t:AddThemeObject(y,"BackgroundColor3","TabTextColor")
+
+local A=create("ScrollingFrame",{
+Active=true,BackgroundColor3=g(255,255,255),
+BackgroundTransparency=1,BorderColor3=g(0,0,0),
+BorderSizePixel=0,Position=k(0,0,0.023,0),
+Size=k(0,385,0,372),CanvasSize=k(0,0,0,0),
+AutomaticCanvasSize=j.AutomaticSize.Y,ScrollBarThickness=2,
+Visible=false,Parent=t.Frame_7
+})
+t:AddThemeObject(A,"ScrollBarImageColor3","SectionsScrollingBarFrameColor")
+w.Tab[5]=A
+
+create("UIListLayout",{Parent=A,SortOrder=j.SortOrder.LayoutOrder,Padding=l(0,5)})
+create("UIPadding",{Parent=A,PaddingTop=l(0,0),PaddingLeft=l(0,10)})
+
+if v and v~=""then
+local B=create("ImageLabel",{
+BackgroundColor3=g(255,255,255),BackgroundTransparency=1,
+BorderColor3=g(0,0,0),BorderSizePixel=0,
+Position=k(0,8,0,6.5),Size=k(0,22,0,22),
+Image=v,Parent=x
+})
+t:AddThemeObject(B,"ImageColor3","TabsIconColor")
+w.Tab[4]=B
 end
 
-function Library:Close()
-	if self.ImageLabel.Visible then
-		self:Tween(self.ImageLabel,{Size = ud2(0, 40, 0, 0)},0)
-		self.ImageLabel.Visible = false
-	else
-		if self.Sections.Visible == false then
-			self:Tween(self.ImageLabel,{Size = ud2(0, 620, 0, 40)},0)
-		elseif self.Sections.Size == ud2(0, 375,0, 370) then
-			self:Tween(self.ImageLabel,{Size = ud2(0, 395,0, 480)},0)
-		else
-			self:Tween(self.ImageLabel,{Size = ud2(0, 620, 0, 480)},0)
-		end
-		self.ImageLabel.Visible = true
-	end
+w.Container=A
+w.Button=x
+w.Frame=y
+
+table.insert(t.mainTabs,w)
+
+if#t.mainTabs==1 then
+t:SelectTab(w,x)
 end
 
--- ------------------------------------------------------------
--- Конфиги
--- ------------------------------------------------------------
 
-function Library:GetConfig(filename)
-	if not isfile(filename) then
-		self:Notification({
-			Name = "Error",
-			Description = "Config not found",
-			Duration = 10,
-			Type = "Error"
-		})
-	else
-		setclipboard(readfile(filename))
-		self:Notification({
-			Name = "Config",
-			Description = "The config has been successfully copied to the clipboard",
-			Duration = 10,
-			Type = "Notification"
-		})
-	end
+function w.AddList(B,C)
+local D={
+Name=C.Name,
+Elems=C.Elems or{}
+}
+
+local E={
+Elem=nil,IsOpen=false,IsLoaded=false,RenderQueue={}
+}
+
+for F,G in pairs(D.Elems)do
+if G and G._renderFunc then
+local H=table.find(w.RenderQueue,G._renderFunc)
+if H then
+table.remove(w.RenderQueue,H)
+table.insert(E.RenderQueue,G._renderFunc)
+end
+end
 end
 
-function Library:InputConfig(filename,Config)
-	writefile(filename,Config)
+local F=function()
+local F=create("Frame",{
+BackgroundTransparency=0.95,Size=k(0,360,0,0),
+AutomaticSize=j.AutomaticSize.Y,Parent=B.Container
+})
+B:AddThemeObject(F,"BackgroundColor3","ListFrameColor")
+corner(l(0,10),F)
+create("UIListLayout",{Parent=F,SortOrder=j.SortOrder.LayoutOrder})
+
+local G=create("TextButton",{
+Size=k(0,360,0,35),Text="",LayoutOrder=1,
+Parent=F
+})
+B:themeObj(G,{BackgroundColor3="BackGroundElemCol",BackgroundTransparency="BackGroundElemTran"})
+corner(l(0,10),G)
+
+local H=create("TextLabel",{
+BackgroundTransparency=1,Position=k(0.03,0,0,0),
+Size=k(0.7,0,1,0),Font=m,Text=D.Name,
+TextSize=16,TextXAlignment=n,Parent=G
+})
+B:AddThemeObject(H,"TextColor3","TabTextColor")
+
+local I=create("ImageLabel",{
+BackgroundTransparency=1,Position=k(0.9,0,0.2,0),
+Rotation=-180,Size=k(0,20,0,20),
+Image="rbxassetid://126982255108418",Parent=G
+})
+B:AddThemeObject(I,"ImageColor3","DropDownArrowImg")
+
+local J=create("Frame",{
+BackgroundTransparency=1,ClipsDescendants=true,
+Size=k(0,360,0,0),Visible=false,
+LayoutOrder=2,Parent=F
+})
+local K=create("UIListLayout",{Parent=J,Padding=l(0,5),SortOrder=j.SortOrder.LayoutOrder})
+local L=create("UIPadding",{Parent=J,PaddingTop=l(0,5)})
+
+for M,N in pairs(D.Elems)do
+if N and N.Elem then
+N.Elem.Parent=J
+N.Elem.Visible=true
+end
 end
 
-function Library:SaveConfig(foldername,filename)
-	local config = {
-		Toggles = {}, Keybinds = {}, Dropdowns = {},
-		Sliders = {}, ColorPickers = {}, Inputs = {}
-	}
+E.Elem=F
 
-	for name, obj in pairs(self.AllElements.Toggles) do
-		pcall(function()
-			config.Toggles[name] = obj:GetState()
-		end)
-	end
+G.MouseButton1Click:Connect(function()
+local M=false
 
-	for name, obj in pairs(self.AllElements.Keybinds) do
-		pcall(function()
-			local state = obj:GetState()
-			config.Keybinds[name] = state and state.Name or "None"
-		end)
-	end
+if not E.IsLoaded then
+E.IsLoaded=true
+M=true
 
-	for name, obj in pairs(self.AllElements.Sliders) do
-		pcall(function()
-			config.Sliders[name] = obj:GetValue()
-		end)
-	end
-
-	for name, obj in pairs(self.AllElements.Dropdowns) do
-		pcall(function()
-			config.Dropdowns[name] = obj:GetValue()
-		end)
-	end
-
-	for name, obj in pairs(self.AllElements.Inputs) do
-		pcall(function()
-			config.Inputs[name] = obj:GetState()
-		end)
-	end
-
-	for name, obj in pairs(self.AllElements.ColorPickers) do
-		pcall(function()
-			local color = obj:GetColor()
-			if color then
-				config.ColorPickers[name] = {R = color.R, G = color.G, B = color.B}
-			end
-		end)
-	end
-
-	if not isfolder(foldername) then
-		pcall(makefolder, foldername)
-	end
-
-	local success, encoded = pcall(function() return HttpService:JSONEncode(config) end)
-	if success then
-		pcall(function()
-			writefile(foldername .. "/" .. filename, encoded)
-		end)
-	end
+for N,O in ipairs(E.RenderQueue)do
+O()
 end
 
-function Library:IsLoadConfig(filename)
-	if not isfile(filename) then
-		return false
-	end
-
-	local successRead, content = pcall(readfile, filename)
-	if not successRead or not content then return false end
-
-	local success, data = pcall(function()
-		return HttpService:JSONDecode(content)
-	end)
-
-	if not success or type(data) ~= "table" or not data.Toggles then
-		return false
-	end
-
-	local toggles = self.AllElements.Toggles
-	local savedToggles = data.Toggles
-
-	local configKeys = {"Load Config", "Auto Load Config", "Auto Load", "AutoLoad"}
-
-	for _, key in ipairs(configKeys) do
-		local toggleElement = toggles[key]
-		local savedState = savedToggles[key]
-
-		if toggleElement and savedState == true then
-			toggleElement:SetState(true)
-			return true
-		end
-	end
-
-	return false
+for N,O in pairs(D.Elems)do
+if O and O.Elem then
+O.Elem.Parent=J
+O.Elem.Visible=true
+end
+end
 end
 
-function Library:LoadConfig(filename)
-	if not isfile(filename) then return false end
+E.IsOpen=not E.IsOpen
+B:Tween(I,{Rotation=E.IsOpen and 0 or-180},0.3)
 
-	local successRead, content = pcall(readfile, filename)
-	if not successRead then return false end
+if E.IsOpen then
+J.Visible=true
+if M then task.wait()end
 
-	local success, data = pcall(function()
-		return HttpService:JSONDecode(content)
-	end)
-	if not success or type(data) ~= "table" then return false end
-
-	if data.Inputs then
-		for name, value in pairs(data.Inputs) do
-			local obj = self.AllElements.Inputs[name]
-			if obj then
-				if obj.SaveConfig ~= true then
-					pcall(function()
-						obj.SetText(value)
-					end)
-				end
-			end
-		end
-	end
-
-	if data.Keybinds then
-		for name, keyStr in pairs(data.Keybinds) do
-			local obj = self.AllElements.Keybinds[name]
-			if obj and keyStr and keyStr ~= "None" and keyStr ~= "nil" then
-				local successKey, keyCode = pcall(function() return enum.KeyCode[keyStr] end)
-				if successKey then
-					pcall(function()
-						obj:SetKey(keyCode)
-					end)
-				end
-			end
-		end
-	end
-
-	if data.Sliders then
-		for name, value in pairs(data.Sliders) do
-			local obj = self.AllElements.Sliders[name]
-			if obj then
-				pcall(function()
-					obj:SetValue(value)
-				end)
-			end
-		end
-	end
-
-	if data.Dropdowns then
-		for name, value in pairs(data.Dropdowns) do
-			local obj = self.AllElements.Dropdowns[name]
-			if obj and obj.SetValue then
-				pcall(function()
-					if obj.Multi and type(value) == "table" then
-						local fixed = {}
-						for k, v in pairs(value) do
-							if type(k) == "string" then fixed[k] = v else fixed[v] = true end
-						end
-						obj:SetValue(fixed)
-					else
-						obj:SetValue(value)
-					end
-				end)
-			end
-		end
-	end
-
-	if data.ColorPickers then
-		for name, c in pairs(data.ColorPickers) do
-			local obj = self.AllElements.ColorPickers[name]
-			if obj and c.R and c.G and c.B then
-				pcall(function()
-					obj:SetColor(c3new(c.R, c.G, c.B))
-				end)
-			end
-		end
-	end
-
-	if data.Toggles then
-		for name, state in pairs(data.Toggles) do
-			local obj = self.AllElements.Toggles[name]
-			if obj then
-				if name ~= "Load Config" and name ~= "Auto Load Config" and name ~= "Auto Load" and name ~= "AutoLoad" then
-					pcall(function()
-						obj:SetState(state)
-					end)
-				end
-			end
-		end
-	end
-
-	return true
+local N=K.AbsoluteContentSize.Y/(B.ScaleFactor or 1)
+local O=N+L.PaddingTop.Offset+L.PaddingBottom.Offset
+B:Tween(J,{Size=k(0,360,0,O)},0.4)
+else
+B:Tween(J,{Size=k(0,360,0,0)},0.3)
+task.delay(0.3,function()
+if not E.IsOpen then
+J.Visible=false
+end
+end)
+end
+end)
 end
 
-function Library:SetSavePath(folder, filename)
-	self.saveFolder = folder
-	self.saveFileName = filename
+return register(w,E,F)
 end
 
-function Library:GetConfigsList()
-	local folder = self.saveFolder or "zxcursedsocute"
-	if not isfolder(folder) then makefolder(folder) end
 
-	local files = listfiles(folder)
-	local configs = {}
-	for _, path in ipairs(files) do
-		local name = path:gsub(folder .. "/", "")
-		if name:find(".json") then
-			table.insert(configs, name)
-		end
-	end
-	return configs
+function w.AddDiscordInvite(B,C)
+local D={Elem=nil}
+
+local E=function()
+local E=C.Invite or""
+local F=E:match"discord%.gg/([%w-]+)"or E:match"discord%.com/invite/([%w-]+)"or E
+
+local G=create("Frame",{
+Size=k(0,360,0,110),Parent=B.Container
+})
+corner(l(0,10),G)
+B:themeObj(G,{BackgroundColor3="BackGroundElemCol",BackgroundTransparency="BackGroundElemTran"})
+
+local H=create("ImageLabel",{
+Size=k(0,50,0,50),Position=k(0,12,0,12),
+BackgroundColor3=g(43,45,49),
+Image=C.Icon or"rbxassetid://93164175094440",Parent=G
+})
+corner(l(0,12),H)
+
+local I=create("TextLabel",{
+Position=k(0,75,0,15),Size=k(0,270,0,20),
+BackgroundTransparency=1,Font=m,Text="Loading Discord...",
+TextSize=16,TextXAlignment=n,Parent=G
+})
+B:AddThemeObject(I,"TextColor3","TabTextColor")
+
+local J=create("TextLabel",{
+Position=k(0,75,0,38),Size=k(0,270,0,15),
+BackgroundTransparency=1,Font=m,Text="Connecting...",
+TextSize=13,TextXAlignment=n,RichText=true,Parent=G
+})
+B:AddThemeObject(J,"TextColor3","TabSubTtitleTextColor")
+
+local K=create("TextButton",{
+Size=k(1,-24,0,30),Position=k(0,12,0,70),
+BackgroundColor3=g(36,128,70),Font=m,
+Text="Copy Invite Link",TextColor3=g(255,255,255),
+TextSize=14,Parent=G
+})
+corner(l(0,8),K)
+
+K.MouseButton1Click:Connect(function()
+if setclipboard then
+setclipboard("https://discord.gg/"..F)
+K.Text="Copied to Clipboard!"
+task.wait(2)
+K.Text="Copy Invite Link"
+end
+end)
+
+task.spawn(function()
+local L=(syn and syn.request)or(http and http.request)or http_request or request
+if not L then return end
+local M=L{Url="https://discord.com/api/v9/invites/"..F.."?with_counts=true",Method="GET"}
+if M.StatusCode==200 then
+local N=c:JSONDecode(M.Body)
+I.Text=N.guild.name
+J.Text=("<font color='#23a559'>●</font> %s Online  <font color='#80848e'>●</font> %s Members"):format(N.approximate_presence_count or 0,N.approximate_member_count or 0)
+else
+I.Text="Invalid Invite"
+J.Text="Could not fetch server data"
+end
+end)
+
+D.Elem=G
 end
 
-function Library:UpdateConfigSelection(name)
-	local validName = name:find(".json") and name or name .. ".json"
-	self.saveFileName = validName
-
-	writefile(self.saveFolder .. "/last_config.txt", validName)
+return register(w,D,E)
 end
 
-function Library:DeleteConfig(folder, filename)
-	local path = folder .. "/" .. filename
-	if isfile(path) then
-		delfile(path)
-		return true
-	end
-	return false
+
+function w.AddParagraph(B,C,D,E,F)
+local G={
+Element=nil,Elem=nil,
+Title=C or"",Subtitle=D or"",
+IsDestroyed=false
+}
+
+local H=function()
+if G.IsDestroyed then return end
+
+local H=create("Frame",{BorderSizePixel=0,Parent=B.Container})
+if typeof(E)=="Color3"then
+H.BackgroundColor3=E
+else
+B:themeObj(H,{BackgroundColor3="BackGroundElemCol",BackgroundTransparency="BackGroundElemTran"})
+end
+corner(l(0,12),H)
+
+local I=create("TextLabel",{
+BackgroundTransparency=1,Size=k(0,328,0,20),
+Font=m,Text=G.Title,
+TextSize=16,TextXAlignment=n,Parent=H
+})
+
+local J=create("TextLabel",{
+BackgroundTransparency=1,Font=m,
+Text=G.Subtitle,TextSize=14,
+TextWrapped=true,TextXAlignment=n,
+TextYAlignment=j.TextYAlignment.Top,Parent=H
+})
+
+if typeof(F)=="Color3"then
+I.TextColor3=F
+J.TextColor3=F
+else
+B:AddThemeObject(I,"TextColor3","TabTextColor")
+B:AddThemeObject(J,"TextColor3","TabSubTtitleTextColor")
 end
 
--- ------------------------------------------------------------
--- Диалог уничтожения
--- ------------------------------------------------------------
+G.Element=H
+G.Elem=H
+G._TitleLabel=I
+G._ContentLabel=J
 
-function Library:CreateDestroyGui()
-	self.Destroy_gui = create("Frame", {
-		BackgroundColor3 = c3rgb(0, 0, 0), BackgroundTransparency = 0.4,
-		BorderColor3 = c3rgb(0, 0, 0), Position = ud2(0.017, 0, 0.02, 0),
-		Size = ud2(0, 560, 0, 460), Visible = false, ZIndex = 10,
-		Parent = self.ImageLabel
-	})
-	corner(ud(0, 24), self.Destroy_gui)
+G.RecalcSizes=function()
+local K=G._ContentLabel.Text
+local L=K~=""
 
-	self.dFrame_2 = create("Frame", {
-		BorderColor3 = c3rgb(0, 0, 0), Position = ud2(0.306, 0, 0.328, 0),
-		Size = ud2(0, 250, 0, 150), Transparency = 1, ZIndex = 10,
-		Parent = self.Destroy_gui
-	})
-	self:AddThemeObject(self.dFrame_2, "BackgroundColor3", "DestroyGFrame")
-	self.dFrame_2.BackgroundTransparency = self.Theme.DestroyGFrameTransparency
+if L then
+local M=f:GetTextSize(K,G._ContentLabel.TextSize,G._ContentLabel.Font,Vector2.new(328,10000))
+local N=math.max(16,math.ceil(M.Y))
 
-	create("UIPadding", {
-		Parent = self.dFrame_2, PaddingBottom = ud(0, 5), PaddingLeft = ud(0, 5),
-		PaddingRight = ud(0, 5), PaddingTop = ud(0, 5)
-	})
-	corner(ud(0, 12), self.dFrame_2)
+G._ContentLabel.Visible=true
+G._ContentLabel.Position=k(0.027,0,0,28)
+G._ContentLabel.Size=k(0,328,0,N+4)
 
-	self.dTextLabel = create("TextLabel", {
-		BackgroundColor3 = c3rgb(255, 255, 255), BackgroundTransparency = 1,
-		BorderColor3 = c3rgb(0, 0, 0), BorderSizePixel = 2,
-		Position = ud2(0.029, 0, 0.035, 0), Size = ud2(0, 200, 0, 36),
-		Font = FONT, Text = "Destroy Interface?", TextSize = 23,
-		TextWrapped = true, Visible = false, TextXAlignment = LEFT,
-		Parent = self.dFrame_2
-	})
-	self:AddThemeObject(self.dTextLabel, "TextColor3", "TextColor")
-
-	self.dTextLabel_2 = create("TextLabel", {
-		BackgroundColor3 = c3rgb(255, 255, 255), BackgroundTransparency = 1,
-		BorderColor3 = c3rgb(0, 0, 0), Position = ud2(0.03, 0, 0.25, 0),
-		Size = ud2(0, 219, 0, 40), Font = FONT, TextWrapped = true,
-		Text = "This action will permamently close the GUI", TextSize = 15,
-		Visible = false, TextXAlignment = LEFT, Parent = self.dFrame_2
-	})
-	self:AddThemeObject(self.dTextLabel_2, "TextColor3", "SubTtitleTextColor")
-
-	self.dTextButton = create("TextButton", {
-		BackgroundColor3 = c3rgb(207, 0, 0), BackgroundTransparency = 0.4,
-		BorderColor3 = c3rgb(0, 0, 0), Position = ud2(0.017, 0, 0.721, 0),
-		Size = ud2(0, 112, 0, 36), ZIndex = 10, Font = FONT,
-		Text = "Destroy", TextColor3 = c3rgb(255, 255, 255),
-		Visible = false, TextSize = 14, Parent = self.dFrame_2
-	})
-	self.dTextButton.MouseButton1Click:Connect(function()
-		self:Destroy()
-	end)
-	corner(ud(0, 10), self.dTextButton)
-
-	self.dTextButton_2 = create("TextButton", {
-		BackgroundTransparency = 0.950, BorderColor3 = c3rgb(0, 0, 0),
-		Position = ud2(0.517, 0, 0.721, 0), Size = ud2(0, 112, 0, 36),
-		ZIndex = 10, Font = FONT, Text = "Close",
-		Visible = false, TextSize = 14, Parent = self.dFrame_2
-	})
-	self:themeObj(self.dTextButton_2, {BackgroundColor3 = "dbtncolor", TextColor3 = "TextColor"})
-	self.dTextButton_2.MouseButton1Click:Connect(function()
-		self:ShowDestroyQ()
-	end)
-	corner(ud(0, 10), self.dTextButton_2)
+G._TitleLabel.Position=k(0.027,0,0,5)
+G.Elem.Size=k(0,360,0,33+N)
+else
+G._ContentLabel.Visible=false
+G.Elem.Size=k(0,360,0,40)
+G._TitleLabel.Position=k(0.027,0,0,10)
+end
 end
 
--- ------------------------------------------------------------
--- Темы и категории
--- ------------------------------------------------------------
-
-function Library:SetTheme(themeName : string)
-	if self.CurrentThemeName == themeName then return end
-
-	local theme = Themes[themeName]
-	if not theme then return end
-
-	self.CurrentThemeName = themeName
-	-- Копия, чтобы не мутировать общую тему (важно для ChangeBackgroundTransparance)
-	self.Theme = extendTheme(theme, {})
-
-	if self.ThemeObjects then
-		for instance, properties in pairs(self.ThemeObjects) do
-			for _, data in ipairs(properties) do
-				if theme[data.ThemeKey] ~= nil then
-					instance[data.Property] = theme[data.ThemeKey]
-				end
-			end
-		end
-	end
-
-	for i, v in pairs(self.ActiveNotifications) do
-		v.notification.Image = theme.NotiImg
-		v.notification.Title.TextColor3 = theme.TextColor
-		v.notification.Description.TextColor3 = theme.SubTtitleTextColor
-		v.notification.CloseButton.ImageColor3 = theme.TabsIconColor
-		if v.notification.Icon.Image == "rbxassetid://75930996983661" or v.notification.Icon.Image == "rbxassetid://76158273611595" then
-			v.notification.Icon.ImageColor3 = theme.TabsIconColor
-		end
-	end
-
-	if self.AllElements and self.AllElements.Toggles then
-		for _, tgl in pairs(self.AllElements.Toggles) do
-			tgl:UpdateVisuals(tgl.Value, true)
-		end
-	end
-
-	if self.CurrentTab and self.CurrentTab.Tab and self.CurrentTab.Tab[1] then
-		self.CurrentTab.Tab[1].BackgroundTransparency = theme.TabTransparancy
-	end
+G.RecalcSizes()
 end
 
-function Library:AddCategory(name)
-	local Window = self
-	Window.Categories = Window.Categories or {}
+G.Update=function(I,J,K)
+if J then I.Title=J end
+if K~=nil then I.Subtitle=K end
 
-	local category = {
-		Name = name, Tabs = {}, Header = nil,
-		Arrow = nil, Container = nil, Wrapper = nil
-	}
-
-	local CategoryWrapper = create("Frame", {
-		BackgroundTransparency = 1, Size = ud2(0, 173, 0, 0),
-		AutomaticSize = enum.AutomaticSize.Y, Parent = Window.ScrollingFrame
-	})
-	corner(ud(0, 8), CategoryWrapper)
-	create("UIListLayout", {Parent = CategoryWrapper, SortOrder = enum.SortOrder.LayoutOrder})
-	category.Wrapper = CategoryWrapper
-
-	local HeaderBtn = create("TextButton", {
-		BackgroundTransparency = 1, Size = ud2(0, 173, 0, 30),
-		Text = "", Parent = CategoryWrapper
-	})
-
-	local HeaderText = create("TextLabel", {
-		BackgroundTransparency = 1, Position = ud2(0.05, 0, 0, 0),
-		Size = ud2(0.8, 0, 1, 0), Font = FONT, Text = name:upper(),
-		TextSize = 11, TextXAlignment = LEFT, Parent = HeaderBtn
-	})
-	self:AddThemeObject(HeaderText, "TextColor3", "TabTextColor")
-	category.Header = HeaderText
-
-	local Arrow = create("ImageLabel", {
-		BackgroundTransparency = 1, Position = ud2(0.85, 0, 0.25, 0),
-		Size = ud2(0, 15, 0, 15), Image = "rbxassetid://126982255108418",
-		Rotation = 0, Parent = HeaderBtn
-	})
-	self:AddThemeObject(Arrow, "ImageColor3", "DropDownArrowImg")
-	category.Arrow = Arrow
-
-	local TabsContainer = create("Frame", {
-		BackgroundTransparency = 1, ClipsDescendants = true,
-		Size = ud2(0, 173, 0, 0), Parent = CategoryWrapper
-	})
-	self:AddThemeObject(TabsContainer, "BackgroundColor3", "BackGroundElemCol")
-	category.Container = TabsContainer
-
-	local UIListLayout = create("UIListLayout", {Parent = TabsContainer, Padding = ud(0, 2), SortOrder = enum.SortOrder.LayoutOrder})
-
-	local IsOpen = true
-
-	local function GetTargetHeight()
-		return (UIListLayout.AbsoluteContentSize.Y / Window.ScaleFactor)
-	end
-
-	HeaderBtn.MouseButton1Click:Connect(function()
-		IsOpen = not IsOpen
-		local targetHeight = IsOpen and GetTargetHeight() or 0
-		local targetRotation = IsOpen and 0 or 180
-
-		Window:Tween(Arrow, {Rotation = targetRotation}, 0.2)
-		Window:Tween(TabsContainer, {Size = ud2(0, 173, 0, targetHeight)}, 0.3)
-	end)
-
-	function category:AddTab(tabName, tabIcon)
-		local newTab = Window:AddTab(tabName, tabIcon)
-		newTab.Button.Parent = TabsContainer
-		newTab.Button.Size = ud2(0, 173, 0, 35)
-
-		if IsOpen then
-			TabsContainer.Size = ud2(0, 173, 0, GetTargetHeight())
-		end
-		table.insert(self.Tabs, newTab)
-		return newTab
-	end
-
-	table.insert(Window.Categories, category)
-	return category
+if I.Elem then
+I._TitleLabel.Text=I.Title
+I._ContentLabel.Text=I.Subtitle
+I.RecalcSizes()
+end
 end
 
-return Library
+G.Destroy=function(I)
+I.IsDestroyed=true
+if I.Element then
+I.Element:Destroy()
+I.Element=nil
+I.Elem=nil
+end
+end
+
+return register(w,G,H)
+end
+
+
+function w.AddImage(B,C)
+local D={Elem=nil}
+
+local E=function()
+local E=create("ImageLabel",{
+Name="CustomImage",BackgroundTransparency=1,
+Size=C.Size or k(0,80,0,80),
+Image=C.Image or"",Parent=B.Container
+})
+
+if C.CornerRadius then
+corner(C.CornerRadius,E)
+end
+
+D.Elem=E
+end
+
+return register(w,D,E)
+end
+
+
+function w.AddSection(B,C)
+local D={Elem=nil}
+
+local E=function()
+local E=create("TextLabel",{
+BackgroundTransparency=1,BorderSizePixel=0,
+Size=k(0,193,0,21),Font=m,Text=C,
+TextSize=18,TextXAlignment=n,Parent=B.Container
+})
+B:AddThemeObject(E,"TextColor3","TabTextColor")
+
+D.Elem=E
+end
+
+return register(w,D,E)
+end
+
+
+function w.AddButton(B,C)
+local D={Elem=nil}
+local E=C.Description or""
+
+local F=function()
+local F=B:CreateRow("TextButton",C.Name,E)
+
+F.MouseButton1Click:Connect(function()
+if C.Callback then
+task.spawn(C.Callback)
+end
+if C.DestroyOnClick then
+F:Destroy()
+end
+end)
+
+local G=create("ImageLabel",{
+BackgroundTransparency=1,BorderSizePixel=0,
+Position=k(0.841,0,0.244,0),Size=k(0,25,0,23),
+Image="rbxassetid://140083176080437",Parent=F
+})
+B:AddThemeObject(G,"ImageColor3","DropDownArrowImg")
+
+D.Elem=F
+end
+
+return register(w,D,F)
+end
+
+
+function w.AddToggle(B,C)
+local D={
+Value=C.Default or false,
+Elem=nil,
+UpdateVisuals=function()end,
+
+SetState=function(D,E)
+if E==D.Value then return end
+D.Value=E
+if C.Callback then
+task.spawn(C.Callback,E)
+end
+D:UpdateVisuals(E,false)
+end,
+
+GetState=function(D)
+return D.Value
+end,
+
+Toggle=function(D)
+D:SetState(not D.Value)
+end
+}
+
+B.AllElements.Toggles[C.Name]=D
+
+local E=function()
+local E=B:CreateRow("TextButton",C.Name,C.Description or"",15)
+
+local F=create("Frame",{
+BackgroundColor3=B.Theme.ToggleButton,
+BackgroundTransparency=B.Theme.ToggleTran,
+BorderSizePixel=0,Position=k(0.8,0,0.206,0),
+Size=k(0,54,0,25),Parent=E
+})
+corner(l(0,12),F)
+
+local G=create("Frame",{
+BorderSizePixel=0,Position=k(0,3,0.12,0),
+Size=k(0,19,0,19),Parent=F
+})
+corner(l(0,35),G)
+B:AddThemeObject(G,"BackgroundColor3","Togglebtn")
+
+D.Elem=E
+
+D.UpdateVisuals=function(H,I,J)
+local K=o.Theme or B.Theme
+local L=I and k(0,32,0.12,0)or k(0,3,0.12,0)
+local M=I and K.TogleActivColor or K.ToggleButton
+local N=I and 0 or K.ToggleTran
+
+if J then
+G.Position=L
+F.BackgroundColor3,F.BackgroundTransparency=M,N
+else
+o:Tween(G,{Position=L},0.2)
+o:Tween(F,{BackgroundColor3=M,BackgroundTransparency=N},0.2)
+end
+end
+
+local H=E.MouseButton1Click:Connect(function()
+D:Toggle()
+end)
+table.insert(w.Connections,H)
+
+D:UpdateVisuals(D.Value,true)
+end
+
+return register(w,D,E)
+end
+
+
+function w.AddKeybind(B,C)
+if e.TouchEnabled and not e.KeyboardEnabled then
+return nil
+end
+
+local D=(typeof(C.Default)=="EnumItem")and C.Default or nil
+local E=C.Name or"Keybind"
+local F=C.Description or""
+
+local G={
+Name=E,
+Elem=nil,
+Callback=C.Callback,
+GetState=function()
+return D
+end
+}
+
+function G.SetKey(H,I)
+D=I
+if H._bindButton then
+H._bindButton.Text=(typeof(I)=="EnumItem"and I.Name)or"None"
+end
+end
+
+if B.AllElements and B.AllElements.Keybinds then
+B.AllElements.Keybinds[E]=G
+end
+
+if not B.AllElements.GlobalKeybindConnection then
+B.AllElements.GlobalKeybindConnection=e.InputBegan:Connect(function(H,I)
+if I then return end
+
+if H.UserInputType==j.UserInputType.Keyboard then
+for J,K in pairs(B.AllElements.Keybinds)do
+local L=K:GetState()
+if L and H.KeyCode==L and K.Callback then
+task.spawn(K.Callback)
+end
+end
+end
+end)
+end
+
+local H=function()
+local H=B:CreateRow("TextButton",E,F)
+
+local I=create("TextButton",{
+Position=k(0.672,0,0.221,0),Size=k(0,100,0,25),
+Font=m,TextSize=14,Parent=H
+})
+B:themeObj(I,{
+BackgroundColor3="BackGroundElemCol",
+BackgroundTransparency="BackGroundButtonTran",
+TextColor3="TabTextColor"
+})
+corner(l(0,5),I)
+
+G.Elem=H
+G._bindButton=I
+
+I.Text=(typeof(D)=="EnumItem"and D.Name)or"None"
+
+local J={
+[j.KeyCode.Unknown]=true,[j.KeyCode.W]=true,
+[j.KeyCode.A]=true,[j.KeyCode.S]=true,
+[j.KeyCode.D]=true,[j.KeyCode.Escape]=true,
+[j.KeyCode.Space]=true,[j.KeyCode.Backspace]=true
+}
+
+local K
+K=I.MouseButton1Click:Connect(function()
+I.Text="..."
+local L
+
+L=e.InputBegan:Connect(function(M,N)
+task.wait()
+if N and M.UserInputType==j.UserInputType.Keyboard then return end
+
+if M.UserInputType==j.UserInputType.Keyboard then
+if not J[M.KeyCode]then
+G:SetKey(M.KeyCode)
+else
+G:SetKey(nil)
+end
+L:Disconnect()
+elseif M.UserInputType==j.UserInputType.MouseButton1 or M.UserInputType==j.UserInputType.MouseButton2 then
+G:SetKey(nil)
+L:Disconnect()
+end
+end)
+end)
+table.insert(w.Connections,K)
+end
+
+return register(w,G,H)
+end
+
+
+function w.AddInput(B,C)
+local D=C.Default or"Default"
+local E=C.Name or"Input"
+local F=C.Description or""
+
+local G={
+Name=E,
+Elem=nil,
+SaveConfig=C.SaveConfig or false,
+Callback=C.Callback,
+GetState=function()
+return D
+end
+}
+
+G.SetText=function(H)
+D=H
+
+if G._textBox then
+G._textBox.Text=(C.SaveUserText and#H>18)and(string.sub(H,1,15).."...")or H
+end
+
+if C.Callback then
+task.spawn(C.Callback,H)
+end
+end
+
+if B.AllElements and B.AllElements.Inputs then
+B.AllElements.Inputs[E]=G
+end
+
+local H=function()
+local H=B:CreateRow("TextButton",E,F)
+
+local I=(C.SaveUserText and#D>18)and(string.sub(D,1,15).."...")or D
+local J=create("TextBox",{
+BorderSizePixel=0,Position=k(0.575,0,0.15,0),
+Size=k(0,135,0,30),Font=m,Text=I,
+TextSize=14,Parent=H
+})
+B:themeObj(J,{
+BackgroundColor3="BackGroundElemCol",
+BackgroundTransparency="BackGroundButtonTran",
+TextColor3="InputTextColor"
+})
+corner(l(0,5),J)
+
+G.Elem=H
+G._textBox=J
+
+J.FocusLost:Connect(function()
+D=J.Text
+if C.SaveUserText then
+if#D>18 then
+J.Text=string.sub(D,1,15).."..."
+end
+else
+task.defer(function()J.Text=C.Default or"Default"end)
+end
+if C.Callback then
+task.spawn(C.Callback,D)
+end
+end)
+end
+
+return register(w,G,H)
+end
+
+
+function w.AddSlider(B,C)
+local D=C.Min or 0
+local E=C.Max or 100
+local F=C.Name or"Slider"
+local G=C.Description or""
+
+local H=C.Default
+if H==nil then
+H=D
+end
+
+
+if not o.SharedSliderState then
+o.SharedSliderState={
+ActiveMoveFunc=nil,
+ActiveReleaseFunc=nil
+}
+
+e.InputChanged:Connect(function(I)
+local J=o.SharedSliderState
+local K=J and J.ActiveMoveFunc
+
+if K and(I.UserInputType==j.UserInputType.MouseMovement or I.UserInputType==j.UserInputType.Touch)then
+K(I)
+end
+end)
+
+e.InputEnded:Connect(function(I)
+if I.UserInputType~=j.UserInputType.MouseButton1 and I.UserInputType~=j.UserInputType.Touch then
+return
+end
+
+local J=o.SharedSliderState
+if J.ActiveReleaseFunc then
+J.ActiveReleaseFunc()
+end
+J.ActiveMoveFunc=nil
+J.ActiveReleaseFunc=nil
+
+if o then
+o.IsInteractingWithUI=false
+end
+end)
+end
+
+local I={
+Elem=nil,
+Name=F,
+Value=math.clamp(H,D,E)
+}
+
+
+local J=E>10
+
+local function getDisplayValue(K)
+if J then
+return math.floor(K+0.5)
+end
+return math.floor(K*10+0.5)/10
+end
+
+local function getPercent(K)
+local L=E-D
+if L<=0 then return 0 end
+return math.clamp((K-D)/L,0,1)
+end
+
+function I.GetValue(K)
+return K.Value
+end
+
+
+function I.SetValue(K,L,M)
+L=tonumber(L)or D
+L=math.clamp(L,D,E)
+
+K.Value=L
+
+local N=getDisplayValue(L)
+local O=getPercent(L)
+
+if K._sliderbutton then
+K._fillGrad.Transparency=fillSequence(O)
+K._sliderball.Position=k(O,0,0.5,0)
+
+if J then
+K._slideramount.Text=tostring(N)
+else
+K._slideramount.Text=string.format("%.1f",N)
+end
+end
+
+if not M and C.Callback then
+task.spawn(C.Callback,N)
+end
+end
+
+if B.AllElements and B.AllElements.Sliders then
+B.AllElements.Sliders[F]=I
+end
+
+
+I:SetValue(I.Value)
+
+local K=function()
+local K=B:CreateRow("TextButton",F,G)
+K.Active=true
+
+local L=create("Frame",{
+BackgroundTransparency=1,Position=k(0.671,0,0.244,0),
+Size=k(0,100,0,22),Active=true,Parent=K
+})
+
+local M=create("Frame",{
+BackgroundColor3=g(255,255,255),BorderSizePixel=0,
+Position=k(0,0,0.455,0),Size=k(1,0,0,2),
+Parent=L
+})
+
+local N=create("Frame",{
+BorderSizePixel=0,AnchorPoint=Vector2.new(0.5,0.5),
+Position=k(0,0,0.5,0),Size=k(0,15,0,15),
+ZIndex=2,Parent=L
+})
+corner(l(1,0),N)
+B:AddThemeObject(N,"BackgroundColor3","Sliderball")
+
+local O=create("TextLabel",{
+BackgroundTransparency=1,Position=k(0,-35,0.075,0),
+Size=k(0,21,0,18),Font=m,TextSize=14,
+Parent=L
+})
+B:AddThemeObject(O,"TextColor3","TabTextColor")
+
+
+local P=create("UIGradient",{Parent=M,Transparency=NumberSequence.new(1)})
+
+
+local R=setmetatable({},{
+__newindex=function(Q,R,S)
+P.Color=ColorSequence.new(S)
+end
+})
+B:AddThemeObject(R,"Color","SliderUnderLineColor")
+
+I.Elem=K
+I._sliderbutton=L
+I._fillGrad=P
+I._sliderball=N
+I._slideramount=O
+
+
+local S=getPercent(I.Value)
+local T=getDisplayValue(I.Value)
+
+P.Transparency=fillSequence(S)
+N.Position=k(S,0,0.5,0)
+
+if J then
+O.Text=tostring(T)
+else
+O.Text=string.format("%.1f",T)
+end
+
+local function moveSlider(U)
+local V=L.AbsoluteSize.X
+if V<=0 then return end
+
+local W=math.clamp((U.Position.X-L.AbsolutePosition.X)/V,0,1)
+
+I:SetValue(D+W*(E-D),true)
+end
+
+L.InputBegan:Connect(function(U)
+if U.UserInputType~=j.UserInputType.MouseButton1 and U.UserInputType~=j.UserInputType.Touch then
+return
+end
+
+if o then
+o.IsInteractingWithUI=true
+end
+
+local V=o.SharedSliderState
+V.ActiveMoveFunc=moveSlider
+
+
+V.ActiveReleaseFunc=function()
+local W=I:GetValue()
+local X=getDisplayValue(W)
+if C.Callback then
+task.spawn(C.Callback,X)
+end
+end
+
+moveSlider(U)
+end)
+end
+
+return register(w,I,K)
+end
+
+
+function w.AddColorPicker(B,C)
+local D=B
+local E=C.Name or"ColorPicker"
+local F=C.Description or""
+local G=C.Default or h(1,1,1)
+local H=C.Callback
+
+local I=G
+local J,K,L=I:ToHSV()
+
+local M={
+Elem=nil,
+Name=E,
+Description=F,
+GetColor=function()return I end
+}
+
+function M.SetColor(N,O,P,R,S)
+if not O then return end
+I=O
+
+if P and R and S then
+J,K,L=P,R,S
+else
+local T,U,V=O:ToHSV()
+J=(U==0 or V==0)and J or T
+K=U
+L=V
+end
+
+if N._colorButton then
+N._colorButton.BackgroundColor3=O
+end
+
+if D.ActiveColorPickerData and D.ActiveColorPickerData.Controller==N and D.UpdateSharedPaletteVisuals then
+D.UpdateSharedPaletteVisuals(I,J,K,L)
+end
+
+if H then
+task.spawn(H,O)
+end
+end
+
+if D.AllElements and D.AllElements.ColorPickers then
+D.AllElements.ColorPickers[E]=M
+end
+
+M:SetColor(G)
+
+local aa=function()
+local N=D:CreateRow("TextButton",E,F)
+
+local O=create("TextButton",{
+BackgroundColor3=I,BorderSizePixel=0,
+Position=k(0.802,0,0.206,0),Size=k(0,54,0,25),
+Text="",ZIndex=2,Parent=N
+})
+corner(l(0,5),O)
+
+M.Elem=N
+M._colorButton=O
+
+local function togglePalette()
+if not D.SharedPaletteUI then
+D.SharedPaletteUI={}
+
+local P=create("TextButton",{
+Parent=D.ImageLabel,Text="",AutoButtonColor=false,
+BackgroundColor3=g(0,0,0),BackgroundTransparency=0.5,
+Size=k(0.966,0,0.96,0),Position=k(0,10,0,10),
+ZIndex=40,Visible=false
+})
+corner(l(0,24),P)
+D.SharedPaletteUI.Modal=P
+
+local R=create("Frame",{
+Parent=D.ImageLabel,BorderSizePixel=0,ZIndex=50,
+Visible=false,Size=k(0,0,0,0),
+Position=k(0.5,0,0.5,0),AnchorPoint=Vector2.new(0.5,0.5)
+})
+D:AddThemeObject(R,"BackgroundColor3","ColorPickerColoro")
+corner(l(0,12),R)
+create("UIStroke",{Color=g(60,60,70),Thickness=2,Parent=R})
+D.SharedPaletteUI.Frame=R
+
+local S=create("TextLabel",{
+Parent=R,Text="Choose a color",Font=j.Font.GothamSemibold,
+TextSize=16,BackgroundTransparency=1,Size=k(1,0,0,40),ZIndex=52
+})
+D:AddThemeObject(S,"TextColor3","TabTextColor")
+
+local T=create("Frame",{Parent=R,Size=k(0,200,0,200),Position=k(0.435,-100,0,50),ZIndex=51})
+corner(l(0,8),T)
+D.SharedPaletteUI.SVGradient=T
+
+local U=create("Frame",{Parent=T,Size=k(1,0,1,0),BackgroundColor3=h(1,1,1),ZIndex=51})
+corner(l(0,8),U)
+create("UIGradient",{Parent=U,Transparency=NumberSequence.new{NumberSequenceKeypoint.new(0,0),NumberSequenceKeypoint.new(1,1)}})
+
+local V=create("Frame",{Parent=T,Size=k(1,0,1,0),BackgroundColor3=h(0,0,0),ZIndex=51})
+corner(l(0,8),V)
+create("UIGradient",{Parent=V,Rotation=90,Transparency=NumberSequence.new{NumberSequenceKeypoint.new(0,1),NumberSequenceKeypoint.new(1,0)}})
+
+local W=create("Frame",{Parent=T,Size=k(0,14,0,14),AnchorPoint=Vector2.new(0.5,0.5),BackgroundTransparency=1,BorderSizePixel=2,BorderColor3=h(1,1,1),ZIndex=52})
+corner(l(1,0),W)
+D.SharedPaletteUI.SVSelector=W
+
+local X=create("Frame",{Parent=W,Size=k(0,6,0,6),AnchorPoint=Vector2.new(0.5,0.5),Position=k(0.5,0,0.5,0),ZIndex=53})
+corner(l(1,0),X)
+D.SharedPaletteUI.InnerCircle=X
+
+local Y={}
+for Z=0,6 do table.insert(Y,ColorSequenceKeypoint.new(Z/6,Color3.fromHSV(Z/6,1,1)))end
+local Z=create("Frame",{Parent=R,Size=k(0,20,0,200),Position=k(0.82,0,0,50),ZIndex=51})
+corner(l(0,8),Z)
+create("UIGradient",{Parent=Z,Rotation=90,Color=ColorSequence.new(Y)})
+
+local _=create("Frame",{Parent=Z,Size=k(1,0,0,4),BackgroundColor3=h(1,1,1),BorderSizePixel=0,ZIndex=52})
+corner(l(0,2),_)
+D.SharedPaletteUI.HueSlider=_
+
+
+local aa=create("TextBox",{
+Parent=R,Position=k(0,30,0,260),
+Size=k(0.7,-28,0,40),
+BackgroundColor3=g(40,40,45),BackgroundTransparency=0.5,
+Font=j.Font.Gotham,TextSize=14,
+TextXAlignment=j.TextXAlignment.Center,ZIndex=52
+})
+D:AddThemeObject(aa,"TextColor3","TabTextColor")
+corner(l(0,6),aa)
+create("UIStroke",{Color=g(60,60,70),Thickness=1,Parent=aa})
+D.SharedPaletteUI.HexInput=aa
+
+local ab=create("Frame",{Parent=R,Size=k(0,40,0,40),Position=k(0.76,0,0,260),ZIndex=51})
+corner(l(0,8),ab)
+create("UIStroke",{Color=g(60,60,70),Thickness=2,Parent=ab})
+D.SharedPaletteUI.PreviewFrame=ab
+
+local function processInput(ac,ad,ae)
+if not D.ActiveColorPickerData then return end
+local af,ag,ah=D.ActiveColorPickerData.GetHSV()
+
+local ai=math.clamp((ac.Position.Y-ad.AbsolutePosition.Y)/ad.AbsoluteSize.Y,0,1)
+if ae then
+af=ai
+else
+local aj=math.clamp((ac.Position.X-ad.AbsolutePosition.X)/ad.AbsoluteSize.X,0,1)
+ag,ah=aj,1-ai
+end
+
+D.ActiveColorPickerData.SetColor(Color3.fromHSV(af,ag,ah),af,ag,ah)
+end
+
+local ac,ad=false,false
+
+Z.InputBegan:Connect(function(ae)
+if ae.UserInputType==j.UserInputType.MouseButton1 or ae.UserInputType==j.UserInputType.Touch then
+ac=true;processInput(ae,Z,true)
+end
+end)
+
+T.InputBegan:Connect(function(ae)
+if ae.UserInputType==j.UserInputType.MouseButton1 or ae.UserInputType==j.UserInputType.Touch then
+ad=true;processInput(ae,T,false)
+end
+end)
+
+e.InputEnded:Connect(function(ae)
+if ae.UserInputType==j.UserInputType.MouseButton1 or ae.UserInputType==j.UserInputType.Touch then
+ac,ad=false,false
+end
+end)
+
+e.InputChanged:Connect(function(ae)
+if ae.UserInputType==j.UserInputType.MouseMovement or ae.UserInputType==j.UserInputType.Touch then
+if ac then processInput(ae,Z,true)
+elseif ad then processInput(ae,T,false)end
+end
+end)
+
+aa.FocusLost:Connect(function(ae)
+if ae and D.ActiveColorPickerData then
+local af=aa.Text:gsub("#","")
+if#af==6 then
+local ag,ah,ai=tonumber(af:sub(1,2),16),tonumber(af:sub(3,4),16),tonumber(af:sub(5,6),16)
+if ag and ah and ai then
+local aj=g(ag,ah,ai)
+local ak,al,am=aj:ToHSV()
+D.ActiveColorPickerData.SetColor(aj,ak,al,am)
+end
+else
+local ag=D.ActiveColorPickerData
+local ah,ai,aj=ag.GetHSV()
+D.UpdateSharedPaletteVisuals(ag.GetCurrentColor(),ah,ai,aj)
+end
+end
+end)
+
+D.TogglePaletteOff=function()
+if R.Visible then
+B:Tween(R,{
+Size=k(0,0,0,0)
+},0.2).Completed:Once(function()
+R.Visible=false
+P.Visible=false
+D.ActiveColorPicker=nil
+D.ActiveColorPickerData=nil
+end)
+end
+end
+
+P.InputBegan:Connect(function(ae)
+if ae.UserInputType==j.UserInputType.MouseButton1 or ae.UserInputType==j.UserInputType.Touch then
+local af,ag,ah=ae.Position,R.AbsolutePosition,R.AbsoluteSize
+if af.X<ag.X or af.X>ag.X+ah.X or af.Y<ag.Y or af.Y>ag.Y+ah.Y then
+D.TogglePaletteOff()
+end
+end
+end)
+
+D.UpdateSharedPaletteVisuals=function(ae,af,ag,ah)
+D.SharedPaletteUI.SVGradient.BackgroundColor3=Color3.fromHSV(af,1,1)
+D.SharedPaletteUI.HueSlider.Position=k(0,0,af,-2)
+D.SharedPaletteUI.SVSelector.Position=k(ag,0,1-ah,0)
+D.SharedPaletteUI.InnerCircle.BackgroundColor3=ae
+D.SharedPaletteUI.PreviewFrame.BackgroundColor3=ae
+
+local ai,aj,ak=math.floor(ae.R*255),math.floor(ae.G*255),math.floor(ae.B*255)
+D.SharedPaletteUI.HexInput.Text=string.format("#%02X%02X%02X",ai,aj,ak)
+end
+end
+
+if D.SharedPaletteUI.Frame.Visible and D.ActiveColorPicker==N then
+D.TogglePaletteOff()
+return
+end
+
+D.ActiveColorPicker=N
+D.ActiveColorPickerData={
+Controller=M,
+GetHSV=function()return J,K,L end,
+GetCurrentColor=function()return I end,
+SetColor=function(aa,ab,ac,ad)M:SetColor(aa,ab,ac,ad)end
+}
+
+D.UpdateSharedPaletteVisuals(I,J,K,L)
+
+D.SharedPaletteUI.Modal.Visible=true
+D.SharedPaletteUI.Frame.Visible=true
+B:Tween(D.SharedPaletteUI.Frame,{
+Size=k(0,300,0,310)
+},0.3)
+end
+
+O.MouseButton1Click:Connect(togglePalette)
+end
+
+return register(w,M,aa)
+end
+
+
+function w.AddDropdown(aa,ab)
+local ac=ab.Name or"Dropdown"
+local ad=ab.Description or""
+local ae=ab.Callback
+
+local af={
+Name=ac,
+Options=ab.Options or{},
+Multi=ab.Multi or false,
+Selected=ab.Multi and{}or nil,
+Elem=nil,
+_textLabel=nil,
+_refreshVisuals=nil,
+_closeDropdown=nil,
+_openDropdown=nil,
+_isDropdownOpen=nil
+}
+
+function af.GetValue(ag)
+return ag.Selected
+end
+
+function af.SetValue(ag,ah)
+if ag.Multi then
+local ai={}
+
+if type(ah)=="table"then
+for aj,ak in pairs(ah)do
+if ak and table.find(ag.Options,aj)then
+ai[aj]=true
+end
+end
+end
+
+ag.Selected=ai
+
+local aj=""
+for ak in pairs(ag.Selected)do
+aj=aj==""and ak or(aj..", "..ak)
+end
+
+if ag._textLabel then
+ag._textLabel.Text=aj~=""and aj or"Select..."
+end
+else
+if ah and table.find(ag.Options,ah)then
+ag.Selected=ah
+if ag._textLabel then
+ag._textLabel.Text=tostring(ah)
+end
+else
+ag.Selected=nil
+if ag._textLabel then
+ag._textLabel.Text="Select..."
+end
+end
+end
+
+if ag._refreshVisuals then
+ag._refreshVisuals()
+end
+
+if ae then
+task.spawn(ae,ag.Selected)
+end
+end
+
+function af.UpdateOptions(ag,ah,ai)
+ag.Options=ah
+
+if ag._isDropdownOpen and ag._isDropdownOpen()then
+ag._openDropdown()
+end
+
+ag:SetValue(ai or(ag.Multi and{}or nil))
+end
+
+function af.SetVisible(ag,ah)
+if ag.Elem then ag.Elem.Visible=ah end
+end
+
+function af.Destroy(ag)
+if ag._closeDropdown then ag._closeDropdown()end
+if ag.Elem then ag.Elem:Destroy()end
+end
+
+if aa.AllElements and aa.AllElements.Dropdowns then
+aa.AllElements.Dropdowns[ac]=af
+end
+
+if ab.Default then
+af:SetValue(ab.Default)
+end
+
+local ag=function()
+local ag=aa.Container.Parent.Parent
+
+
+if not o.SharedDropdownState then
+local ah=create("ImageLabel",{
+Name="SharedDropdownContainer",BackgroundColor3=g(48,48,48),
+BackgroundTransparency=1,BorderColor3=g(0,0,0),
+BorderSizePixel=0,Size=k(0,135,0,0),
+Visible=false,ZIndex=50,Image="ImageLabel_2",
+ImageTransparency=0.9,ClipsDescendants=true,Parent=ag
+})
+
+local ai=create("ScrollingFrame",{
+Active=true,BorderSizePixel=0,
+Position=k(0.0277,0,0.035,0),Size=k(0,135,0,0),
+ZIndex=50,ScrollBarThickness=2,ClipsDescendants=true,
+CanvasSize=k(0,0,0,0),AutomaticCanvasSize=j.AutomaticSize.Y,
+Parent=ah
+})
+aa:themeObj(ai,{BackgroundColor3="DropDownColor",BackgroundTransparency="DropDownTransparency"})
+corner(l(0,5),ai)
+create("UIListLayout",{Parent=ai,SortOrder=j.SortOrder.LayoutOrder})
+
+o.SharedDropdownState={
+Container=ah,
+OptionsFrame=ai,
+ActiveCloseFunc=nil,
+ClickConnection=nil
+}
+end
+
+local ah=o.SharedDropdownState.Container
+local ai=o.SharedDropdownState.OptionsFrame
+
+local aj=aa:CreateRow("TextButton",ac,ad)
+
+local ak=create("TextButton",{
+Position=k(0.576,0,0.155,0),Size=k(0,135,0,30),
+Text="",Parent=aj
+})
+aa:themeObj(ak,{BackgroundColor3="BackGroundElemCol",BackgroundTransparency="BackGroundButtonTran"})
+corner(l(0,5),ak)
+
+local al=create("TextLabel",{
+BackgroundTransparency=1,Position=k(0.038,0,-2E-2,0),
+Size=k(0,88,0,30),Font=m,TextSize=14,
+TextXAlignment=n,TextWrapped=true,
+TextTruncate=j.TextTruncate.AtEnd,Parent=ak
+})
+aa:AddThemeObject(al,"TextColor3","TabTextColor")
+
+local am=create("ImageLabel",{
+BackgroundTransparency=1,Position=k(0.816,0,0.166,0),
+Size=k(0,20,0,20),Image="rbxassetid://126982255108418",
+Parent=ak
+})
+aa:AddThemeObject(am,"ImageColor3","DropDownArrowImg")
+
+af.Elem=aj
+af._textLabel=al
+
+local B=""
+if af.Multi then
+for C,D in pairs(af.Selected)do
+if D then B=B..(B==""and C or", "..C)end
+end
+al.Text=B==""and"Select..."or B
+else
+al.Text=af.Selected and tostring(af.Selected)or"Select..."
+end
+
+local C={}
+
+local function refreshVisuals()
+for D,E in pairs(C)do
+local F=af.Multi and af.Selected[D]or(af.Selected==D)
+if F then
+o:Tween(E,{Size=k(0,2,0,22),BackgroundTransparency=0},0.2)
+else
+o:Tween(E,{Size=k(0,2,0,0),BackgroundTransparency=1},0.2)
+end
+end
+end
+
+local function closeDropdown()
+if not ah.Visible then return end
+o:Tween(ah,{Size=k(0,140,0,0)},0.2)
+o:Tween(ai,{Size=k(0,135,0,0)},0.2)
+
+if o.SharedDropdownState.ClickConnection then
+o.SharedDropdownState.ClickConnection:Disconnect()
+o.SharedDropdownState.ClickConnection=nil
+end
+
+task.delay(0.2,function()
+if o.SharedDropdownState.ActiveCloseFunc==closeDropdown then
+ah.Visible=false
+table.clear(C)
+end
+end)
+end
+
+local function handleOptionClick(D)
+if af.Multi then
+local E=table.clone(af.Selected)
+E[D]=not E[D]
+af:SetValue(E)
+else
+af:SetValue(D)
+closeDropdown()
+end
+end
+
+local function createOption(D)
+local E=create("TextButton",{
+BackgroundTransparency=1,Size=k(0,135,0,30),
+Font=m,Text="  "..D,TextSize=14,
+TextXAlignment=n,TextWrapped=true,
+TextTruncate=j.TextTruncate.AtEnd,Parent=ai
+})
+aa:AddThemeObject(E,"TextColor3","TabTextColor")
+
+local F=create("Frame",{
+BorderSizePixel=0,Position=k(0.01,0,0,4),
+Size=k(0,2,0,0),Transparency=1,Parent=E
+})
+aa:AddThemeObject(F,"BackgroundColor3","DropDownFrameColor")
+
+C[D]=F
+
+E.MouseEnter:Connect(function()
+o:Tween(E,{BackgroundTransparency=0.95},0.3)
+local G=af.Multi and af.Selected[D]or(af.Selected==D)
+if not G then
+o:Tween(F,{Size=k(0,2,0,22),BackgroundTransparency=0.5},0.3)
+end
+end)
+
+E.MouseLeave:Connect(function()
+o:Tween(E,{BackgroundTransparency=1},0.3)
+local G=af.Multi and af.Selected[D]or(af.Selected==D)
+if not G then
+o:Tween(F,{BackgroundTransparency=1,Size=k(0,2,0,0)},0.3)
+end
+end)
+
+
+E.MouseButton1Click:Connect(function()handleOptionClick(D)end)
+end
+
+local function updateDropdownPosition()
+if not ah.Visible then return end
+local D=ak.AbsolutePosition
+local E=ag.AbsolutePosition
+
+local F=1
+local G=ag
+while G and not G:IsA"ScreenGui"do
+local H=G:FindFirstChildWhichIsA"UIScale"
+if H then F*=H.Scale end
+G=G.Parent
+end
+
+local H=(D.X-E.X)/F-4
+local I=(D.Y-E.Y+ak.AbsoluteSize.Y)/F
+ah.Position=k(0,H,0,I)
+end
+
+local function openDropdown()
+if o.SharedDropdownState.ActiveCloseFunc and o.SharedDropdownState.ActiveCloseFunc~=closeDropdown then
+o.SharedDropdownState.ActiveCloseFunc()
+end
+
+o.SharedDropdownState.ActiveCloseFunc=closeDropdown
+
+for D,E in pairs(ai:GetChildren())do
+if E:IsA"TextButton"then E:Destroy()end
+end
+table.clear(C)
+
+for D,E in ipairs(af.Options)do createOption(E)end
+
+updateDropdownPosition()
+ah.Visible=true
+
+local D=math.min(150,#af.Options*30)
+o:Tween(ah,{Size=k(0,140,0,D+10)},0.2)
+o:Tween(ai,{Size=k(0,135,0,D)},0.2)
+refreshVisuals()
+
+task.spawn(function()
+while ah.Visible and o.SharedDropdownState.ActiveCloseFunc==closeDropdown do
+updateDropdownPosition()
+task.wait()
+end
+end)
+
+if o.SharedDropdownState.ClickConnection then o.SharedDropdownState.ClickConnection:Disconnect()end
+o.SharedDropdownState.ClickConnection=e.InputBegan:Connect(function(E)
+if E.UserInputType==j.UserInputType.MouseButton1 or E.UserInputType==j.UserInputType.Touch then
+local F=E.Position
+local G=F.X>=ak.AbsolutePosition.X and F.X<=ak.AbsolutePosition.X+ak.AbsoluteSize.X and F.Y>=ak.AbsolutePosition.Y and F.Y<=ak.AbsolutePosition.Y+ak.AbsoluteSize.Y
+local H=F.X>=ah.AbsolutePosition.X and F.X<=ah.AbsolutePosition.X+ah.AbsoluteSize.X and F.Y>=ah.AbsolutePosition.Y and F.Y<=ah.AbsolutePosition.Y+ah.AbsoluteSize.Y
+
+if not G and not H then closeDropdown()end
+end
+end)
+end
+
+ak.MouseButton1Click:Connect(function()
+if ah.Visible and o.SharedDropdownState.ActiveCloseFunc==closeDropdown then
+closeDropdown()
+else
+openDropdown()
+end
+end)
+
+af._refreshVisuals=function()
+if o.SharedDropdownState.ActiveCloseFunc==closeDropdown then refreshVisuals()end
+end
+af._closeDropdown=function()
+if o.SharedDropdownState.ActiveCloseFunc==closeDropdown then closeDropdown()end
+end
+af._openDropdown=openDropdown
+af._isDropdownOpen=function()
+return ah.Visible and o.SharedDropdownState.ActiveCloseFunc==closeDropdown
+end
+end
+
+return register(w,af,ag)
+end
+
+
+function w.AddLine(aa)
+local ab={Elem=nil}
+
+local ac=function()
+local ac=create("Frame",{Size=k(0,360,0,3),Parent=aa.Container})
+aa:themeObj(ac,{BackgroundColor3="BackGroundElemCol",BackgroundTransparency="BackGroundElemTran"})
+ab.Elem=ac
+end
+
+return register(w,ab,ac)
+end
+
+return w
+end
+
+
+
+
+
+function o.SelectTab(aa,ab,ac)
+for ad,ae in ipairs(aa.mainTabs)do
+if ae.Container then ae.Container.Visible=false end
+if ae.Button then aa:Tween(ae.Button,{BackgroundTransparency=1},0.2)end
+if ae.Frame then
+aa:Tween(ae.Frame,{BackgroundTransparency=1,Size=k(0,2,0,0)},0.2)
+end
+end
+
+if not ab.IsLoaded then
+for ad,ae in ipairs(ab.RenderQueue)do
+ae()
+end
+ab.IsLoaded=true
+end
+
+if ab.Container then ab.Container.Visible=true end
+
+if ac then
+aa:Tween(ac,{BackgroundTransparency=aa.Theme.TabTransparancy},0.2)
+aa:Tween(ab.Frame,{BackgroundTransparency=0,Size=k(0,2,0,23)},0.2)
+end
+
+aa.CurrentTab=ab
+aa.TextLabel_5.Text=ab.Name
+end
+
+local aa={}
+local ab=setmetatable({},{__mode="k"})
+
+function o.Tween(ac,ad,ae,af)
+af=af or 0.3
+
+local ag=aa[af]
+if not ag then
+ag=TweenInfo.new(af,Enum.EasingStyle.Quad,Enum.EasingDirection.Out)
+aa[af]=ag
+end
+
+local ah=ab[ad]
+if not ah then
+ah={}
+ab[ad]=ah
+end
+
+for ai in pairs(ae)do
+local aj=ah[ai]
+if aj then
+aj:Cancel()
+end
+end
+
+local ai=d:Create(ad,ag,ae)
+
+for aj in pairs(ae)do
+ah[aj]=ai
+end
+
+ai.Completed:Once(function()
+for aj in pairs(ae)do
+if ah[aj]==ai then
+ah[aj]=nil
+end
+end
+
+if next(ah)==nil then
+ab[ad]=nil
+end
+end)
+
+ai:Play()
+return ai
+end
+
+
+
+
+
+function o.ChangeBackgroundTransparance(ac)
+if ac.ImageLabel.ImageTransparency<=0.05 then
+ac.ImageLabel.ImageTransparency=0.05
+ac.Theme.BackGroundTran=0.05
+else
+ac.ImageLabel.ImageTransparency=0
+ac.Theme.BackGroundTran=0
+end
+end
+
+
+local function reanchor(ac,ad)
+local ae=ad-ac.AnchorPoint
+ac.AnchorPoint=ad
+ac.Position=ac.Position+k(0,ae.X*ac.AbsoluteSize.X,0,ae.Y*ac.AbsoluteSize.Y)
+end
+
+function o.Minimaze(ac)
+if ac.Windowscd==false then
+ac.Windowscd=true
+if(ac.ImageLabel.ImageTransparency~=1)then
+reanchor(ac.ImageLabel,Vector2.new(0.5,0))
+if not e.TouchEnabled then
+ac.Header.BackgroundTransparency=ac.Theme.BackGroundTran
+ac.Tabs.Visible=false
+ac.Sections.Visible=false
+if ac.Sections.Size==k(0,375,0,370)then
+ac:Tween(ac.ImageLabel,{Size=k(0,395,0,40)},1)
+ac:Tween(ac.Header,{Size=k(0,390,0,40)},0)
+else
+ac:Tween(ac.ImageLabel,{Size=k(0,620,0,40)},1)
+ac.Header.Size=k(0,596,0,40)
+end
+task.wait(1)
+ac.ImageLabel.ImageTransparency=1
+ac.Windowscd=false
+else
+reanchor(ac.ImageLabel,Vector2.new(0.5,0))
+ac.Header.BackgroundTransparency=1
+ac.Tabs.Visible=false
+ac.Sections.Visible=false
+
+ac.TextLabel.Visible=false
+if ac.TextLabel_2 then
+ac.TextLabel_2.Visible=false
+end
+ac.version.Visible=false
+ac.close.Visible=false
+ac.ImageButton.Visible=false
+ac.ImageButton_2.Visible=false
+
+if ac.Sections.Size==k(0,375,0,370)then
+ac:Tween(ac.ImageLabel,{Size=k(0,55,0,40)},1)
+ac:Tween(ac.Header,{Size=k(0,40,0,40)},0)
+ac.ImageButton_2.Position=k(0.28,0,0.25,0)
+else
+ac:Tween(ac.ImageLabel,{Size=k(0,40,0,40)},1)
+ac.Header.Size=k(0,40,0,40)
+ac.ImageButton_2.Position=k(0.28,0,0.25,0)
+end
+task.wait(1)
+ac.ImageButton_2.Visible=true
+ac.ImageLabel.ImageTransparency=1
+ac.Header.BackgroundTransparency=ac.Theme.BackGroundTran
+ac.Windowscd=false
+end
+else
+if not e.TouchEnabled then
+ac.ImageLabel.ImageTransparency=ac.Theme.BackGroundTran
+ac.Header.BackgroundTransparency=1
+if ac.Sections.Size==k(0,375,0,370)then
+ac:Tween(ac.ImageLabel,{Size=k(0,395,0,480)},1)
+ac:Tween(ac.Header,{Size=k(0,380,0,40)},1)
+else
+ac:Tween(ac.ImageLabel,{Size=k(0,620,0,480)},1)
+ac:Tween(ac.Header,{Size=k(0,596,0,40)},1)
+end
+
+task.wait(1)
+
+reanchor(ac.ImageLabel,Vector2.new(0.5,0.5))
+ac.Tabs.Visible=true
+ac.Sections.Visible=true
+ac.Windowscd=false
+else
+ac.ImageButton_2.Visible=false
+
+ac.ImageLabel.ImageTransparency=ac.Theme.BackGroundTran
+ac.Header.BackgroundTransparency=1
+
+if ac.Sections.Size==k(0,375,0,370)then
+ac:Tween(ac.ImageLabel,{Size=k(0,395,0,480)},1)
+ac:Tween(ac.Header,{Size=k(0,380,0,40)},1)
+ac.ImageButton_2.Position=k(0.76,0,0.29,0)
+else
+ac:Tween(ac.ImageLabel,{Size=k(0,620,0,480)},1)
+
+ac.ImageButton_2.Position=k(0.825,0,0.29,0)
+ac:Tween(ac.Header,{Size=k(0,596,0,40)},1)
+end
+
+task.wait(1)
+
+reanchor(ac.ImageLabel,Vector2.new(0.5,0.5))
+
+ac.TextLabel.Visible=true
+if ac.TextLabel_2 then
+ac.TextLabel_2.Visible=true
+end
+ac.version.Visible=true
+ac.close.Visible=true
+ac.ImageButton.Visible=true
+ac.ImageButton_2.Visible=true
+
+ac.Tabs.Visible=true
+ac.Sections.Visible=true
+ac.Windowscd=false
+end
+end
+end
+end
+
+function o.ColumnWindow(ac)
+if ac.Windowscd==false then
+ac.Windowscd=true
+
+local ad=ac.ScrollingFrame:FindFirstChildOfClass"UIListLayout"
+
+local ae=ac.Sections.Size~=k(0,375,0,370)
+
+ac.Header.BackgroundTransparency=1
+ac.ImageLabel.ImageTransparency=ac.Theme.BackGroundTran
+ac.Frame_2.Visible=not ae
+ac.TextLabel_5.Visible=not ae
+
+ac.Tabs.Visible=false
+ac.Sections.Visible=false
+if ae then ac.WindowUser.Visible=false end
+
+if ae and ac.version then
+ac.version.Visible=false
+end
+
+ac:Tween(ac.close,{Position=ae and k(0.92,0,0.2,0)or k(0.945,0,0.2,0)},1)
+ac:Tween(ac.ImageButton,{Position=ae and k(0.854,0,0.35,0)or k(0.897,0,0.35,0)},1)
+ac:Tween(ac.ImageButton_2,{Position=ae and k(0.76,0,0.29,0)or k(0.835,0,0.29,0)},1)
+ac:Tween(ac.ImageLabel,{Size=ae and k(0,405,0,480)or k(0,620,0,480)},1)
+ac:Tween(ac.Header,{Size=ae and k(0,381,0,40)or k(0,596,0,40)},1)
+
+ac.Sections.Size=ae and k(0,375,0,370)or k(0,390,0,414)
+ac.Sections.Position=ae and k(0.02,0,0.201,0)or k(0.34,0,0.1,0)
+ac.Frame_7.Size=ae and k(0,375,0,370)or k(0,366,0,379)
+ac.Frame_7.Position=ae and k(0,2,0,5)or k(0,0,0.085,0)
+
+ac.Tabs.Size=ae and k(0,375,0,45)or k(0,185,0,414)
+ac.Tabs.Position=ae and k(0.02,0,0.12,0)or k(0.035,0,0.116,0)
+ac.ScrollingFrame.Size=ae and k(0,365,0,45)or k(0,185,0,415)
+ac.ScrollingFrame.Position=ae and k(0,10,0,0)or k(0,0,0,0)
+
+ac.ScrollingFrame.ScrollingDirection=ae and j.ScrollingDirection.X or j.ScrollingDirection.Y
+ac.ScrollingFrame.AutomaticCanvasSize=ae and j.AutomaticSize.X or j.AutomaticSize.Y
+ac.ScrollingFrame.CanvasSize=k(0,0,0,0)
+ac.ScrollingFrame.ScrollBarImageTransparency=ae and 1 or 0
+
+if ad then
+ad.FillDirection=ae and j.FillDirection.Horizontal or j.FillDirection.Vertical
+ad.Padding=ae and l(0,8)or l(0,5)
+if ae then ad.SortOrder=j.SortOrder.LayoutOrder end
+end
+
+if ac.Categories then
+for af,ag in pairs(ac.Categories)do
+if ag.Wrapper then ag.Wrapper.Visible=not ae end
+for ah,ai in pairs(ag.Tabs)do
+local aj=ai.Button or(ai.Tab and ai.Tab[1])
+if aj then
+if ae then
+aj.Parent=ac.ScrollingFrame
+else
+aj.Parent=ag.Container
+aj.Size=k(0,173,0,35)
+end
+end
+end
+end
+end
+
+for af,ag in pairs(ac.mainTabs)do
+ag.Tab[5].Position=ae and k(0,0,0,0)or k(0,0,0.023,0)
+ag.Tab[5].Size=ae and k(0,380,0,365)or k(0,385,0,370)
+
+if ag.Tab[5]:IsA"ScrollingFrame"then
+ag.Tab[5].AutomaticCanvasSize=j.AutomaticSize.Y
+ag.Tab[5].CanvasSize=k(0,0,0,0)
+end
+
+local ah=ag.Tab[5]:FindFirstChildOfClass"UIPadding"
+if ah then
+ah.PaddingLeft=l(0,10)
+ah.PaddingRight=l(0,10)
+ah.PaddingTop=l(0,10)
+ah.PaddingBottom=l(0,10)
+end
+
+if ae then
+ag.Tab[1].Parent=ac.ScrollingFrame
+ag.Tab[1].Size=k(0,130,0,35)
+ag.Tab[1].LayoutOrder=af
+
+if ag.Tab[4]and ag.Tab[4].Image~=""then
+ag.Tab[2].Position=k(0.28,0,0,-1)
+end
+else
+if not ag.Button or ag.Tab[1].Parent==ac.ScrollingFrame then
+ag.Tab[1].Size=k(0,180,0,35)
+end
+
+if ag.Tab[4]and ag.Tab[4].Image~=""then
+ag.Tab[2].Position=k(0.21,0,0,-1)
+end
+end
+end
+
+task.wait(1)
+ac.Tabs.Visible=true
+ac.Sections.Visible=true
+
+if not ae and ac.version then
+ac.version.Visible=true
+end
+
+if not ae and ac.userinfo then
+ac.WindowUser.Visible=true
+ac.Tabs.Size=k(0,185,0,372)
+ac.ScrollingFrame.Size=k(0,185,0,358)
+end
+ac.Windowscd=false
+end
+end
+
+
+
+
+
+function o.Destroy(ac)
+if ac.AllElements and ac.AllElements.GlobalKeybindConnection then
+ac.AllElements.GlobalKeybindConnection:Disconnect()
+ac.AllElements.GlobalKeybindConnection=nil
+end
+for ad,ae in ipairs(ac.mainTabs)do
+for af,ag in ipairs(ae.Connections)do
+ag:Disconnect()
+end
+for af,ag in ipairs(ae.KeybindConnections)do
+ag:Disconnect()
+end
+end
+for ad,ae in pairs(ac.AllElements.Toggles)do
+if ae.Value==true then
+ae:SetState(false)
+end
+end
+if ac.Destroy_gui then
+ac.Destroy_gui.Visible=false
+end
+ac.AllElements.Toggles={}
+ac.ThemeObjects={}
+
+ac:Tween(ac.ImageLabel,{ImageTransparency=1},0.8)
+ac.Tabs.Visible=false
+ac.Sections.Visible=false
+ac.Header.Visible=false
+task.wait(0.5)
+ac.UI:Destroy()
+setmetatable(ac,nil)
+table.clear(ac)
+end
+
+function o.ShowDestroyQ(ac)
+if not ac.Destroy_gui then
+ac:CreateDestroyGui()
+end
+
+if ac.Destroy_gui.Visible then
+ac.dTextLabel.Visible=false
+ac.dTextButton.Visible=false
+ac.dTextLabel_2.Visible=false
+ac.dTextButton_2.Visible=false
+ac:Tween(ac.dFrame_2,{Transparency=1},0.15)
+task.wait(0.15)
+ac.Destroy_gui.Visible=false
+else
+local ad
+local ae=l(0,ac.ImageLabel.Size.Y.Offset-18)
+
+if ac.ImageLabel.Size~=k(0,620,0,40)and ac.ImageLabel.Size~=k(0,620,0,480)then
+ad=l(0,ac.ImageLabel.Size.X.Offset-14)
+ac.dFrame_2.Position=k(0.18,0,0.329,0)
+else
+ad=l(0,ac.ImageLabel.Size.X.Offset-20)
+ac.dFrame_2.Position=k(0.307,0,0.329,0)
+end
+ac.Destroy_gui.Size=k(ad,ae)
+ac.Destroy_gui.Visible=true
+ac:Tween(ac.ImageLabel,{Position=k(0.5,0,0.5,0)},0.25)
+ac:Tween(ac.dFrame_2,{Transparency=ac.Theme.DestroyGFrameTransparency},0.15)
+task.wait(0.15)
+ac.dTextLabel.Visible=true
+ac.dTextButton.Visible=true
+ac.dTextLabel_2.Visible=true
+ac.dTextButton_2.Visible=true
+end
+end
+
+function o.UserInfo(ac)
+if ac.WindowUser.Visible then
+ac.userinfo=false
+ac.WindowUser.Visible=false
+ac.Tabs.Size=k(0,185,0,405)
+ac.ScrollingFrame.Size=k(0,185,0,405)
+else
+ac.WindowUser.Visible=true
+ac.Tabs.Size=k(0,185,0,372)
+ac.ScrollingFrame.Size=k(0,185,0,354)
+ac.userinfo=true
+end
+end
+
+function o.Close(ac)
+if ac.ImageLabel.Visible then
+ac:Tween(ac.ImageLabel,{Size=k(0,40,0,0)},0)
+ac.ImageLabel.Visible=false
+else
+if ac.Sections.Visible==false then
+ac:Tween(ac.ImageLabel,{Size=k(0,620,0,40)},0)
+elseif ac.Sections.Size==k(0,375,0,370)then
+ac:Tween(ac.ImageLabel,{Size=k(0,395,0,480)},0)
+else
+ac:Tween(ac.ImageLabel,{Size=k(0,620,0,480)},0)
+end
+ac.ImageLabel.Visible=true
+end
+end
+
+
+
+
+
+function o.GetConfig(ac,ad)
+if not isfile(ad)then
+ac:Notification{
+Name="Error",
+Description="Config not found",
+Duration=10,
+Type="Error"
+}
+else
+setclipboard(readfile(ad))
+ac:Notification{
+Name="Config",
+Description="The config has been successfully copied to the clipboard",
+Duration=10,
+Type="Notification"
+}
+end
+end
+
+function o.InputConfig(ac,ad,ae)
+writefile(ad,ae)
+end
+
+function o.SaveConfig(ac,ad,ae)
+local af={
+Toggles={},Keybinds={},Dropdowns={},
+Sliders={},ColorPickers={},Inputs={}
+}
+
+for ag,ah in pairs(ac.AllElements.Toggles)do
+pcall(function()
+af.Toggles[ag]=ah:GetState()
+end)
+end
+
+for ag,ah in pairs(ac.AllElements.Keybinds)do
+pcall(function()
+local ai=ah:GetState()
+af.Keybinds[ag]=ai and ai.Name or"None"
+end)
+end
+
+for ag,ah in pairs(ac.AllElements.Sliders)do
+pcall(function()
+af.Sliders[ag]=ah:GetValue()
+end)
+end
+
+for ag,ah in pairs(ac.AllElements.Dropdowns)do
+pcall(function()
+af.Dropdowns[ag]=ah:GetValue()
+end)
+end
+
+for ag,ah in pairs(ac.AllElements.Inputs)do
+pcall(function()
+af.Inputs[ag]=ah:GetState()
+end)
+end
+
+for ag,ah in pairs(ac.AllElements.ColorPickers)do
+pcall(function()
+local ai=ah:GetColor()
+if ai then
+af.ColorPickers[ag]={R=ai.R,G=ai.G,B=ai.B}
+end
+end)
+end
+
+if not isfolder(ad)then
+pcall(makefolder,ad)
+end
+
+local ag,ah=pcall(function()return c:JSONEncode(af)end)
+if ag then
+pcall(function()
+writefile(ad.."/"..ae,ah)
+end)
+end
+end
+
+function o.IsLoadConfig(ac,ad)
+if not isfile(ad)then
+return false
+end
+
+local ae,af=pcall(readfile,ad)
+if not ae or not af then return false end
+
+local ag,ah=pcall(function()
+return c:JSONDecode(af)
+end)
+
+if not ag or type(ah)~="table"or not ah.Toggles then
+return false
+end
+
+local ai=ac.AllElements.Toggles
+local aj=ah.Toggles
+
+local ak={"Load Config","Auto Load Config","Auto Load","AutoLoad"}
+
+for al,am in ipairs(ak)do
+local t=ai[am]
+local u=aj[am]
+
+if t and u==true then
+t:SetState(true)
+return true
+end
+end
+
+return false
+end
+
+function o.LoadConfig(ac,ad)
+if not isfile(ad)then return false end
+
+local ae,af=pcall(readfile,ad)
+if not ae then return false end
+
+local ag,ah=pcall(function()
+return c:JSONDecode(af)
+end)
+if not ag or type(ah)~="table"then return false end
+
+if ah.Inputs then
+for ai,aj in pairs(ah.Inputs)do
+local ak=ac.AllElements.Inputs[ai]
+if ak then
+if ak.SaveConfig~=true then
+pcall(function()
+ak.SetText(aj)
+end)
+end
+end
+end
+end
+
+if ah.Keybinds then
+for ai,aj in pairs(ah.Keybinds)do
+local ak=ac.AllElements.Keybinds[ai]
+if ak and aj and aj~="None"and aj~="nil"then
+local al,am=pcall(function()return j.KeyCode[aj]end)
+if al then
+pcall(function()
+ak:SetKey(am)
+end)
+end
+end
+end
+end
+
+if ah.Sliders then
+for ai,aj in pairs(ah.Sliders)do
+local ak=ac.AllElements.Sliders[ai]
+if ak then
+pcall(function()
+ak:SetValue(aj)
+end)
+end
+end
+end
+
+if ah.Dropdowns then
+for ai,aj in pairs(ah.Dropdowns)do
+local ak=ac.AllElements.Dropdowns[ai]
+if ak and ak.SetValue then
+pcall(function()
+if ak.Multi and type(aj)=="table"then
+local al={}
+for am,t in pairs(aj)do
+if type(am)=="string"then al[am]=t else al[t]=true end
+end
+ak:SetValue(al)
+else
+ak:SetValue(aj)
+end
+end)
+end
+end
+end
+
+if ah.ColorPickers then
+for ai,aj in pairs(ah.ColorPickers)do
+local ak=ac.AllElements.ColorPickers[ai]
+if ak and aj.R and aj.G and aj.B then
+pcall(function()
+ak:SetColor(h(aj.R,aj.G,aj.B))
+end)
+end
+end
+end
+
+if ah.Toggles then
+for ai,aj in pairs(ah.Toggles)do
+local ak=ac.AllElements.Toggles[ai]
+if ak then
+if ai~="Load Config"and ai~="Auto Load Config"and ai~="Auto Load"and ai~="AutoLoad"then
+pcall(function()
+ak:SetState(aj)
+end)
+end
+end
+end
+end
+
+return true
+end
+
+function o.SetSavePath(ac,ad,ae)
+ac.saveFolder=ad
+ac.saveFileName=ae
+end
+
+function o.GetConfigsList(ac)
+local ad=ac.saveFolder or"zxcursedsocute"
+if not isfolder(ad)then makefolder(ad)end
+
+local ae=listfiles(ad)
+local af={}
+for ag,ah in ipairs(ae)do
+local ai=ah:gsub(ad.."/","")
+if ai:find".json"then
+table.insert(af,ai)
+end
+end
+return af
+end
+
+function o.UpdateConfigSelection(ac,ad)
+local ae=ad:find".json"and ad or ad..".json"
+ac.saveFileName=ae
+
+writefile(ac.saveFolder.."/last_config.txt",ae)
+end
+
+function o.DeleteConfig(ac,ad,ae)
+local af=ad.."/"..ae
+if isfile(af)then
+delfile(af)
+return true
+end
+return false
+end
+
+
+
+
+
+function o.CreateDestroyGui(ac)
+ac.Destroy_gui=create("Frame",{
+BackgroundColor3=g(0,0,0),BackgroundTransparency=0.4,
+BorderColor3=g(0,0,0),Position=k(0.017,0,0.02,0),
+Size=k(0,560,0,460),Visible=false,ZIndex=10,
+Parent=ac.ImageLabel
+})
+corner(l(0,24),ac.Destroy_gui)
+
+ac.dFrame_2=create("Frame",{
+BorderColor3=g(0,0,0),Position=k(0.306,0,0.328,0),
+Size=k(0,250,0,150),Transparency=1,ZIndex=10,
+Parent=ac.Destroy_gui
+})
+ac:AddThemeObject(ac.dFrame_2,"BackgroundColor3","DestroyGFrame")
+ac.dFrame_2.BackgroundTransparency=ac.Theme.DestroyGFrameTransparency
+
+create("UIPadding",{
+Parent=ac.dFrame_2,PaddingBottom=l(0,5),PaddingLeft=l(0,5),
+PaddingRight=l(0,5),PaddingTop=l(0,5)
+})
+corner(l(0,12),ac.dFrame_2)
+
+ac.dTextLabel=create("TextLabel",{
+BackgroundColor3=g(255,255,255),BackgroundTransparency=1,
+BorderColor3=g(0,0,0),BorderSizePixel=2,
+Position=k(0.029,0,0.035,0),Size=k(0,200,0,36),
+Font=m,Text="Destroy Interface?",TextSize=23,
+TextWrapped=true,Visible=false,TextXAlignment=n,
+Parent=ac.dFrame_2
+})
+ac:AddThemeObject(ac.dTextLabel,"TextColor3","TextColor")
+
+ac.dTextLabel_2=create("TextLabel",{
+BackgroundColor3=g(255,255,255),BackgroundTransparency=1,
+BorderColor3=g(0,0,0),Position=k(0.03,0,0.25,0),
+Size=k(0,219,0,40),Font=m,TextWrapped=true,
+Text="This action will permamently close the GUI",TextSize=15,
+Visible=false,TextXAlignment=n,Parent=ac.dFrame_2
+})
+ac:AddThemeObject(ac.dTextLabel_2,"TextColor3","SubTtitleTextColor")
+
+ac.dTextButton=create("TextButton",{
+BackgroundColor3=g(207,0,0),BackgroundTransparency=0.4,
+BorderColor3=g(0,0,0),Position=k(0.017,0,0.721,0),
+Size=k(0,112,0,36),ZIndex=10,Font=m,
+Text="Destroy",TextColor3=g(255,255,255),
+Visible=false,TextSize=14,Parent=ac.dFrame_2
+})
+ac.dTextButton.MouseButton1Click:Connect(function()
+ac:Destroy()
+end)
+corner(l(0,10),ac.dTextButton)
+
+ac.dTextButton_2=create("TextButton",{
+BackgroundTransparency=0.950,BorderColor3=g(0,0,0),
+Position=k(0.517,0,0.721,0),Size=k(0,112,0,36),
+ZIndex=10,Font=m,Text="Close",
+Visible=false,TextSize=14,Parent=ac.dFrame_2
+})
+ac:themeObj(ac.dTextButton_2,{BackgroundColor3="dbtncolor",TextColor3="TextColor"})
+ac.dTextButton_2.MouseButton1Click:Connect(function()
+ac:ShowDestroyQ()
+end)
+corner(l(0,10),ac.dTextButton_2)
+end
+
+
+
+
+
+function o.SetTheme(ac,ad:string)
+if ac.CurrentThemeName==ad then return end
+
+local ae=q[ad]
+if not ae then return end
+
+ac.CurrentThemeName=ad
+
+ac.Theme=extendTheme(ae,{})
+
+if ac.ThemeObjects then
+for af,ag in pairs(ac.ThemeObjects)do
+for ah,ai in ipairs(ag)do
+if ae[ai.ThemeKey]~=nil then
+af[ai.Property]=ae[ai.ThemeKey]
+end
+end
+end
+end
+
+for af,ag in pairs(ac.ActiveNotifications)do
+ag.notification.Image=ae.NotiImg
+ag.notification.Title.TextColor3=ae.TextColor
+ag.notification.Description.TextColor3=ae.SubTtitleTextColor
+ag.notification.CloseButton.ImageColor3=ae.TabsIconColor
+if ag.notification.Icon.Image=="rbxassetid://75930996983661"or ag.notification.Icon.Image=="rbxassetid://76158273611595"then
+ag.notification.Icon.ImageColor3=ae.TabsIconColor
+end
+end
+
+if ac.AllElements and ac.AllElements.Toggles then
+for af,ag in pairs(ac.AllElements.Toggles)do
+ag:UpdateVisuals(ag.Value,true)
+end
+end
+
+if ac.CurrentTab and ac.CurrentTab.Tab and ac.CurrentTab.Tab[1]then
+ac.CurrentTab.Tab[1].BackgroundTransparency=ae.TabTransparancy
+end
+end
+
+function o.AddCategory(ac,ad)
+local ae=ac
+ae.Categories=ae.Categories or{}
+
+local af={
+Name=ad,Tabs={},Header=nil,
+Arrow=nil,Container=nil,Wrapper=nil
+}
+
+local ag=create("Frame",{
+BackgroundTransparency=1,Size=k(0,173,0,0),
+AutomaticSize=j.AutomaticSize.Y,Parent=ae.ScrollingFrame
+})
+corner(l(0,8),ag)
+create("UIListLayout",{Parent=ag,SortOrder=j.SortOrder.LayoutOrder})
+af.Wrapper=ag
+
+local ah=create("TextButton",{
+BackgroundTransparency=1,Size=k(0,173,0,30),
+Text="",Parent=ag
+})
+
+local ai=create("TextLabel",{
+BackgroundTransparency=1,Position=k(0.05,0,0,0),
+Size=k(0.8,0,1,0),Font=m,Text=ad:upper(),
+TextSize=11,TextXAlignment=n,Parent=ah
+})
+ac:AddThemeObject(ai,"TextColor3","TabTextColor")
+af.Header=ai
+
+local aj=create("ImageLabel",{
+BackgroundTransparency=1,Position=k(0.85,0,0.25,0),
+Size=k(0,15,0,15),Image="rbxassetid://126982255108418",
+Rotation=0,Parent=ah
+})
+ac:AddThemeObject(aj,"ImageColor3","DropDownArrowImg")
+af.Arrow=aj
+
+local ak=create("Frame",{
+BackgroundTransparency=1,ClipsDescendants=true,
+Size=k(0,173,0,0),Parent=ag
+})
+ac:AddThemeObject(ak,"BackgroundColor3","BackGroundElemCol")
+af.Container=ak
+
+local al=create("UIListLayout",{Parent=ak,Padding=l(0,2),SortOrder=j.SortOrder.LayoutOrder})
+
+local am=true
+
+local function GetTargetHeight()
+return(al.AbsoluteContentSize.Y/ae.ScaleFactor)
+end
+
+ah.MouseButton1Click:Connect(function()
+am=not am
+local t=am and GetTargetHeight()or 0
+local u=am and 0 or 180
+
+ae:Tween(aj,{Rotation=u},0.2)
+ae:Tween(ak,{Size=k(0,173,0,t)},0.3)
+end)
+
+function af.AddTab(t,u,v)
+local w=ae:AddTab(u,v)
+w.Button.Parent=ak
+w.Button.Size=k(0,173,0,35)
+
+if am then
+ak.Size=k(0,173,0,GetTargetHeight())
+end
+table.insert(t.Tabs,w)
+return w
+end
+
+table.insert(ae.Categories,af)
+return af
+end
+
+return o
