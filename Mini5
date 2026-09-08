@@ -1,20 +1,19 @@
 -- ============================================================
--- LOW-INSTANCES version (на основе refactored version)
--- - поведение и внешний вид сохранены 1:1
--- - меньше строк за счёт хелперов create()/corner()/CreateRow()
--- - удалён мёртвый код (неиспользуемые ImageButton_3/4/5)
--- - фикс для SetTheme: копия темы вместо ссылки, чтобы
---   ChangeBackgroundTransparance не мутировала общую таблицу тем
--- - уведомления защищены от падения после Destroy()
+-- COMPACT-INSTANCES version (на основе low-instances version)
+-- Цель: ещё сильнее сократить число инстансов.
+-- Все фиксы и сокращения low-версии сохранены, плюс:
 --
--- Сокращение числа инстансов (визуал не меняется):
--- - subLabel создаётся только если у элемента есть SubText (-1/элемент)
--- - иконка таба создаётся только если иконка задана (-1/таб)
--- - "пилюля" версии: Frame+TextLabel слиты в один TextLabel (-1)
--- - палитра колорпикера: убраны прозрачные обёртки
---   titleFrame / hueFrame / inputFrame (-3 на таб с палитрой)
--- - кнопки заголовка (close/column/minimize): ImageLabel+TextButton
---   слиты в ImageButton (-3; зона клика = размер иконки)
+-- С ВИЗУАЛЬНЫМИ КОМПРОМИССАМИ (оговорено с пользователем):
+-- - имя элемента без описания рисуется текстом самой строки
+--   (строка всегда TextButton, AutoButtonColor = false);
+--   текст начинается от левого края строки вместо отступа ~10пкс,
+--   у элементов С описанием раскладка прежняя  (-1/элемент)
+-- - заполнение слайдера — UIGradient на треке вместо
+--   отдельного фрейма-подчёркивания  (-1/слайдер)
+-- - опция дропдауна: текст на самой кнопке опции вместо
+--   вложенного TextLabel (клик-зона уже на ~6пкс слева)  (-1/опция)
+--
+-- Без изменений: скругления углов, темы, вся логика.
 -- ============================================================
 
 local cloneref = (cloneref or clonereference or function(instance) return instance end)
@@ -61,38 +60,57 @@ end
 function Library:CreateRow(class, title, desc, nameTextSize)
 	local hasDesc = desc ~= ""
 
+	-- всегда TextButton: если описания нет, имя рисуется текстом самой строки
+	-- (экономит 1 TextLabel на элемент); AutoButtonColor выключен, чтобы
+	-- клик по строке не затемнял фон
 	local row = create(class, {
-		BorderSizePixel = 0,
-		Size = ud2(0, 360, 0, 45),
-		Text = (class == "TextButton") and "" or nil,
+		BorderSizePixel = 0, AutoButtonColor = false,
+		Size = ud2(0, 360, 0, 45), Text = "",
 		Parent = self.Container
 	})
 	self:themeObj(row, {BackgroundColor3 = "BackGroundElemCol", BackgroundTransparency = "BackGroundElemTran"})
 	corner(ud(0, 12), row)
 
-	local nameLabel = create("TextLabel", {
-		Parent = row, BackgroundTransparency = 1, BorderSizePixel = 0,
-		Position = ud2(0.029, 0, 0, hasDesc and 4 or 12.5),
-		Size = ud2(0, 77, 0, 20), Font = FONT, Text = title,
-		TextSize = nameTextSize or 16, TextXAlignment = LEFT
-	})
-	self:AddThemeObject(nameLabel, "TextColor3", "TabTextColor")
-
-	local subLabel
 	if hasDesc then
-		subLabel = create("TextLabel", {
+		local nameLabel = create("TextLabel", {
+			Parent = row, BackgroundTransparency = 1, BorderSizePixel = 0,
+			Position = ud2(0.029, 0, 0, 4),
+			Size = ud2(0, 77, 0, 20), Font = FONT, Text = title,
+			TextSize = nameTextSize or 16, TextXAlignment = LEFT
+		})
+		self:AddThemeObject(nameLabel, "TextColor3", "TabTextColor")
+
+		local subLabel = create("TextLabel", {
 			Parent = row, BackgroundTransparency = 1, BorderSizePixel = 0,
 			Position = ud2(0.029, 0, 0, 25), Size = ud2(0, 193, 0, 14),
 			Font = FONT, Text = desc, TextSize = 14,
 			TextXAlignment = LEFT
 		})
 		self:AddThemeObject(subLabel, "TextColor3", "TabSubTtitleTextColor")
+		return row, nameLabel, subLabel
 	end
 
-	return row, nameLabel, subLabel
+	row.Text = title
+	row.Font = FONT
+	row.TextSize = nameTextSize or 16
+	row.TextXAlignment = LEFT
+	self:AddThemeObject(row, "TextColor3", "TabTextColor")
+	return row, row
 end
 
 -- Регистрация отложенного рендера элемента
+-- Прозрачность градиента-заполнения слайдера: непрозрачно до p, дальше прозрачно
+local function fillSequence(p)
+	if p <= 0 then return NumberSequence.new(1) end
+	if p >= 1 then return NumberSequence.new(0) end
+	return NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 0),
+		NumberSequenceKeypoint.new(p, 0),
+		NumberSequenceKeypoint.new(math.min(p + 0.001, 1), 1),
+		NumberSequenceKeypoint.new(1, 1)
+	})
+end
+
 local function register(tab, controller, renderFunc)
 	controller._renderFunc = renderFunc
 	table.insert(tab.RenderQueue, renderFunc)
@@ -1273,7 +1291,7 @@ function Library:AddTab(name : string, icon : string)
 		end
 
 		local renderFunc = function()
-			local container = self:CreateRow("Frame", keybindName, desc)
+			local container = self:CreateRow("TextButton", keybindName, desc)
 
 			local bindButton = create("TextButton", {
 				Position = ud2(0.672, 0, 0.221, 0), Size = ud2(0, 100, 0, 25),
@@ -1359,7 +1377,7 @@ function Library:AddTab(name : string, icon : string)
 		end
 
 		local renderFunc = function()
-			local input = self:CreateRow("Frame", inputName, desc)
+			local input = self:CreateRow("TextButton", inputName, desc)
 
 			local displayText = (config.SaveUserText and #internalFullText > 18) and (string.sub(internalFullText, 1, 15) .. "...") or internalFullText
 			local TextBox = create("TextBox", {
@@ -1478,7 +1496,7 @@ function Library:AddTab(name : string, icon : string)
 			local percent = getPercent(newValue)
 
 			if self._sliderbutton then
-				self._underline.Size = ud2(percent, 0, 0, 2)
+				self._fillGrad.Transparency = fillSequence(percent)
 				self._sliderball.Position = ud2(percent, 0, 0.5, 0)
 
 				if useIntegerDisplay then
@@ -1501,7 +1519,7 @@ function Library:AddTab(name : string, icon : string)
 		sliderObj:SetValue(sliderObj.Value)
 
 		local renderFunc = function()
-			local slider = self:CreateRow("Frame", sliderName, desc)
+			local slider = self:CreateRow("TextButton", sliderName, desc)
 			slider.Active = true
 
 			local sliderbutton = create("Frame", {
@@ -1509,7 +1527,7 @@ function Library:AddTab(name : string, icon : string)
 				Size = ud2(0, 100, 0, 22), Active = true, Parent = slider
 			})
 
-			create("Frame", {
+			local slidertrack = create("Frame", {
 				BackgroundColor3 = c3rgb(255, 255, 255), BorderSizePixel = 0,
 				Position = ud2(0, 0, 0.455, 0), Size = ud2(1, 0, 0, 2),
 				Parent = sliderbutton
@@ -1530,15 +1548,13 @@ function Library:AddTab(name : string, icon : string)
 			})
 			self:AddThemeObject(slideramount, "TextColor3", "TabTextColor")
 
-			local underline = create("Frame", {
-				BorderSizePixel = 0, Position = ud2(0, 0, 0.455, 0),
-				Size = ud2(0, 0, 0, 2), Parent = sliderbutton
-			})
-			self:AddThemeObject(underline, "BackgroundColor3", "SliderUnderLineColor")
+			-- заполнение трека — градиентом на самом треке (без отдельного фрейма)
+			local fillGrad = create("UIGradient", {Parent = slidertrack, Transparency = NumberSequence.new(1)})
+			self:AddThemeObject(fillGrad, "Color", "SliderUnderLineColor")
 
 			sliderObj.Elem = slider
 			sliderObj._sliderbutton = sliderbutton
-			sliderObj._underline = underline
+			sliderObj._fillGrad = fillGrad
 			sliderObj._sliderball = sliderball
 			sliderObj._slideramount = slideramount
 
@@ -1546,7 +1562,7 @@ function Library:AddTab(name : string, icon : string)
 			local currentPercent = getPercent(sliderObj.Value)
 			local currentDisplayValue = getDisplayValue(sliderObj.Value)
 
-			underline.Size = ud2(currentPercent, 0, 0, 2)
+			fillGrad.Transparency = fillSequence(currentPercent)
 			sliderball.Position = ud2(currentPercent, 0, 0.5, 0)
 
 			if useIntegerDisplay then
@@ -1643,7 +1659,7 @@ function Library:AddTab(name : string, icon : string)
 		colorPickerObj:SetColor(defaultColor)
 
 		local renderFunc = function()
-			local ColorPick = tabRef:CreateRow("Frame", colorName, desc)
+			local ColorPick = tabRef:CreateRow("TextButton", colorName, desc)
 
 			local colorButton = create("TextButton", {
 				BackgroundColor3 = currentColor, BorderSizePixel = 0,
@@ -1984,7 +2000,7 @@ function Library:AddTab(name : string, icon : string)
 			local SharedContainer = Library.SharedDropdownState.Container
 			local SharedOptions = Library.SharedDropdownState.OptionsFrame
 
-			local Dropdown = self:CreateRow("Frame", dropdownName, desc)
+			local Dropdown = self:CreateRow("TextButton", dropdownName, desc)
 
 			local Select = create("TextButton", {
 				Position = ud2(0.576, 0, 0.155, 0), Size = ud2(0, 135, 0, 30),
@@ -2066,8 +2082,11 @@ function Library:AddTab(name : string, icon : string)
 			local function createOption(optionText)
 				local Option = create("TextButton", {
 					BackgroundTransparency = 1, Size = ud2(0, 135, 0, 30),
-					Text = "", Parent = SharedOptions
+					Font = FONT, Text = optionText, TextSize = 14,
+					TextXAlignment = LEFT, TextWrapped = true,
+					TextTruncate = enum.TextTruncate.AtEnd, Parent = SharedOptions
 				})
+				self:AddThemeObject(Option, "TextColor3", "TabTextColor")
 
 				local Frame = create("Frame", {
 					BorderSizePixel = 0, Position = ud2(0.01, 0, 0, 4),
@@ -2093,13 +2112,6 @@ function Library:AddTab(name : string, icon : string)
 					end
 				end)
 
-				local OptionTextLabel = create("TextLabel", {
-					BackgroundTransparency = 1, Position = ud2(0.047, 0, 0, 0),
-					Size = ud2(0, 124, 0, 30), Font = FONT, Text = optionText,
-					TextSize = 14, TextXAlignment = LEFT, TextWrapped = true,
-					TextTruncate = enum.TextTruncate.AtEnd, Parent = Option
-				})
-				self:AddThemeObject(OptionTextLabel, "TextColor3", "TabTextColor")
 
 				Option.MouseButton1Click:Connect(function() handleOptionClick(optionText) end)
 			end
