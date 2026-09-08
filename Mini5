@@ -62,7 +62,6 @@ p:AddThemeObject(x,"TextColor3","TabSubTtitleTextColor")
 return v,w,x
 end
 
-
 v.Text="   "..r
 v.Font=m
 v.TextSize=t or 16
@@ -70,8 +69,6 @@ v.TextXAlignment=n
 p:AddThemeObject(v,"TextColor3","TabTextColor")
 return v,v
 end
-
-
 
 local function fillSequence(p)
 if p<=0 then return NumberSequence.new(1)end
@@ -90,10 +87,6 @@ table.insert(p.RenderQueue,r)
 if p.IsLoaded then r()end
 return q
 end
-
-
-
-
 
 local function extendTheme(p,q)
 local r={}
@@ -227,10 +220,6 @@ SubTtitleTextColor=g(140,140,140),TogleActivColor=g(124,41,124)
 })
 }
 
-
-
-
-
 function o.AddThemeObject(r,s:Instance,t:string,u:string)
 if not r.ThemeObjects then
 r.ThemeObjects=setmetatable({},{__mode="k"})
@@ -247,16 +236,11 @@ s[t]=r.Theme[u]
 end
 end
 
-
 function o.themeObj(r,s,t)
 for u,v in pairs(t)do
 r:AddThemeObject(s,u,v)
 end
 end
-
-
-
-
 
 local r={
 Notification="rbxassetid://75930996983661",
@@ -380,7 +364,6 @@ if not u then return end
 local v=u.notification
 s.ActiveNotifications[t]=nil
 
-
 if not v.Parent then
 return
 end
@@ -407,10 +390,6 @@ y=y-A.data.multi
 end
 end
 
-
-
-
-
 function o.CreateWindow(s)
 local t=s.Name or"Default Title"
 local u=s.Description
@@ -432,7 +411,6 @@ Toggles={},Keybinds={},Dropdowns={},
 Sliders={},ColorPickers={},Inputs={}
 }
 x.Windowscd=false
-x.userinfo=true
 x.saveFolder=nil
 x.saveFileName=nil
 x.ActiveNotifications={}
@@ -455,7 +433,6 @@ if e.touchEnabled then
 create("UIScale",{Scale=0.75,Parent=x.ImageLabel})
 x.ScaleFactor=0.75
 end
-
 
 local y=false
 local z
@@ -505,7 +482,6 @@ B.Y.Offset+(F.Y/G)
 end
 end
 end)
-
 
 x.Header=create("Frame",{
 BackgroundTransparency=1,Position=k(0.02,0,0.025,0),
@@ -557,7 +533,6 @@ create("UIPadding",{Parent=x.version,PaddingLeft=l(0,12),PaddingRight=l(0,12)})
 corner(l(0,11),x.version)
 end
 
-
 x.close=create("ImageButton",{
 BackgroundTransparency=1,Position=k(0.945,0,0.2,0),
 Size=k(0,24,0,24),Image="rbxassetid://94538718832963",
@@ -582,11 +557,10 @@ Parent=x.Header
 x:AddThemeObject(x.ImageButton_2,"ImageColor3","TabsIconColor")
 x.ImageButton_2.MouseButton1Click:Connect(function()x:Minimaze()end)
 
-
 x.Tabs=create("Frame",{
 BackgroundColor3=g(255,255,255),BackgroundTransparency=1,
 BorderColor3=g(0,0,0),Position=k(0.035,0,0.115,0),
-Size=k(0,185,0,372),Parent=x.ImageLabel
+Size=k(0,185,0,405),Parent=x.ImageLabel
 })
 x.Frame_2=i"Frame"
 
@@ -594,52 +568,13 @@ x.ScrollingFrame=create("ScrollingFrame",{
 Active=true,BackgroundColor3=g(255,255,255),
 BackgroundTransparency=1,BorderColor3=g(0,0,0),
 BorderSizePixel=0,Position=k(0,0,0,0),
-Size=k(0,190,0,357),ScrollBarThickness=2,
+Size=k(0,190,0,405),ScrollBarThickness=2,
 CanvasSize=k(0,0,0,0),AutomaticCanvasSize=j.AutomaticSize.Y,
 Parent=x.Tabs
 })
 x:AddThemeObject(x.ScrollingFrame,"ScrollBarImageColor3","TabsScrollingBarFrameColor")
 
 create("UIListLayout",{Parent=x.ScrollingFrame,SortOrder=j.SortOrder.LayoutOrder,Padding=l(0,5)})
-
-
-x.WindowUser=create("Frame",{
-BorderColor3=g(0,0,0),BackgroundTransparency=0.95,
-Position=k(0,0,0.975,0),Size=k(0,180,0,45),
-Parent=x.Tabs
-})
-x:AddThemeObject(x.WindowUser,"BackgroundColor3","versionBackgroundColor3")
-corner(l(0.35,0),x.WindowUser)
-
-local C=create("ImageLabel",{
-BackgroundColor3=g(255,255,255),BorderColor3=g(0,0,0),
-Position=k(0.05,0,0,8),Size=k(0,30,0,30),
-Image="rbxassetid://128203179498740",Parent=x.WindowUser
-})
-corner(l(0,100),C)
-
-x.wTextLabel=create("TextLabel",{
-BackgroundColor3=g(255,255,255),BackgroundTransparency=1,
-BorderColor3=g(0,0,0),Position=k(0.27,0,0,6),
-Size=k(0,131,0,15),Font=m,TextSize=15,
-Text="Anonymous",TextXAlignment=n,Parent=x.WindowUser
-})
-x:AddThemeObject(x.wTextLabel,"TextColor3","TextColor")
-
-x.wTextLabel_2=create("TextLabel",{
-BackgroundColor3=g(255,255,255),BackgroundTransparency=1,
-BorderColor3=g(0,0,0),Position=k(0.27,0,0,22),
-Size=k(0,131,0,15),Font=m,TextColor3=g(200,167,0),
-Text="Premium",TextSize=13,TextXAlignment=n,
-Parent=x.WindowUser
-})
-
-create("ImageLabel",{
-BackgroundTransparency=1,Image="rbxassetid://127843403295538",
-ImageColor3=g(200,167,0),Position=k(0.30,52,0,23),
-Size=k(0,14,0,14),Parent=x.WindowUser
-})
-
 
 x.Sections=create("Frame",{
 BackgroundColor3=g(255,255,255),BackgroundTransparency=1,
@@ -663,7 +598,6 @@ Position=k(0,0,0.084,0),Size=k(0,366,0,379),
 Parent=x.Sections
 })
 
-
 x.Tabs.Visible=false
 x.Sections.Visible=false
 x.Header.Visible=false
@@ -677,10 +611,6 @@ x.Header.Visible=true
 
 return x
 end
-
-
-
-
 
 local s={Settings=
 "rbxassetid://121074539743502",Visual=
@@ -801,7 +731,6 @@ if#t.mainTabs==1 then
 t:SelectTab(w,x)
 end
 
-
 function w.AddList(B,C)
 local D={
 Name=C.Name,
@@ -912,7 +841,6 @@ end
 return register(w,E,F)
 end
 
-
 function w.AddDiscordInvite(B,C)
 local D={Elem=nil}
 
@@ -983,7 +911,6 @@ end
 
 return register(w,D,E)
 end
-
 
 function w.AddParagraph(B,C,D,E,F)
 local G={
@@ -1076,7 +1003,6 @@ end
 return register(w,G,H)
 end
 
-
 function w.AddImage(B,C)
 local D={Elem=nil}
 
@@ -1097,7 +1023,6 @@ end
 return register(w,D,E)
 end
 
-
 function w.AddSection(B,C)
 local D={Elem=nil}
 
@@ -1114,7 +1039,6 @@ end
 
 return register(w,D,E)
 end
-
 
 function w.AddButton(B,C)
 local D={Elem=nil}
@@ -1144,7 +1068,6 @@ end
 
 return register(w,D,F)
 end
-
 
 function w.AddToggle(B,C)
 local D={
@@ -1217,7 +1140,6 @@ end
 
 return register(w,D,E)
 end
-
 
 function w.AddKeybind(B,C)
 if e.TouchEnabled and not e.KeyboardEnabled then
@@ -1317,7 +1239,6 @@ end
 return register(w,G,H)
 end
 
-
 function w.AddInput(B,C)
 local D=C.Default or"Default"
 local E=C.Name or"Input"
@@ -1386,7 +1307,6 @@ end
 return register(w,G,H)
 end
 
-
 function w.AddSlider(B,C)
 local D=C.Min or 0
 local E=C.Max or 100
@@ -1397,7 +1317,6 @@ local H=C.Default
 if H==nil then
 H=D
 end
-
 
 if not o.SharedSliderState then
 o.SharedSliderState={
@@ -1438,7 +1357,6 @@ Name=F,
 Value=math.clamp(H,D,E)
 }
 
-
 local J=E>10
 
 local function getDisplayValue(K)
@@ -1457,7 +1375,6 @@ end
 function I.GetValue(K)
 return K.Value
 end
-
 
 function I.SetValue(K,L,M)
 L=tonumber(L)or D
@@ -1487,7 +1404,6 @@ end
 if B.AllElements and B.AllElements.Sliders then
 B.AllElements.Sliders[F]=I
 end
-
 
 I:SetValue(I.Value)
 
@@ -1521,9 +1437,7 @@ Parent=L
 })
 B:AddThemeObject(O,"TextColor3","TabTextColor")
 
-
 local P=create("UIGradient",{Parent=M,Transparency=NumberSequence.new(1)})
-
 
 local R=setmetatable({},{
 __newindex=function(Q,R,S)
@@ -1537,7 +1451,6 @@ I._sliderbutton=L
 I._fillGrad=P
 I._sliderball=N
 I._slideramount=O
-
 
 local S=getPercent(I.Value)
 local T=getDisplayValue(I.Value)
@@ -1572,7 +1485,6 @@ end
 local V=o.SharedSliderState
 V.ActiveMoveFunc=moveSlider
 
-
 V.ActiveReleaseFunc=function()
 local W=I:GetValue()
 local X=getDisplayValue(W)
@@ -1587,7 +1499,6 @@ end
 
 return register(w,I,K)
 end
-
 
 function w.AddColorPicker(B,C)
 local D=B
@@ -1709,7 +1620,6 @@ create("UIGradient",{Parent=Z,Rotation=90,Color=ColorSequence.new(Y)})
 local _=create("Frame",{Parent=Z,Size=k(1,0,0,4),BackgroundColor3=h(1,1,1),BorderSizePixel=0,ZIndex=52})
 corner(l(0,2),_)
 D.SharedPaletteUI.HueSlider=_
-
 
 local aa=create("TextBox",{
 Parent=R,Position=k(0,30,0,260),
@@ -1850,7 +1760,6 @@ end
 return register(w,M,aa)
 end
 
-
 function w.AddDropdown(aa,ab)
 local ac=ab.Name or"Dropdown"
 local ad=ab.Description or""
@@ -1947,7 +1856,6 @@ end
 
 local ag=function()
 local ag=aa.Container.Parent.Parent
-
 
 if not o.SharedDropdownState then
 local ah=create("ImageLabel",{
@@ -2092,7 +2000,6 @@ o:Tween(F,{BackgroundTransparency=1,Size=k(0,2,0,0)},0.3)
 end
 end)
 
-
 E.MouseButton1Click:Connect(function()handleOptionClick(D)end)
 end
 
@@ -2178,25 +2085,8 @@ end
 return register(w,af,ag)
 end
 
-
-function w.AddLine(aa)
-local ab={Elem=nil}
-
-local ac=function()
-local ac=create("Frame",{Size=k(0,360,0,3),Parent=aa.Container})
-aa:themeObj(ac,{BackgroundColor3="BackGroundElemCol",BackgroundTransparency="BackGroundElemTran"})
-ab.Elem=ac
-end
-
-return register(w,ab,ac)
-end
-
 return w
 end
-
-
-
-
 
 function o.SelectTab(aa,ab,ac)
 for ad,ae in ipairs(aa.mainTabs)do
@@ -2272,10 +2162,6 @@ ai:Play()
 return ai
 end
 
-
-
-
-
 function o.ChangeBackgroundTransparance(ac)
 if ac.ImageLabel.ImageTransparency<=0.05 then
 ac.ImageLabel.ImageTransparency=0.05
@@ -2285,7 +2171,6 @@ ac.ImageLabel.ImageTransparency=0
 ac.Theme.BackGroundTran=0
 end
 end
-
 
 local function reanchor(ac,ad)
 local ae=ad-ac.AnchorPoint
@@ -2413,7 +2298,6 @@ ac.TextLabel_5.Visible=not ae
 
 ac.Tabs.Visible=false
 ac.Sections.Visible=false
-if ae then ac.WindowUser.Visible=false end
 
 if ae and ac.version then
 ac.version.Visible=false
@@ -2507,18 +2391,9 @@ if not ae and ac.version then
 ac.version.Visible=true
 end
 
-if not ae and ac.userinfo then
-ac.WindowUser.Visible=true
-ac.Tabs.Size=k(0,185,0,372)
-ac.ScrollingFrame.Size=k(0,185,0,358)
-end
 ac.Windowscd=false
 end
 end
-
-
-
-
 
 function o.Destroy(ac)
 if ac.AllElements and ac.AllElements.GlobalKeybindConnection then
@@ -2590,20 +2465,6 @@ ac.dTextButton_2.Visible=true
 end
 end
 
-function o.UserInfo(ac)
-if ac.WindowUser.Visible then
-ac.userinfo=false
-ac.WindowUser.Visible=false
-ac.Tabs.Size=k(0,185,0,405)
-ac.ScrollingFrame.Size=k(0,185,0,405)
-else
-ac.WindowUser.Visible=true
-ac.Tabs.Size=k(0,185,0,372)
-ac.ScrollingFrame.Size=k(0,185,0,354)
-ac.userinfo=true
-end
-end
-
 function o.Close(ac)
 if ac.ImageLabel.Visible then
 ac:Tween(ac.ImageLabel,{Size=k(0,40,0,0)},0)
@@ -2619,10 +2480,6 @@ end
 ac.ImageLabel.Visible=true
 end
 end
-
-
-
-
 
 function o.GetConfig(ac,ad)
 if not isfile(ad)then
@@ -2870,10 +2727,6 @@ end
 return false
 end
 
-
-
-
-
 function o.CreateDestroyGui(ac)
 ac.Destroy_gui=create("Frame",{
 BackgroundColor3=g(0,0,0),BackgroundTransparency=0.4,
@@ -2940,10 +2793,6 @@ ac:ShowDestroyQ()
 end)
 corner(l(0,10),ac.dTextButton_2)
 end
-
-
-
-
 
 function o.SetTheme(ac,ad:string)
 if ac.CurrentThemeName==ad then return end
