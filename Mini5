@@ -70,17 +70,6 @@ p:AddThemeObject(v,"TextColor3","TabTextColor")
 return v,v
 end
 
-local function fillSequence(p)
-if p<=0 then return NumberSequence.new(1)end
-if p>=1 then return NumberSequence.new(0)end
-return NumberSequence.new{
-NumberSequenceKeypoint.new(0,0),
-NumberSequenceKeypoint.new(p,0),
-NumberSequenceKeypoint.new(math.min(p+0.001,1),1),
-NumberSequenceKeypoint.new(1,1)
-}
-end
-
 local function register(p,q,r)
 q._renderFunc=r
 table.insert(p.RenderQueue,r)
@@ -1386,7 +1375,7 @@ local N=getDisplayValue(L)
 local O=getPercent(L)
 
 if K._sliderbutton then
-K._fillGrad.Transparency=fillSequence(O)
+K._underline.Size=k(O,0,0,2)
 K._sliderball.Position=k(O,0,0.5,0)
 
 if J then
@@ -1416,65 +1405,62 @@ BackgroundTransparency=1,Position=k(0.671,0,0.244,0),
 Size=k(0,100,0,22),Active=true,Parent=K
 })
 
-local M=create("Frame",{
+create("Frame",{
 BackgroundColor3=g(255,255,255),BorderSizePixel=0,
 Position=k(0,0,0.455,0),Size=k(1,0,0,2),
 Parent=L
 })
 
-local N=create("Frame",{
+local M=create("Frame",{
 BorderSizePixel=0,AnchorPoint=Vector2.new(0.5,0.5),
 Position=k(0,0,0.5,0),Size=k(0,15,0,15),
 ZIndex=2,Parent=L
 })
-corner(l(1,0),N)
-B:AddThemeObject(N,"BackgroundColor3","Sliderball")
+corner(l(1,0),M)
+B:AddThemeObject(M,"BackgroundColor3","Sliderball")
 
-local O=create("TextLabel",{
+local N=create("TextLabel",{
 BackgroundTransparency=1,Position=k(0,-35,0.075,0),
 Size=k(0,21,0,18),Font=m,TextSize=14,
 Parent=L
 })
-B:AddThemeObject(O,"TextColor3","TabTextColor")
+B:AddThemeObject(N,"TextColor3","TabTextColor")
 
-local P=create("UIGradient",{Parent=M,Transparency=NumberSequence.new(1)})
-
-local R=setmetatable({},{
-__newindex=function(Q,R,S)
-P.Color=ColorSequence.new(S)
-end
+local O=create("Frame",{
+BorderSizePixel=0,Position=k(0,0,0.455,0),
+Size=k(0,0,0,2),Parent=L
 })
-B:AddThemeObject(R,"Color","SliderUnderLineColor")
+B:AddThemeObject(O,"BackgroundColor3","SliderUnderLineColor")
 
 I.Elem=K
 I._sliderbutton=L
-I._fillGrad=P
-I._sliderball=N
-I._slideramount=O
+I._underline=O
+I._sliderball=M
+I._slideramount=N
 
-local S=getPercent(I.Value)
-local T=getDisplayValue(I.Value)
+local P=getPercent(I.Value)
+local Q=getDisplayValue(I.Value)
 
-P.Transparency=fillSequence(S)
-N.Position=k(S,0,0.5,0)
+O.Size=k(P,0,0,2)
+M.Position=k(P,0,0.5,0)
 
 if J then
-O.Text=tostring(T)
+N.Text=tostring(Q)
 else
-O.Text=string.format("%.1f",T)
+N.Text=string.format("%.1f",Q)
 end
 
-local function moveSlider(U)
-local V=L.AbsoluteSize.X
-if V<=0 then return end
+local function moveSlider(R)
+local S=L.AbsoluteSize.X
+if S<=0 then return end
 
-local W=math.clamp((U.Position.X-L.AbsolutePosition.X)/V,0,1)
+local T=math.clamp((R.Position.X-L.AbsolutePosition.X)/S,0,1)
 
-I:SetValue(D+W*(E-D),true)
+I:SetValue(D+T*(E-D),true)
 end
 
-L.InputBegan:Connect(function(U)
-if U.UserInputType~=j.UserInputType.MouseButton1 and U.UserInputType~=j.UserInputType.Touch then
+L.InputBegan:Connect(function(R)
+if R.UserInputType~=j.UserInputType.MouseButton1 and R.UserInputType~=j.UserInputType.Touch then
 return
 end
 
@@ -1482,18 +1468,18 @@ if o then
 o.IsInteractingWithUI=true
 end
 
-local V=o.SharedSliderState
-V.ActiveMoveFunc=moveSlider
+local S=o.SharedSliderState
+S.ActiveMoveFunc=moveSlider
 
-V.ActiveReleaseFunc=function()
-local W=I:GetValue()
-local X=getDisplayValue(W)
+S.ActiveReleaseFunc=function()
+local T=I:GetValue()
+local U=getDisplayValue(T)
 if C.Callback then
-task.spawn(C.Callback,X)
+task.spawn(C.Callback,U)
 end
 end
 
-moveSlider(U)
+moveSlider(R)
 end)
 end
 
@@ -1517,17 +1503,17 @@ Description=F,
 GetColor=function()return I end
 }
 
-function M.SetColor(N,O,P,R,S)
+function M.SetColor(N,O,P,Q,R)
 if not O then return end
 I=O
 
-if P and R and S then
-J,K,L=P,R,S
+if P and Q and R then
+J,K,L=P,Q,R
 else
-local T,U,V=O:ToHSV()
-J=(U==0 or V==0)and J or T
-K=U
-L=V
+local S,T,U=O:ToHSV()
+J=(T==0 or U==0)and J or S
+K=T
+L=U
 end
 
 if N._colorButton then
@@ -1575,135 +1561,135 @@ ZIndex=40,Visible=false
 corner(l(0,24),P)
 D.SharedPaletteUI.Modal=P
 
-local R=create("Frame",{
+local Q=create("Frame",{
 Parent=D.ImageLabel,BorderSizePixel=0,ZIndex=50,
 Visible=false,Size=k(0,0,0,0),
 Position=k(0.5,0,0.5,0),AnchorPoint=Vector2.new(0.5,0.5)
 })
-D:AddThemeObject(R,"BackgroundColor3","ColorPickerColoro")
-corner(l(0,12),R)
-create("UIStroke",{Color=g(60,60,70),Thickness=2,Parent=R})
-D.SharedPaletteUI.Frame=R
+D:AddThemeObject(Q,"BackgroundColor3","ColorPickerColoro")
+corner(l(0,12),Q)
+create("UIStroke",{Color=g(60,60,70),Thickness=2,Parent=Q})
+D.SharedPaletteUI.Frame=Q
 
-local S=create("TextLabel",{
-Parent=R,Text="Choose a color",Font=j.Font.GothamSemibold,
+local R=create("TextLabel",{
+Parent=Q,Text="Choose a color",Font=j.Font.GothamSemibold,
 TextSize=16,BackgroundTransparency=1,Size=k(1,0,0,40),ZIndex=52
 })
-D:AddThemeObject(S,"TextColor3","TabTextColor")
+D:AddThemeObject(R,"TextColor3","TabTextColor")
 
-local T=create("Frame",{Parent=R,Size=k(0,200,0,200),Position=k(0.435,-100,0,50),ZIndex=51})
+local S=create("Frame",{Parent=Q,Size=k(0,200,0,200),Position=k(0.435,-100,0,50),ZIndex=51})
+corner(l(0,8),S)
+D.SharedPaletteUI.SVGradient=S
+
+local T=create("Frame",{Parent=S,Size=k(1,0,1,0),BackgroundColor3=h(1,1,1),ZIndex=51})
 corner(l(0,8),T)
-D.SharedPaletteUI.SVGradient=T
+create("UIGradient",{Parent=T,Transparency=NumberSequence.new{NumberSequenceKeypoint.new(0,0),NumberSequenceKeypoint.new(1,1)}})
 
-local U=create("Frame",{Parent=T,Size=k(1,0,1,0),BackgroundColor3=h(1,1,1),ZIndex=51})
+local U=create("Frame",{Parent=S,Size=k(1,0,1,0),BackgroundColor3=h(0,0,0),ZIndex=51})
 corner(l(0,8),U)
-create("UIGradient",{Parent=U,Transparency=NumberSequence.new{NumberSequenceKeypoint.new(0,0),NumberSequenceKeypoint.new(1,1)}})
+create("UIGradient",{Parent=U,Rotation=90,Transparency=NumberSequence.new{NumberSequenceKeypoint.new(0,1),NumberSequenceKeypoint.new(1,0)}})
 
-local V=create("Frame",{Parent=T,Size=k(1,0,1,0),BackgroundColor3=h(0,0,0),ZIndex=51})
-corner(l(0,8),V)
-create("UIGradient",{Parent=V,Rotation=90,Transparency=NumberSequence.new{NumberSequenceKeypoint.new(0,1),NumberSequenceKeypoint.new(1,0)}})
+local V=create("Frame",{Parent=S,Size=k(0,14,0,14),AnchorPoint=Vector2.new(0.5,0.5),BackgroundTransparency=1,BorderSizePixel=2,BorderColor3=h(1,1,1),ZIndex=52})
+corner(l(1,0),V)
+D.SharedPaletteUI.SVSelector=V
 
-local W=create("Frame",{Parent=T,Size=k(0,14,0,14),AnchorPoint=Vector2.new(0.5,0.5),BackgroundTransparency=1,BorderSizePixel=2,BorderColor3=h(1,1,1),ZIndex=52})
+local W=create("Frame",{Parent=V,Size=k(0,6,0,6),AnchorPoint=Vector2.new(0.5,0.5),Position=k(0.5,0,0.5,0),ZIndex=53})
 corner(l(1,0),W)
-D.SharedPaletteUI.SVSelector=W
+D.SharedPaletteUI.InnerCircle=W
 
-local X=create("Frame",{Parent=W,Size=k(0,6,0,6),AnchorPoint=Vector2.new(0.5,0.5),Position=k(0.5,0,0.5,0),ZIndex=53})
-corner(l(1,0),X)
-D.SharedPaletteUI.InnerCircle=X
+local X={}
+for Y=0,6 do table.insert(X,ColorSequenceKeypoint.new(Y/6,Color3.fromHSV(Y/6,1,1)))end
+local Y=create("Frame",{Parent=Q,Size=k(0,20,0,200),Position=k(0.82,0,0,50),ZIndex=51})
+corner(l(0,8),Y)
+create("UIGradient",{Parent=Y,Rotation=90,Color=ColorSequence.new(X)})
 
-local Y={}
-for Z=0,6 do table.insert(Y,ColorSequenceKeypoint.new(Z/6,Color3.fromHSV(Z/6,1,1)))end
-local Z=create("Frame",{Parent=R,Size=k(0,20,0,200),Position=k(0.82,0,0,50),ZIndex=51})
-corner(l(0,8),Z)
-create("UIGradient",{Parent=Z,Rotation=90,Color=ColorSequence.new(Y)})
+local Z=create("Frame",{Parent=Y,Size=k(1,0,0,4),BackgroundColor3=h(1,1,1),BorderSizePixel=0,ZIndex=52})
+corner(l(0,2),Z)
+D.SharedPaletteUI.HueSlider=Z
 
-local _=create("Frame",{Parent=Z,Size=k(1,0,0,4),BackgroundColor3=h(1,1,1),BorderSizePixel=0,ZIndex=52})
-corner(l(0,2),_)
-D.SharedPaletteUI.HueSlider=_
-
-local aa=create("TextBox",{
-Parent=R,Position=k(0,30,0,260),
+local _=create("TextBox",{
+Parent=Q,Position=k(0,30,0,260),
 Size=k(0.7,-28,0,40),
 BackgroundColor3=g(40,40,45),BackgroundTransparency=0.5,
 Font=j.Font.Gotham,TextSize=14,
 TextXAlignment=j.TextXAlignment.Center,ZIndex=52
 })
-D:AddThemeObject(aa,"TextColor3","TabTextColor")
-corner(l(0,6),aa)
-create("UIStroke",{Color=g(60,60,70),Thickness=1,Parent=aa})
-D.SharedPaletteUI.HexInput=aa
+D:AddThemeObject(_,"TextColor3","TabTextColor")
+corner(l(0,6),_)
+create("UIStroke",{Color=g(60,60,70),Thickness=1,Parent=_})
+D.SharedPaletteUI.HexInput=_
 
-local ab=create("Frame",{Parent=R,Size=k(0,40,0,40),Position=k(0.76,0,0,260),ZIndex=51})
-corner(l(0,8),ab)
-create("UIStroke",{Color=g(60,60,70),Thickness=2,Parent=ab})
-D.SharedPaletteUI.PreviewFrame=ab
+local aa=create("Frame",{Parent=Q,Size=k(0,40,0,40),Position=k(0.76,0,0,260),ZIndex=51})
+corner(l(0,8),aa)
+create("UIStroke",{Color=g(60,60,70),Thickness=2,Parent=aa})
+D.SharedPaletteUI.PreviewFrame=aa
 
-local function processInput(ac,ad,ae)
+local function processInput(ab,ac,ad)
 if not D.ActiveColorPickerData then return end
-local af,ag,ah=D.ActiveColorPickerData.GetHSV()
+local ae,af,ag=D.ActiveColorPickerData.GetHSV()
 
-local ai=math.clamp((ac.Position.Y-ad.AbsolutePosition.Y)/ad.AbsoluteSize.Y,0,1)
-if ae then
-af=ai
+local ah=math.clamp((ab.Position.Y-ac.AbsolutePosition.Y)/ac.AbsoluteSize.Y,0,1)
+if ad then
+ae=ah
 else
-local aj=math.clamp((ac.Position.X-ad.AbsolutePosition.X)/ad.AbsoluteSize.X,0,1)
-ag,ah=aj,1-ai
+local ai=math.clamp((ab.Position.X-ac.AbsolutePosition.X)/ac.AbsoluteSize.X,0,1)
+af,ag=ai,1-ah
 end
 
-D.ActiveColorPickerData.SetColor(Color3.fromHSV(af,ag,ah),af,ag,ah)
+D.ActiveColorPickerData.SetColor(Color3.fromHSV(ae,af,ag),ae,af,ag)
 end
 
-local ac,ad=false,false
+local ab,ac=false,false
 
-Z.InputBegan:Connect(function(ae)
-if ae.UserInputType==j.UserInputType.MouseButton1 or ae.UserInputType==j.UserInputType.Touch then
-ac=true;processInput(ae,Z,true)
-end
-end)
-
-T.InputBegan:Connect(function(ae)
-if ae.UserInputType==j.UserInputType.MouseButton1 or ae.UserInputType==j.UserInputType.Touch then
-ad=true;processInput(ae,T,false)
+Y.InputBegan:Connect(function(ad)
+if ad.UserInputType==j.UserInputType.MouseButton1 or ad.UserInputType==j.UserInputType.Touch then
+ab=true;processInput(ad,Y,true)
 end
 end)
 
-e.InputEnded:Connect(function(ae)
-if ae.UserInputType==j.UserInputType.MouseButton1 or ae.UserInputType==j.UserInputType.Touch then
-ac,ad=false,false
+S.InputBegan:Connect(function(ad)
+if ad.UserInputType==j.UserInputType.MouseButton1 or ad.UserInputType==j.UserInputType.Touch then
+ac=true;processInput(ad,S,false)
 end
 end)
 
-e.InputChanged:Connect(function(ae)
-if ae.UserInputType==j.UserInputType.MouseMovement or ae.UserInputType==j.UserInputType.Touch then
-if ac then processInput(ae,Z,true)
-elseif ad then processInput(ae,T,false)end
+e.InputEnded:Connect(function(ad)
+if ad.UserInputType==j.UserInputType.MouseButton1 or ad.UserInputType==j.UserInputType.Touch then
+ab,ac=false,false
 end
 end)
 
-aa.FocusLost:Connect(function(ae)
-if ae and D.ActiveColorPickerData then
-local af=aa.Text:gsub("#","")
-if#af==6 then
-local ag,ah,ai=tonumber(af:sub(1,2),16),tonumber(af:sub(3,4),16),tonumber(af:sub(5,6),16)
-if ag and ah and ai then
-local aj=g(ag,ah,ai)
-local ak,al,am=aj:ToHSV()
-D.ActiveColorPickerData.SetColor(aj,ak,al,am)
+e.InputChanged:Connect(function(ad)
+if ad.UserInputType==j.UserInputType.MouseMovement or ad.UserInputType==j.UserInputType.Touch then
+if ab then processInput(ad,Y,true)
+elseif ac then processInput(ad,S,false)end
+end
+end)
+
+_.FocusLost:Connect(function(ad)
+if ad and D.ActiveColorPickerData then
+local ae=_.Text:gsub("#","")
+if#ae==6 then
+local af,ag,ah=tonumber(ae:sub(1,2),16),tonumber(ae:sub(3,4),16),tonumber(ae:sub(5,6),16)
+if af and ag and ah then
+local ai=g(af,ag,ah)
+local aj,ak,al=ai:ToHSV()
+D.ActiveColorPickerData.SetColor(ai,aj,ak,al)
 end
 else
-local ag=D.ActiveColorPickerData
-local ah,ai,aj=ag.GetHSV()
-D.UpdateSharedPaletteVisuals(ag.GetCurrentColor(),ah,ai,aj)
+local af=D.ActiveColorPickerData
+local ag,ah,ai=af.GetHSV()
+D.UpdateSharedPaletteVisuals(af.GetCurrentColor(),ag,ah,ai)
 end
 end
 end)
 
 D.TogglePaletteOff=function()
-if R.Visible then
-B:Tween(R,{
+if Q.Visible then
+B:Tween(Q,{
 Size=k(0,0,0,0)
 },0.2).Completed:Once(function()
-R.Visible=false
+Q.Visible=false
 P.Visible=false
 D.ActiveColorPicker=nil
 D.ActiveColorPickerData=nil
@@ -1711,24 +1697,24 @@ end)
 end
 end
 
-P.InputBegan:Connect(function(ae)
-if ae.UserInputType==j.UserInputType.MouseButton1 or ae.UserInputType==j.UserInputType.Touch then
-local af,ag,ah=ae.Position,R.AbsolutePosition,R.AbsoluteSize
-if af.X<ag.X or af.X>ag.X+ah.X or af.Y<ag.Y or af.Y>ag.Y+ah.Y then
+P.InputBegan:Connect(function(ad)
+if ad.UserInputType==j.UserInputType.MouseButton1 or ad.UserInputType==j.UserInputType.Touch then
+local ae,af,ag=ad.Position,Q.AbsolutePosition,Q.AbsoluteSize
+if ae.X<af.X or ae.X>af.X+ag.X or ae.Y<af.Y or ae.Y>af.Y+ag.Y then
 D.TogglePaletteOff()
 end
 end
 end)
 
-D.UpdateSharedPaletteVisuals=function(ae,af,ag,ah)
-D.SharedPaletteUI.SVGradient.BackgroundColor3=Color3.fromHSV(af,1,1)
-D.SharedPaletteUI.HueSlider.Position=k(0,0,af,-2)
-D.SharedPaletteUI.SVSelector.Position=k(ag,0,1-ah,0)
-D.SharedPaletteUI.InnerCircle.BackgroundColor3=ae
-D.SharedPaletteUI.PreviewFrame.BackgroundColor3=ae
+D.UpdateSharedPaletteVisuals=function(ad,ae,af,ag)
+D.SharedPaletteUI.SVGradient.BackgroundColor3=Color3.fromHSV(ae,1,1)
+D.SharedPaletteUI.HueSlider.Position=k(0,0,ae,-2)
+D.SharedPaletteUI.SVSelector.Position=k(af,0,1-ag,0)
+D.SharedPaletteUI.InnerCircle.BackgroundColor3=ad
+D.SharedPaletteUI.PreviewFrame.BackgroundColor3=ad
 
-local ai,aj,ak=math.floor(ae.R*255),math.floor(ae.G*255),math.floor(ae.B*255)
-D.SharedPaletteUI.HexInput.Text=string.format("#%02X%02X%02X",ai,aj,ak)
+local ah,ai,aj=math.floor(ad.R*255),math.floor(ad.G*255),math.floor(ad.B*255)
+D.SharedPaletteUI.HexInput.Text=string.format("#%02X%02X%02X",ah,ai,aj)
 end
 end
 
@@ -1905,35 +1891,35 @@ TextTruncate=j.TextTruncate.AtEnd,Parent=ak
 })
 aa:AddThemeObject(al,"TextColor3","TabTextColor")
 
-local am=create("ImageLabel",{
+local B=create("ImageLabel",{
 BackgroundTransparency=1,Position=k(0.816,0,0.166,0),
 Size=k(0,20,0,20),Image="rbxassetid://126982255108418",
 Parent=ak
 })
-aa:AddThemeObject(am,"ImageColor3","DropDownArrowImg")
+aa:AddThemeObject(B,"ImageColor3","DropDownArrowImg")
 
 af.Elem=aj
 af._textLabel=al
 
-local B=""
+local C=""
 if af.Multi then
-for C,D in pairs(af.Selected)do
-if D then B=B..(B==""and C or", "..C)end
+for D,E in pairs(af.Selected)do
+if E then C=C..(C==""and D or", "..D)end
 end
-al.Text=B==""and"Select..."or B
+al.Text=C==""and"Select..."or C
 else
 al.Text=af.Selected and tostring(af.Selected)or"Select..."
 end
 
-local C={}
+local D={}
 
 local function refreshVisuals()
-for D,E in pairs(C)do
-local F=af.Multi and af.Selected[D]or(af.Selected==D)
-if F then
-o:Tween(E,{Size=k(0,2,0,22),BackgroundTransparency=0},0.2)
+for E,F in pairs(D)do
+local G=af.Multi and af.Selected[E]or(af.Selected==E)
+if G then
+o:Tween(F,{Size=k(0,2,0,22),BackgroundTransparency=0},0.2)
 else
-o:Tween(E,{Size=k(0,2,0,0),BackgroundTransparency=1},0.2)
+o:Tween(F,{Size=k(0,2,0,0),BackgroundTransparency=1},0.2)
 end
 end
 end
@@ -1951,74 +1937,74 @@ end
 task.delay(0.2,function()
 if o.SharedDropdownState.ActiveCloseFunc==closeDropdown then
 ah.Visible=false
-table.clear(C)
+table.clear(D)
 end
 end)
 end
 
-local function handleOptionClick(D)
+local function handleOptionClick(E)
 if af.Multi then
-local E=table.clone(af.Selected)
-E[D]=not E[D]
-af:SetValue(E)
+local F=table.clone(af.Selected)
+F[E]=not F[E]
+af:SetValue(F)
 else
-af:SetValue(D)
+af:SetValue(E)
 closeDropdown()
 end
 end
 
-local function createOption(D)
-local E=create("TextButton",{
+local function createOption(E)
+local F=create("TextButton",{
 BackgroundTransparency=1,Size=k(0,135,0,30),
-Font=m,Text="  "..D,TextSize=14,
+Font=m,Text="  "..E,TextSize=14,
 TextXAlignment=n,TextWrapped=true,
 TextTruncate=j.TextTruncate.AtEnd,Parent=ai
 })
-aa:AddThemeObject(E,"TextColor3","TabTextColor")
+aa:AddThemeObject(F,"TextColor3","TabTextColor")
 
-local F=create("Frame",{
+local G=create("Frame",{
 BorderSizePixel=0,Position=k(0.01,0,0,4),
-Size=k(0,2,0,0),Transparency=1,Parent=E
+Size=k(0,2,0,0),Transparency=1,Parent=F
 })
-aa:AddThemeObject(F,"BackgroundColor3","DropDownFrameColor")
+aa:AddThemeObject(G,"BackgroundColor3","DropDownFrameColor")
 
-C[D]=F
+D[E]=G
 
-E.MouseEnter:Connect(function()
-o:Tween(E,{BackgroundTransparency=0.95},0.3)
-local G=af.Multi and af.Selected[D]or(af.Selected==D)
-if not G then
-o:Tween(F,{Size=k(0,2,0,22),BackgroundTransparency=0.5},0.3)
+F.MouseEnter:Connect(function()
+o:Tween(F,{BackgroundTransparency=0.95},0.3)
+local H=af.Multi and af.Selected[E]or(af.Selected==E)
+if not H then
+o:Tween(G,{Size=k(0,2,0,22),BackgroundTransparency=0.5},0.3)
 end
 end)
 
-E.MouseLeave:Connect(function()
-o:Tween(E,{BackgroundTransparency=1},0.3)
-local G=af.Multi and af.Selected[D]or(af.Selected==D)
-if not G then
-o:Tween(F,{BackgroundTransparency=1,Size=k(0,2,0,0)},0.3)
+F.MouseLeave:Connect(function()
+o:Tween(F,{BackgroundTransparency=1},0.3)
+local H=af.Multi and af.Selected[E]or(af.Selected==E)
+if not H then
+o:Tween(G,{BackgroundTransparency=1,Size=k(0,2,0,0)},0.3)
 end
 end)
 
-E.MouseButton1Click:Connect(function()handleOptionClick(D)end)
+F.MouseButton1Click:Connect(function()handleOptionClick(E)end)
 end
 
 local function updateDropdownPosition()
 if not ah.Visible then return end
-local D=ak.AbsolutePosition
-local E=ag.AbsolutePosition
+local E=ak.AbsolutePosition
+local F=ag.AbsolutePosition
 
-local F=1
-local G=ag
-while G and not G:IsA"ScreenGui"do
-local H=G:FindFirstChildWhichIsA"UIScale"
-if H then F*=H.Scale end
-G=G.Parent
+local G=1
+local H=ag
+while H and not H:IsA"ScreenGui"do
+local I=H:FindFirstChildWhichIsA"UIScale"
+if I then G*=I.Scale end
+H=H.Parent
 end
 
-local H=(D.X-E.X)/F-4
-local I=(D.Y-E.Y+ak.AbsoluteSize.Y)/F
-ah.Position=k(0,H,0,I)
+local I=(E.X-F.X)/G-4
+local J=(E.Y-F.Y+ak.AbsoluteSize.Y)/G
+ah.Position=k(0,I,0,J)
 end
 
 local function openDropdown()
@@ -2028,19 +2014,19 @@ end
 
 o.SharedDropdownState.ActiveCloseFunc=closeDropdown
 
-for D,E in pairs(ai:GetChildren())do
-if E:IsA"TextButton"then E:Destroy()end
+for E,F in pairs(ai:GetChildren())do
+if F:IsA"TextButton"then F:Destroy()end
 end
-table.clear(C)
+table.clear(D)
 
-for D,E in ipairs(af.Options)do createOption(E)end
+for E,F in ipairs(af.Options)do createOption(F)end
 
 updateDropdownPosition()
 ah.Visible=true
 
-local D=math.min(150,#af.Options*30)
-o:Tween(ah,{Size=k(0,140,0,D+10)},0.2)
-o:Tween(ai,{Size=k(0,135,0,D)},0.2)
+local E=math.min(150,#af.Options*30)
+o:Tween(ah,{Size=k(0,140,0,E+10)},0.2)
+o:Tween(ai,{Size=k(0,135,0,E)},0.2)
 refreshVisuals()
 
 task.spawn(function()
@@ -2051,13 +2037,13 @@ end
 end)
 
 if o.SharedDropdownState.ClickConnection then o.SharedDropdownState.ClickConnection:Disconnect()end
-o.SharedDropdownState.ClickConnection=e.InputBegan:Connect(function(E)
-if E.UserInputType==j.UserInputType.MouseButton1 or E.UserInputType==j.UserInputType.Touch then
-local F=E.Position
-local G=F.X>=ak.AbsolutePosition.X and F.X<=ak.AbsolutePosition.X+ak.AbsoluteSize.X and F.Y>=ak.AbsolutePosition.Y and F.Y<=ak.AbsolutePosition.Y+ak.AbsoluteSize.Y
-local H=F.X>=ah.AbsolutePosition.X and F.X<=ah.AbsolutePosition.X+ah.AbsoluteSize.X and F.Y>=ah.AbsolutePosition.Y and F.Y<=ah.AbsolutePosition.Y+ah.AbsoluteSize.Y
+o.SharedDropdownState.ClickConnection=e.InputBegan:Connect(function(F)
+if F.UserInputType==j.UserInputType.MouseButton1 or F.UserInputType==j.UserInputType.Touch then
+local G=F.Position
+local H=G.X>=ak.AbsolutePosition.X and G.X<=ak.AbsolutePosition.X+ak.AbsoluteSize.X and G.Y>=ak.AbsolutePosition.Y and G.Y<=ak.AbsolutePosition.Y+ak.AbsoluteSize.Y
+local I=G.X>=ah.AbsolutePosition.X and G.X<=ah.AbsolutePosition.X+ah.AbsoluteSize.X and G.Y>=ah.AbsolutePosition.Y and G.Y<=ah.AbsolutePosition.Y+ah.AbsoluteSize.Y
 
-if not G and not H then closeDropdown()end
+if not H and not I then closeDropdown()end
 end
 end)
 end
@@ -2583,12 +2569,12 @@ local aj=ah.Toggles
 
 local ak={"Load Config","Auto Load Config","Auto Load","AutoLoad"}
 
-for al,am in ipairs(ak)do
-local t=ai[am]
-local u=aj[am]
+for al,t in ipairs(ak)do
+local u=ai[t]
+local v=aj[t]
 
-if t and u==true then
-t:SetState(true)
+if u and v==true then
+u:SetState(true)
 return true
 end
 end
@@ -2624,10 +2610,10 @@ if ah.Keybinds then
 for ai,aj in pairs(ah.Keybinds)do
 local ak=ac.AllElements.Keybinds[ai]
 if ak and aj and aj~="None"and aj~="nil"then
-local al,am=pcall(function()return j.KeyCode[aj]end)
+local al,t=pcall(function()return j.KeyCode[aj]end)
 if al then
 pcall(function()
-ak:SetKey(am)
+ak:SetKey(t)
 end)
 end
 end
@@ -2652,8 +2638,8 @@ if ak and ak.SetValue then
 pcall(function()
 if ak.Multi and type(aj)=="table"then
 local al={}
-for am,t in pairs(aj)do
-if type(am)=="string"then al[am]=t else al[t]=true end
+for t,u in pairs(aj)do
+if type(t)=="string"then al[t]=u else al[u]=true end
 end
 ak:SetValue(al)
 else
@@ -2882,31 +2868,31 @@ af.Container=ak
 
 local al=create("UIListLayout",{Parent=ak,Padding=l(0,2),SortOrder=j.SortOrder.LayoutOrder})
 
-local am=true
+local t=true
 
 local function GetTargetHeight()
 return(al.AbsoluteContentSize.Y/ae.ScaleFactor)
 end
 
 ah.MouseButton1Click:Connect(function()
-am=not am
-local t=am and GetTargetHeight()or 0
-local u=am and 0 or 180
+t=not t
+local u=t and GetTargetHeight()or 0
+local v=t and 0 or 180
 
-ae:Tween(aj,{Rotation=u},0.2)
-ae:Tween(ak,{Size=k(0,173,0,t)},0.3)
+ae:Tween(aj,{Rotation=v},0.2)
+ae:Tween(ak,{Size=k(0,173,0,u)},0.3)
 end)
 
-function af.AddTab(t,u,v)
-local w=ae:AddTab(u,v)
-w.Button.Parent=ak
-w.Button.Size=k(0,173,0,35)
+function af.AddTab(u,v,w)
+local x=ae:AddTab(v,w)
+x.Button.Parent=ak
+x.Button.Size=k(0,173,0,35)
 
-if am then
+if t then
 ak.Size=k(0,173,0,GetTargetHeight())
 end
-table.insert(t.Tabs,w)
-return w
+table.insert(u.Tabs,x)
+return x
 end
 
 table.insert(ae.Categories,af)
