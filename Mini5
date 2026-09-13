@@ -608,8 +608,7 @@ local s={Settings=
 "rbxassetid://88963434013027",Animation=
 "rbxassetid://126672101469278",Items=
 "rbxassetid://100873317961037",Teleport=
-"rbxassetid://93236186125909",Halloween=
-"rbxassetid://115053236948532",Misc=
+"rbxassetid://93236186125909",Misc=
 "rbxassetid://137583062645541",Block=
 "rbxassetid://94027029642332",Aim=
 "rbxassetid://130183131122604",Fun=
@@ -619,7 +618,7 @@ local s={Settings=
 "rbxassetid://77808065458415",Run=
 "rbxassetid://94022434049447",Killer=
 "rbxassetid://80624492937943",Survivor=
-"rbxassetid://76337889437039"
+"rbxassetid://76337889437039",box=rbxassetid://109248388104571
 }
 
 function o.AddTab(t,u:string,v:string)
