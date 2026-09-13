@@ -603,28 +603,17 @@ end
 
 local s={Settings=
 "rbxassetid://121074539743502",Visual=
-"rbxassetid://92250291747112",Player=
-"rbxassetid://92793433656183",Combat=
+"rbxassetid://92250291747112",Combat=
 "rbxassetid://73787033062338",Generator=
-"rbxassetid://88963434013027",AutoFarm=
-"rbxassetid://119088300179156",Animation=
+"rbxassetid://88963434013027",Animation=
 "rbxassetid://126672101469278",Items=
 "rbxassetid://100873317961037",Teleport=
-"rbxassetid://93236186125909",Badge=
-"rbxassetid://119734718512317",Quests=
-"rbxassetid://88588775334975",Main=
-"rbxassetid://102448859836734",Halloween=
+"rbxassetid://93236186125909",Halloween=
 "rbxassetid://115053236948532",Misc=
 "rbxassetid://137583062645541",Block=
 "rbxassetid://94027029642332",Aim=
 "rbxassetid://130183131122604",Fun=
-"rbxassetid://137362629704355",Fish=
-"rbxassetid://105045060721724",WebHook=
-"rbxassetid://95301251075575",Heart=
-"rbxassetid://111088001331743",Shop=
-"rbxassetid://82363507426406",Boat=
-"rbxassetid://103950075513303",Trade=
-"rbxassetid://128997687956087",Text=
+"rbxassetid://137362629704355",Text=
 "rbxassetid://140272486271785",Music=
 "rbxassetid://95074569695751",Skin=
 "rbxassetid://77808065458415",Run=
