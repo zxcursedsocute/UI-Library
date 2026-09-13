@@ -618,7 +618,7 @@ local s={Settings=
 "rbxassetid://77808065458415",Run=
 "rbxassetid://94022434049447",Killer=
 "rbxassetid://80624492937943",Survivor=
-"rbxassetid://76337889437039",box="rbxassetid://109248388104571"
+"rbxassetid://76337889437039",box="rbxassetid://83341608917591"
 }
 
 function o.AddTab(t,u:string,v:string)
